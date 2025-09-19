@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useMemo, useState } from "react"
+import { use, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, Download, Heart, Share2, Star, Users } from "lucide-react"
