@@ -1,4 +1,4 @@
-# CLAUDE.md
+do# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -175,3 +175,28 @@ yarn config:restore                         # Import config
 - **Middleware Population**: Update when adding new dynamic zone components
 - **Auth Pages**: Located at `/auth/*` routes
 - **Protected Routes**: Configured in `middleware.ts` `authPages` array
+
+## Implementation Playbook
+
+Follow the refreshed spec in `docs/platform-implementation-spec.md`. Recommended work order:
+
+1. **Infrastructure bootstrap**
+   - Stand up Strapi v5 on managed hosting (Fly.io/Railway/Render) with managed PostgreSQL and file upload persistence.
+   - Configure Cloudflare Pages for the UI, Cloudflare Worker gateway, R2 buckets (with backups), Stripe products/prices, and observability tooling.
+2. **Strapi schema & seeds**
+   - Create collection types (`Project`, `Plan`, `UserProfile`, `DownloadLog`, `TemplateRequest`, `SubscriptionEvent`) and supporting components for version history.
+   - Seed plan data to match current pricing limits; add admin roles/permissions for audit logging.
+3. **Backend services**
+   - Implement Strapi services/controllers for `/me`, `/projects`, `/downloads`, `/template-requests`, quota reset cron, Stripe webhook + outbox processor, and R2 signed URL issuance with row-level locking.
+   - Expose health checks and audit log appenders.
+4. **Edge worker**
+   - Build Cloudflare Worker to validate sessions, enforce CSRF/rate limits, cache public catalogue responses, and proxy API calls to Strapi.
+5. **Next.js UI**
+   - Implement catalogue, pricing, project detail modal, download confirmation flow, account dashboard, and template request form using Shadcn (dark-first).
+   - Integrate NextAuth httpOnly sessions and quota badges; add error states and retry UX.
+6. **Payments & lifecycle**
+   - Wire Stripe Checkout/Customer Portal flows, post-checkout polling, grace-period handling, and add-on purchase logic.
+7. **Testing & release**
+   - Build unit/integration/e2e tests, load-test quota locking, document deployment runbooks, and set up CI gates before production rollout.
+
+Record architectural deviations or new patterns back into the spec to keep guidance current.
