@@ -1,5 +1,15 @@
-import { LayoutProps } from "@/types/next"
+import { AuthProvider } from "@/lib/auth-context"
+import { AppHeader } from "@/components/ui/app-header"
 
-export default async function Layout({ children }: LayoutProps) {
-  return <div className="flex items-center pb-8">{children}</div>
+interface LayoutProps {
+  children: React.ReactNode
+}
+
+export default function Layout({ children }: LayoutProps) {
+  return (
+    <AuthProvider>
+      <AppHeader />
+      <main className="min-h-[calc(100vh-64px)]">{children}</main>
+    </AuthProvider>
+  )
 }
