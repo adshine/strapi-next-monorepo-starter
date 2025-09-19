@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes"
 import { z } from "zod"
 
 import { setupLibraries } from "@/lib/general-helpers"
+import { AuthProvider } from "@/lib/auth-context"
 import { useTranslatedZod } from "@/hooks/useTranslatedZod"
 
 // Setup libraries in client environment
@@ -31,7 +32,7 @@ export function ClientProviders({
           forcedTheme="light"
         >
           <QueryClientProvider client={queryClient}>
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </TokenProvider>
