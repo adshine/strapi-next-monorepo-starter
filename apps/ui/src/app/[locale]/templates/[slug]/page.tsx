@@ -35,9 +35,6 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   const requiredPlan = getMockPlanBySlug(template.planRequired)
   const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
-  const [showRecommendations, setShowRecommendations] = useState(false)
-
-  const lastImageRef = useRef<HTMLImageElement | null>(null)
 
   const galleryImages = useMemo(() => {
     if (template.previewImages && template.previewImages.length > 0) {
@@ -47,6 +44,12 @@ export default function TemplatePage({ params }: TemplatePageProps) {
     return [template.thumbnailUrl]
   }, [template.previewImages, template.thumbnailUrl])
 
+  const shouldAutoShowRecommendations = galleryImages.length <= 1
+  const [showRecommendations, setShowRecommendations] = useState(
+    () => shouldAutoShowRecommendations
+  )
+  const lastImageRef = useRef<HTMLImageElement | null>(null)
+
   const relatedTemplates = useMemo(
     () =>
       MOCK_TEMPLATES.filter(
@@ -54,6 +57,32 @@ export default function TemplatePage({ params }: TemplatePageProps) {
       ).slice(0, 4),
     [template.id, template.category]
   )
+
+  useEffect(() => {
+    if (shouldAutoShowRecommendations) {
+      setShowRecommendations(true)
+      return
+    }
+
+    if (!lastImageRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShowRecommendations(true)
+          }
+        })
+      },
+      { threshold: 0.4, rootMargin: "0px 0px -25% 0px" }
+    )
+
+    observer.observe(lastImageRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [shouldAutoShowRecommendations, galleryImages.length])
 
   const isFreePlan = requiredPlan?.slug === "solo"
 
@@ -280,7 +309,14 @@ export default function TemplatePage({ params }: TemplatePageProps) {
         </div>
 
         {relatedTemplates.length > 0 && (
-          <section className="py-16">
+          <section
+            className={`py-16 transition-all duration-500 ${
+              showRecommendations
+                ? "opacity-100 translate-y-0"
+                : "pointer-events-none opacity-0 translate-y-6"
+            }`}
+            aria-live="polite"
+          >
             <h2 className="text-center text-3xl font-bold">
               You may also like
             </h2>
