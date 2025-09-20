@@ -1,4 +1,3 @@
-import Image from "next/image"
 import { Data } from "@repo/strapi"
 import { getTranslations } from "next-intl/server"
 
@@ -21,23 +20,25 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
   const response = await fetchNavbar(locale)
   const navbar = response?.data
 
-  if (navbar == null) {
-    return null
-  }
-
   const t = await getTranslations("navbar")
-
-  const links = (navbar.links ?? [])
-    .filter((link) => link.href)
-    .concat(...hardcodedLinks)
-
   const session = await getAuth()
 
+  // Fallback navigation when Strapi data is unavailable
+  const fallbackLinks = [
+    { id: "templates", href: "/templates", label: "Templates" },
+    { id: "pricing", href: "/pricing", label: "Pricing" },
+    { id: "dashboard", href: "/dashboard", label: "Dashboard" },
+  ]
+
+  const links = navbar?.links
+    ? (navbar.links ?? []).filter((link) => link.href).concat(...hardcodedLinks)
+    : fallbackLinks
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/90 shadow-sm backdrop-blur transition-colors duration-300">
-      <div className="flex h-16 items-center space-x-6 px-6 sm:space-x-0">
+    <header className="sticky top-0 z-40 w-full border-b border-[var(--border-neutral)] bg-[var(--bg-elevated)]/90 shadow-sm backdrop-blur transition-colors duration-300">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6">
         <div className="flex gap-6 md:gap-10">
-          {navbar.logoImage ? (
+          {navbar?.logoImage ? (
             <StrapiImageWithLink
               component={navbar.logoImage}
               linkProps={{ className: "flex items-center space-x-2" }}
@@ -47,19 +48,19 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
               }}
             />
           ) : (
-            <AppLink href="/" className="text-xl font-bold">
-              <Image src="/images/logo.svg" alt="logo" height={23} width={82} />
+            <AppLink href="/" className="text-xl font-bold text-[var(--text-primary)]">
+              FramerTemplates
             </AppLink>
           )}
 
           {links.length > 0 ? (
-            <nav className="flex">
+            <nav className="flex gap-6">
               {links.map((link) => (
                 <StrapiLink
                   component={link}
                   key={link.href}
                   className={cn(
-                    "flex items-center text-sm font-medium hover:text-red-600"
+                    "flex items-center text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
                   )}
                 />
               ))}
@@ -67,13 +68,18 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
           ) : null}
         </div>
 
-        <div className="hidden flex-1 items-center justify-end space-x-4 lg:flex">
+        <div className="flex items-center space-x-4">
           {session?.user ? (
             <nav className="flex items-center space-x-1">
               <LoggedUserMenu user={session.user} />
             </nav>
           ) : (
-            <AppLink href="/auth/signin">{t("actions.signIn")}</AppLink>
+            <AppLink
+              href="/auth/signin"
+              className="text-sm font-medium text-[var(--text-muted)] transition-colors hover:text-[var(--text-primary)]"
+            >
+              {t("actions.signIn")}
+            </AppLink>
           )}
           <LocaleSwitcher locale={locale} />
         </div>

@@ -50,34 +50,52 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   )
   const lastImageRef = useRef<HTMLImageElement | null>(null)
 
-  const relatedTemplates = useMemo(
-    () =>
-      MOCK_TEMPLATES.filter(
-        (item) => item.id !== template.id && item.category === template.category
-      ).slice(0, 4),
-    [template.id, template.category]
-  )
+  const relatedTemplates = useMemo(() => {
+    // First try to get templates from the same category
+    let related = MOCK_TEMPLATES.filter(
+      (item) => item.id !== template.id && item.category === template.category
+    ).slice(0, 4)
+
+    // If no templates in same category, get any other templates
+    if (related.length === 0) {
+      related = MOCK_TEMPLATES.filter(
+        (item) => item.id !== template.id
+      ).slice(0, 4)
+    }
+
+    console.log("Related templates found:", related.length, "for category:", template.category)
+    return related
+  }, [template.id, template.category])
 
   useEffect(() => {
+    console.log("Gallery images:", galleryImages.length, "Auto show:", shouldAutoShowRecommendations)
+
     if (shouldAutoShowRecommendations) {
       setShowRecommendations(true)
+      console.log("Auto showing recommendations (only 1 image)")
       return
     }
 
-    if (!lastImageRef.current) return
+    if (!lastImageRef.current) {
+      console.log("No last image ref")
+      return
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          console.log("Intersection:", entry.isIntersecting, "Target:", entry.target)
           if (entry.isIntersecting) {
             setShowRecommendations(true)
+            console.log("Showing recommendations via intersection")
           }
         })
       },
-      { threshold: 0.4, rootMargin: "0px 0px -25% 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px 100px 0px" }
     )
 
     observer.observe(lastImageRef.current)
+    console.log("Observer attached to last image")
 
     return () => {
       observer.disconnect()
@@ -316,6 +334,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                 : "pointer-events-none opacity-0 translate-y-6"
             }`}
             aria-live="polite"
+            data-show={showRecommendations}
           >
             <h2 className="text-center text-3xl font-bold">
               You may also like

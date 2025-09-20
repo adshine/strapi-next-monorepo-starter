@@ -1,61 +1,68 @@
-'use client';
+"use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AuthModal } from '@/components/auth/auth-modal';
-import { clearMockUser, getMockUser, type User } from '@/lib/mock-data';
+import React, { createContext, useContext, useEffect, useState } from "react"
+
+import type { User } from "@/lib/mock-data"
+
+import { clearMockUser, getMockUser } from "@/lib/mock-data"
+import { AuthModal } from "@/components/auth/auth-modal"
 
 type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  showAuthModal: (mode?: 'login' | 'signup' | 'forgot-password') => void;
-  logout: () => void;
-  refreshUser: () => void;
-};
+  user: User | null
+  isAuthenticated: boolean
+  showAuthModal: (mode?: "login" | "signup" | "forgot-password") => void
+  logout: () => void
+  refreshUser: () => void
+}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider")
   }
-  return context;
+  return context
 }
 
 interface AuthProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | 'forgot-password'>('login');
+  const [user, setUser] = useState<User | null>(null)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState<
+    "login" | "signup" | "forgot-password"
+  >("login")
 
   // Load user on mount
   useEffect(() => {
-    const loadedUser = getMockUser();
-    setUser(loadedUser);
-  }, []);
+    const loadedUser = getMockUser()
+    setUser(loadedUser)
+  }, [])
 
-  const showAuthModal = (mode: 'login' | 'signup' | 'forgot-password' = 'login') => {
-    setAuthModalMode(mode);
-    setAuthModalOpen(true);
-  };
+  const showAuthModal = (
+    mode: "login" | "signup" | "forgot-password" = "login"
+  ) => {
+    setAuthModalMode(mode)
+    setAuthModalOpen(true)
+  }
 
   const logout = () => {
-    clearMockUser();
-    setUser(null);
-  };
+    clearMockUser()
+    setUser(null)
+  }
 
   const refreshUser = () => {
-    const updatedUser = getMockUser();
-    setUser(updatedUser);
-  };
+    const updatedUser = getMockUser()
+    setUser(updatedUser)
+  }
 
   const handleAuthSuccess = () => {
-    refreshUser();
+    refreshUser()
     // You could redirect to intended page here
-  };
+  }
 
   return (
     <AuthContext.Provider
@@ -76,5 +83,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
         onAuthSuccess={handleAuthSuccess}
       />
     </AuthContext.Provider>
-  );
+  )
 }

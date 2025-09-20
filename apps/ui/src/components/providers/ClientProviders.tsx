@@ -6,8 +6,8 @@ import { SessionProvider, signOut, useSession } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 import { z } from "zod"
 
-import { setupLibraries } from "@/lib/general-helpers"
 import { AuthProvider } from "@/lib/auth-context"
+import { setupLibraries } from "@/lib/general-helpers"
 import { useTranslatedZod } from "@/hooks/useTranslatedZod"
 
 // Setup libraries in client environment
