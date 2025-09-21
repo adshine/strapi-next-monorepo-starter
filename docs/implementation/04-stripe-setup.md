@@ -69,10 +69,10 @@ Navigate to Products → Add Product for each:
 ```javascript
 {
   name: "Day Pass",
-  description: "24-hour access to download templates",
+  description: "24-hour access to remix templates",
   metadata: {
     tier: "day_pass",
-    dailyDownloads: "4",
+    dailyRemixes: "4",
     templateRequests: "0",
     duration: "24_hours"
   }
@@ -96,7 +96,7 @@ STRIPE_PRICE_DAY_PASS=price_xxx
   description: "Perfect for individual creators",
   metadata: {
     tier: "solo",
-    dailyDownloads: "6",
+    dailyRemixes: "6",
     templateRequests: "1",
     favorites: "false"
   }
@@ -130,7 +130,7 @@ STRIPE_PRICE_SOLO_ANNUAL=price_xxx
   description: "For growing design studios",
   metadata: {
     tier: "studio",
-    dailyDownloads: "15",
+    dailyRemixes: "15",
     templateRequests: "3",
     favorites: "true",
     badge: "Most Popular"
@@ -152,10 +152,10 @@ STRIPE_PRICE_STUDIO_ANNUAL=price_xxx
   description: "Unlimited potential for agencies",
   metadata: {
     tier: "agency",
-    dailyDownloads: "40",
+    dailyRemixes: "40",
     templateRequests: "8",
     favorites: "true",
-    bulkDownload: "true",
+    bulkAccess: "true",
     prioritySupport: "true"
   }
 }
@@ -176,7 +176,7 @@ STRIPE_PRICE_AGENCY_ANNUAL=price_xxx
   description: "One-time purchase, lifetime access",
   metadata: {
     tier: "lifetime_core",
-    dailyDownloads: "8",
+    dailyRemixes: "8",
     templateRequests: "30",
     lifetime: "true"
   }
@@ -191,7 +191,7 @@ STRIPE_PRICE_LIFETIME_CORE=price_xxx
   description: "Ultimate lifetime access",
   metadata: {
     tier: "lifetime_plus",
-    dailyDownloads: "20",
+    dailyRemixes: "20",
     templateRequests: "unlimited",
     lifetime: "true",
     prioritySupport: "true"

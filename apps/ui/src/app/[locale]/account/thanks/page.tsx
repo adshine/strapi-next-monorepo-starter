@@ -8,8 +8,8 @@ import {
   CheckCircle,
   Clock,
   Crown,
-  Download,
   Heart,
+  Play,
   Star,
   Users,
 } from "lucide-react"
@@ -110,14 +110,14 @@ export default function ThanksPage() {
   const quickActions = [
     {
       title: "Browse Templates",
-      description: "Discover and download templates",
+      description: "Discover and remix templates",
       href: "/templates",
-      icon: Download,
+      icon: Play,
       color: "bg-accent-primary hover:bg-accent-primary/90",
     },
     {
-      title: "Download History",
-      description: "View your recent downloads",
+      title: "Template History",
+      description: "View your recent template access",
       href: "/account",
       icon: Clock,
       color: "bg-elevated border border-border-neutral hover:bg-subtle",
@@ -187,15 +187,15 @@ export default function ThanksPage() {
             <Card className="bg-primary border-border-neutral">
               <CardContent className="p-6 text-center">
                 <div className="bg-accent-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-                  <Download className="text-accent-primary h-6 w-6" />
+                  <Play className="text-accent-primary h-6 w-6" />
                 </div>
                 <div className="text-text-primary mb-2 text-3xl font-bold">
-                  {purchasedPlan?.dailyDownloadLimit === -1 ||
-                  purchasedPlan?.dailyDownloadLimit === 0
+                  {purchasedPlan?.dailyRemixLimit === -1 ||
+                  purchasedPlan?.dailyRemixLimit === 0
                     ? "∞"
-                    : purchasedPlan?.dailyDownloadLimit || 0}
+                    : purchasedPlan?.dailyRemixLimit || 0}
                 </div>
-                <div className="text-text-muted mb-4">Daily Downloads</div>
+                <div className="text-text-muted mb-4">Daily Remixes</div>
                 <Badge
                   variant="secondary"
                   className="bg-accent-success/20 text-accent-success"

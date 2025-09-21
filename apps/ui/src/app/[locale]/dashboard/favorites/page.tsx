@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Download, Heart, Star, Trash2 } from "lucide-react"
+import { Heart, Play, Star, Trash2 } from "lucide-react"
 
 import type { Plan } from "@/lib/api/plans"
 import type { Project } from "@/lib/api/projects"
@@ -11,10 +11,10 @@ import { plansAPI } from "@/lib/api/plans"
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
 import { useUserProfile } from "@/hooks/use-user-profile"
-import { RemixModal } from "@/components/ui/remix-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { RemixModal } from "@/components/ui/remix-modal"
 
 export default function FavoritesPage() {
   const { user } = useAuth()
@@ -170,7 +170,7 @@ export default function FavoritesPage() {
                     </p>
                   </div>
 
-                  {/* Rating and Downloads */}
+                  {/* Rating and Remixes */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-1">
                       <Star className="fill-accent-warning text-accent-warning h-3 w-3" />
@@ -221,7 +221,7 @@ export default function FavoritesPage() {
                       onClick={() => handleRemix(template)}
                       className="bg-accent-primary hover:bg-accent-primary/90"
                     >
-                      <Download className="mr-1 h-4 w-4" />
+                      <Play className="mr-1 h-4 w-4" />
                       Remix
                     </Button>
                   </div>

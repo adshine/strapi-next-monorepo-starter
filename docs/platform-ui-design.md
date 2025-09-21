@@ -118,7 +118,7 @@ Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`,
 ## 12. Content Voice & Tone
 
 - Tone: expert, encouraging, concise. Avoid jargon; highlight practical benefits (speed, quality, conversion lift).
-- Microcopy: friendly but direct (e.g., “3 downloads left today”, “Reset in 6 hours”).
+- Microcopy: friendly but direct (e.g., "3 remixes left today", "Reset in 6 hours").
 - Error messaging: explain cause + resolution (“Payment failed. Retry in Stripe billing portal or update card.”).
 - Confirmation copy: celebrate success (“Link ready. Paste directly into Framer and start customizing.”).
 
@@ -126,7 +126,7 @@ Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`,
 
 - Provide Figma components mirroring Shadcn primitives with tokens aligned to CSS variables.
 - Document variant states (default, hover, focus, disabled, loading) for each component.
-- Include motion specs in Figma prototyping for key interactions (download modal, plan tile hover).
+- Include motion specs in Figma prototyping for key interactions (remix modal, plan tile hover).
 - Annotate spacing and grid specs in design files for developer reference.
 
 ## 14. Future Exploration

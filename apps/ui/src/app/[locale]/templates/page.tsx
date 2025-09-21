@@ -3,15 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import {
-  Clock,
-  Download,
-  Grid3X3,
-  Heart,
-  List,
-  Search,
-  Star,
-} from "lucide-react"
+import { Clock, Grid3X3, Heart, List, Play, Search, Star } from "lucide-react"
 
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
@@ -20,8 +12,8 @@ import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { RemixModal } from "@/components/ui/remix-modal"
 import { Input } from "@/components/ui/input"
+import { RemixModal } from "@/components/ui/remix-modal"
 import {
   Select,
   SelectContent,
@@ -266,7 +258,7 @@ export default function TemplatesPage() {
             disabled={!canAccess && user !== null}
             onClick={handleRemix}
           >
-            <Download className="mr-1 h-4 w-4" />
+            <Play className="mr-1 h-4 w-4" />
             Remix
           </Button>
         </div>
@@ -402,8 +394,9 @@ export default function TemplatesPage() {
           {user && (
             <div className="hidden items-center space-x-4 text-sm md:flex">
               <div className="flex items-center space-x-1 text-[var(--text-muted)]">
-                <Download className="h-4 w-4" />
-                <span>{user?.remixesToday ?? 0} remixes today</span> {/* TODO: rename from downloadsToday in schema */}
+                <Layers className="h-4 w-4" />
+                <span>{user?.remixesToday ?? 0} remixes today</span>{" "}
+                {/* TODO: rename from downloadsToday in schema */}
               </div>
               <div className="flex items-center space-x-1 text-[var(--text-muted)]">
                 <Clock className="h-4 w-4" />

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Check, Download, Star, Users, Zap } from "lucide-react"
+import { ArrowRight, Check, Play, Star, Users, Zap } from "lucide-react"
 
 import { plansAPI } from "@/lib/api/plans"
 import { projectsAPI } from "@/lib/api/projects"
@@ -108,7 +108,7 @@ function FeaturedTemplates() {
                     by {template.creator}
                   </span>
                   <span className="text-sm text-[var(--text-muted)]">
-                    {template.downloadCount.toLocaleString()} downloads
+                    {template.remixCount.toLocaleString()} remixes
                   </span>
                 </div>
               </div>
@@ -147,9 +147,9 @@ function Benefits() {
                     "Every template is thoroughly tested and optimized for performance across all devices.",
                 },
                 {
-                  title: "Instant Download",
+                  title: "Instant Access",
                   description:
-                    "Secure, instant downloads with automatic verification and version tracking.",
+                    "Secure, instant access with automatic verification and version tracking.",
                 },
                 {
                   title: "Regular Updates",
@@ -191,14 +191,14 @@ function Benefits() {
                     Start Free Today
                   </h3>
                   <p className="mb-6 text-[var(--text-muted)]">
-                    No credit card required. Get 3 downloads per day with our
-                    free plan.
+                    No credit card required. Get 3 remixes per day with our free
+                    plan.
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   {[
-                    "3 downloads per day",
+                    "3 remixes per day",
                     "1 request per month",
                     "Community support",
                   ].map((feature) => (
@@ -394,7 +394,7 @@ export function MarketingLandingPage() {
                   size="lg"
                   className="bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90"
                 >
-                  <Download className="mr-2 h-5 w-5" />
+                  <Play className="mr-2 h-5 w-5" />
                   Browse Templates
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

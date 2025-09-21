@@ -127,7 +127,7 @@ curl -X POST http://localhost:1337/api/auth/local/register
 
 # Access template (currently uses download-log endpoint)
 curl -X POST http://localhost:1337/api/download-logs
-# Note: This endpoint name will change to /api/template-access
+# Note: This endpoint name will change to /api/template-access-logs
 
 # Check user's template access history
 curl http://localhost:1337/api/users/me?populate=download_logs

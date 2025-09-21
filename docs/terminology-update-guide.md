@@ -1,5 +1,9 @@
 # Terminology Update Guide: Download → Remix
 
+## Current Status: IN PROGRESS
+
+**Frontend UI components and most user-facing text have been updated to use "remix" terminology. Documentation files and some helper functions still need attention.**
+
 ## Files Requiring Updates
 
 ### Priority 1: User-Facing UI Components & Pages
@@ -15,8 +19,8 @@
 
 #### Components
 
-- [ ] `apps/ui/src/components/download-modal.tsx` → Rename to `remix-modal.tsx`, update all text
-- [ ] `apps/ui/src/components/ui/download-modal.tsx` → Rename to `ui/remix-modal.tsx`, update all text
+- [x] `apps/ui/src/components/download-modal.tsx` → Rename to `remix-modal.tsx`, update all text
+- [x] `apps/ui/src/components/ui/download-modal.tsx` → Rename to `ui/remix-modal.tsx`, update all text
 - [x] `apps/ui/src/components/ui/app-header.tsx` → Updated navigation labels from "Downloads" to "My Templates"
 - [ ] `apps/ui/src/components/marketing/landing-page.tsx` → Update marketing copy
 
@@ -26,6 +30,7 @@
 
 - [x] `apps/ui/src/app/api/remix/[projectId]/route.ts` → Updated with TODO comments for backend field renames
 - [ ] `apps/worker/src/handlers/download.ts` → Rename to `remix.ts` or `access.ts`
+- [ ] `apps/ui/src/lib/api/projects.ts` → Update method names to use remix terminology
 
 #### Type Definitions
 
@@ -40,11 +45,27 @@
 
 #### Lib Functions
 
-- [x] `apps/ui/src/lib/api/projects.ts` → Updated function name to `trackRemix` and added TODO comments
+- [ ] `apps/ui/src/lib/api/projects.ts` → Update method names to use remix terminology
 - [x] `apps/ui/src/lib/api/plans.ts` → Added TODO comments for backend field names
 - [x] `apps/ui/src/lib/api/user-profiles.ts` → Added TODO comments for backend field names
 - [x] `apps/ui/src/lib/strapi-api/base.ts` → Added TODO comments for download-logs endpoint
 - [x] `apps/ui/src/lib/files.ts` → Added TODO comment for future rename
+
+### Priority 4: Middleware & Documentation
+
+#### Middleware
+
+- [ ] `apps/ui/src/middleware.ts` → Verify routes point to /remix instead of /download
+
+#### Documentation
+
+- [ ] `docs/cloudflare-setup.md` → Replace "download" wording
+- [ ] `docs/platform-ui-design.md` → Replace "download" wording
+- [ ] `docs/platform-user-flows.md` → Replace "download" wording
+- [ ] `docs/implementation/01-checklist.md` → Replace "download" wording
+- [ ] `docs/implementation/02-api-contracts.md` → Replace "download" wording
+- [ ] `docs/implementation/04-stripe-setup.md` → Replace "download" wording
+- [ ] `docs/implementation/05-infrastructure-setup.md` → Replace "download" wording
 
 ### Priority 4: Backend/Strapi (Comment Only - No Rename)
 
@@ -62,6 +83,13 @@ These files should have comments added noting the planned rename, but field name
 - [ ] `apps/ui/tests/e2e/catalog.spec.ts` → Update catalog test copy
 - [ ] `apps/ui/tests/e2e/templates-catalog.spec.ts` → Update template test copy
 - [ ] `apps/ui/tests/e2e/pricing.spec.ts` → Update pricing test copy
+
+### Priority 6: Final Verification & Cleanup
+
+- [ ] Run final search for remaining "download" references in codebase
+- [ ] Update any remaining helper functions (downloadBlob, etc.)
+- [ ] Run lint, test, and build to ensure everything passes
+- [ ] Add TODO comments where backend field names are referenced
 
 ## Replacement Mapping
 

@@ -220,7 +220,7 @@ Get current user profile with subscription details.
     addOns: string[] // ["fast_turnaround"]
   }
   quotas: {
-    dailyDownloads: {
+    dailyRemixes: {
       used: number
       limit: number
       resetAt: string // ISO8601 in user timezone
@@ -232,7 +232,7 @@ Get current user profile with subscription details.
     }
   }
   stats: {
-    totalDownloads: number
+    totalRemixes: number
     favoriteCount: number
     memberSince: string // ISO8601
   }
@@ -260,7 +260,7 @@ Update user preferences.
   timezone?: string // IANA timezone
   theme?: "light" | "dark" | "system"
   emailNotifications?: {
-    downloads?: boolean
+    remixes?: boolean
     requests?: boolean
     billing?: boolean
     updates?: boolean
@@ -313,7 +313,7 @@ List all projects with filtering.
       videoPreview?: string
       tags: string[]
       requiredPlan: string
-      downloadCount: number
+      remixCount: number
       complexity: "beginner" | "intermediate" | "advanced"
       currentVersion: string
       lastUpdated: string
@@ -349,8 +349,8 @@ Get project details.
   livePreview?: string
   tags: string[]
   requiredPlan: string
-  canDownload: boolean // based on user's plan
-  downloadCount: number
+  canAccess: boolean // based on user's plan
+  remixCount: number
   fileSize: string // human readable
   complexity: "beginner" | "intermediate" | "advanced"
   currentVersion: string
@@ -367,11 +367,11 @@ Get project details.
 }
 ```
 
-## Download Endpoints
+## Template Access Endpoints
 
-### POST /api/downloads
+### POST /api/template-access
 
-Initiate a download with quota enforcement.
+Initiate template access with quota enforcement.
 
 **Request:**
 
@@ -386,7 +386,7 @@ Initiate a download with quota enforcement.
 
 ```typescript
 {
-  downloadId: string
+  accessId: string
   link: string // signed R2 URL
   expiresAt: string // ISO8601 (15 minutes)
   fileName: string
@@ -422,15 +422,15 @@ Initiate a download with quota enforcement.
 }
 ```
 
-### POST /api/downloads/:id/complete
+### POST /api/template-access/:id/complete
 
-Mark download as completed for tracking.
+Mark template access as completed for tracking.
 
 **Request:**
 
 ```typescript
 {
-  downloadId: string
+  accessId: string
   success: boolean
   duration?: number // milliseconds
 }
@@ -444,15 +444,15 @@ Mark download as completed for tracking.
 }
 ```
 
-### POST /api/downloads/:id/retry
+### POST /api/template-access/:id/retry
 
-Retry a failed download without quota charge.
+Retry a failed template access without quota charge.
 
 **Request:**
 
 ```typescript
 {
-  downloadId: string
+  accessId: string
   reason?: string // optional error description
 }
 ```
@@ -477,9 +477,9 @@ Retry a failed download without quota charge.
 }
 ```
 
-### GET /api/downloads/history
+### GET /api/template-access/history
 
-Get user's download history.
+Get user's template access history.
 
 **Query Parameters:**
 
@@ -497,7 +497,7 @@ Get user's download history.
 
 ```typescript
 {
-  downloads: [
+  accesses: [
     {
       id: string
       project: {
@@ -507,7 +507,7 @@ Get user's download history.
         thumbnailImage: string
       }
       status: "success" | "failed" | "pending"
-      downloadedAt: string
+      accessedAt: string
       fileSize: number
       version: string
       attempts: number
@@ -636,7 +636,7 @@ Get user's template requests.
           createdAt: string
         }
       ]
-      downloadLink?: string // when delivered
+      accessLink?: string // when delivered
     }
   ]
   stats: {
@@ -696,10 +696,10 @@ Get available subscription plans.
       }
       billingCycle: "day" | "month" | "year" | "lifetime"
       features: {
-        dailyDownloads: number
+        dailyRemixes: number
         templateRequests: number
         favorites: boolean
-        bulkDownload: boolean
+        bulkAccess: boolean
         prioritySupport: boolean
         supportSLA: number // hours
       }
@@ -834,7 +834,7 @@ List all users (admin only).
       name: string
       plan: string
       state: string
-      totalDownloads: number
+      totalRemixes: number
       createdAt: string
       lastLogin: string
     }
@@ -855,7 +855,7 @@ Update user details (admin only).
 {
   subscriptionState?: string
   quotaOverride?: {
-    dailyDownloads?: number
+    dailyRemixes?: number
     templateRequests?: number
   }
   notes?: string

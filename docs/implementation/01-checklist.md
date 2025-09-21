@@ -77,7 +77,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Password reset
   - [ ] Payment failed
   - [ ] Payment recovered
-  - [ ] Download receipt
+  - [ ] Remix receipt
   - [ ] Template request confirmation
 - [ ] Test email delivery
 - [ ] Configure SPF/DKIM records
@@ -87,9 +87,11 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 ### Strapi Collections
 
 - [ ] Create `Project` collection
+
   - [ ] Add all fields from spec
   - [ ] Configure media fields
   - [ ] Set up slug generation
+
   ```bash
   # Use Strapi MCP to create collections
   mcp__strapi-mcp__create_content_type \
@@ -103,6 +105,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
       "requiredPlan": {"type": "enumeration"}
     }'
   ```
+
 - [ ] Create `Plan` collection
   - [ ] Add pricing fields
   - [ ] Configure tier features
@@ -110,7 +113,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Link to Strapi users
   - [ ] Add quota fields
   - [ ] Add preference fields
-- [ ] Create `DownloadLog` collection
+- [ ] Create `TemplateAccessLog` collection
   - [ ] Configure as append-only
   - [ ] Add lifecycle hooks
 - [ ] Create `TemplateRequest` collection
@@ -158,9 +161,9 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] No quota charging
   - [ ] Link invalidation
 
-### Download System
+### Template Access System
 
-- [ ] Implement download initiation
+- [ ] Implement template access initiation
   - [ ] Quota validation
   - [ ] State machine checks
   - [ ] Lock acquisition
@@ -169,7 +172,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Single-use tokens
   - [ ] Hash storage
 - [ ] Build completion tracking
-  - [ ] Update DownloadLog
+  - [ ] Update TemplateAccessLog
   - [ ] Analytics events
   - [ ] Success metrics
 - [ ] Handle failures
@@ -214,7 +217,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 - [ ] CSRF protection
 - [ ] Rate limiting per route:
   - [ ] /api/auth/\* - 5 req/min
-  - [ ] /api/downloads - 10 req/min
+  - [ ] /api/template-access - 10 req/min
   - [ ] /api/stripe/\* - 3 req/min
 - [ ] IP-based blocking
 - [ ] Request sanitization
@@ -253,7 +256,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Image gallery
   - [ ] Video preview
   - [ ] Plan requirements
-  - [ ] Download button
+  - [ ] Remix button
 - [ ] Pricing page
   - [ ] Plan cards
   - [ ] Feature comparison
@@ -291,7 +294,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Upgrade/downgrade
   - [ ] Payment history
   - [ ] Portal redirect
-- [ ] Downloads history
+- [ ] Template access history
   - [ ] List with status
   - [ ] Retry buttons
   - [ ] Filters
@@ -313,7 +316,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
   - [ ] Quota badge
   - [ ] Favorite toggle
   - [ ] Loading states
-- [ ] Download modal
+- [ ] Remix modal
   - [ ] Quota display
   - [ ] Confirmation
   - [ ] Progress indicator
@@ -357,7 +360,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 - [ ] Strapi services (80% coverage)
   - [ ] Quota calculations
   - [ ] State transitions
-  - [ ] Download logic
+  - [ ] Template access logic
 - [ ] React components (80% coverage)
   - [ ] User interactions
   - [ ] Error states
@@ -371,7 +374,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 
 - [ ] API endpoints
   - [ ] Auth flows
-  - [ ] Download flow
+  - [ ] Template access flow
   - [ ] Payment flow
 - [ ] Database operations
   - [ ] Transactions
@@ -386,7 +389,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 
 - [ ] Critical paths:
   - [ ] Visitor → Signup → Purchase
-  - [ ] Login → Browse → Download
+  - [ ] Login → Browse → Remix
   - [ ] Payment failure → Recovery
   - [ ] Template request flow
 - [ ] Error scenarios:
@@ -404,7 +407,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 
 - [ ] Load testing (k6):
   - [ ] 100 concurrent users
-  - [ ] Download endpoint stress
+  - [ ] Template access endpoint stress
   - [ ] Database locks
 - [ ] Lighthouse scores:
   - [ ] Performance > 90
@@ -493,7 +496,7 @@ mcp__taskmaster-ai__get_tasks --projectRoot $(pwd)
 ### Business Metrics
 
 - ✅ Stripe processing payments
-- ✅ Downloads tracked accurately
+- ✅ Template access tracked accurately
 - ✅ Quota enforcement working
 - ✅ Email delivery functional
 

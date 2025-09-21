@@ -676,12 +676,12 @@ fly scale count 1
 
 ```sql
 -- Add indexes
-CREATE INDEX idx_downloads_user_date ON download_logs(user_id, created_at);
+CREATE INDEX idx_template_access_user_date ON template_access_logs(user_id, created_at);
 CREATE INDEX idx_projects_slug ON projects(slug);
 CREATE INDEX idx_users_email ON users(email);
 
 -- Analyze tables
-ANALYZE download_logs;
+ANALYZE template_access_logs;
 ANALYZE projects;
 ANALYZE user_profiles;
 ```
@@ -711,7 +711,7 @@ const securityHeaders = {
 (http.request.uri.path contains "/api/auth")
   Rate: 5 requests per 1 minute per IP
 
-(http.request.uri.path contains "/api/downloads")
+(http.request.uri.path contains "/api/template-access")
   Rate: 10 requests per 1 minute per IP
 
 (http.request.uri.path contains "/api/stripe")
