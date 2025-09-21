@@ -184,10 +184,10 @@ Follow the refreshed spec in `docs/platform-implementation-spec.md`. Recommended
    - Stand up Strapi v5 on managed hosting (Fly.io/Railway/Render) with managed PostgreSQL and file upload persistence.
    - Configure Cloudflare Pages for the UI, Cloudflare Worker gateway, R2 buckets (with backups), Stripe products/prices, and observability tooling.
 2. **Strapi schema & seeds**
-   - Create collection types (`Project`, `Plan`, `UserProfile`, `TemplateAccessLog` /* TODO: rename from DownloadLog */, `TemplateRequest`, `SubscriptionEvent`) and supporting components for version history.
+   - Create collection types (`Project`, `Plan`, `UserProfile`, `TemplateAccessLog` /_ TODO: rename from DownloadLog _/, `TemplateRequest`, `SubscriptionEvent`) and supporting components for version history.
    - Seed plan data to match current pricing limits; add admin roles/permissions for audit logging.
 3. **Backend services**
-   - Implement Strapi services/controllers for `/me`, `/projects`, `/template-access` /* TODO: rename from /downloads */, `/template-requests`, quota reset cron, Stripe webhook + outbox processor, and R2 signed URL issuance with row-level locking.
+   - Implement Strapi services/controllers for `/me`, `/projects`, `/template-access` /_ TODO: rename from /downloads _/, `/template-requests`, quota reset cron, Stripe webhook + outbox processor, and R2 signed URL issuance with row-level locking.
    - Expose health checks and audit log appenders.
 4. **Edge worker**
    - Build Cloudflare Worker to validate sessions, enforce CSRF/rate limits, cache public catalogue responses, and proxy API calls to Strapi.

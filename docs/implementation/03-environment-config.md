@@ -487,7 +487,7 @@ console.log("✅ Environment validation passed")
 
 ## Secret Generation
 
-### Generate secure secrets:
+### Generate secure secrets
 
 ```bash
 # Generate NextAuth secret

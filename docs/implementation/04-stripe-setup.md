@@ -35,7 +35,7 @@ mcp__stripe__create_payment_link \
 
 ### 1. Create Stripe Account
 
-1. Sign up at https://dashboard.stripe.com
+1. Sign up at <https://dashboard.stripe.com>
 2. Complete business verification
 3. Enable Customer Portal: Settings → Billing → Customer Portal
 4. Configure tax settings if needed: Settings → Tax

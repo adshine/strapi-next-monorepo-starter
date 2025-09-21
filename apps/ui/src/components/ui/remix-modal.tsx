@@ -28,18 +28,9 @@ interface RemixModalProps {
   onClose: () => void
 }
 
-type RemixStep =
-  | "confirm"
-  | "preparing"
-  | "generating"
-  | "complete"
-  | "error"
+type RemixStep = "confirm" | "preparing" | "generating" | "complete" | "error"
 
-export function RemixModal({
-  template,
-  isOpen,
-  onClose,
-}: RemixModalProps) {
+export function RemixModal({ template, isOpen, onClose }: RemixModalProps) {
   const [currentStep, setCurrentStep] = useState<RemixStep>("confirm")
   const [progress, setProgress] = useState(0)
   const [remixUrl, setRemixUrl] = useState<string | null>(null)
@@ -111,7 +102,8 @@ export function RemixModal({
           // Update remix count via API
           if (user) {
             // Call API to record remix
-            fetch("/api/remix", { // TODO: rename from /api/downloads when backend updated
+            fetch("/api/remix", {
+              // TODO: rename from /api/downloads when backend updated
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

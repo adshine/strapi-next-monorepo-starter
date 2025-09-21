@@ -84,9 +84,7 @@ test.describe("Pricing Page", () => {
     expect(checkCount).toBeGreaterThan(0)
 
     // Verify specific features are mentioned
-    await expect(
-      page.locator("text=/Templates|Support/i")
-    ).toBeVisible()
+    await expect(page.locator("text=/Templates|Support/i")).toBeVisible()
   })
 
   test("should highlight popular plan", async ({ page }) => {

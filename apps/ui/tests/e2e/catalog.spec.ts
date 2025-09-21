@@ -79,9 +79,7 @@ test.describe("Template Catalog", () => {
 
     // Check for remix button
     await expect(
-      page.locator(
-        'button:has-text("Remix"), button:has-text("Get Template")'
-      )
+      page.locator('button:has-text("Remix"), button:has-text("Get Template")')
     ).toBeVisible()
   })
 

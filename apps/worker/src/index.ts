@@ -1,6 +1,6 @@
-import { handleTemplateRemix } from "./handlers/remix"
 import { handleHealthCheck } from "./handlers/health"
 import { proxyToStrapi } from "./handlers/proxy"
+import { handleTemplateRemix } from "./handlers/remix"
 import { createErrorResponse, createSuccessResponse, verifyJWT } from "./utils"
 
 export interface Env {

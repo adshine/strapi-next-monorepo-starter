@@ -58,7 +58,8 @@ export async function handleTemplateRemix(
 
     // Log remix event
     // TODO: Backend still uses download-logs endpoint
-    await fetch(`${env.STRAPI_URL}/api/download-logs`, { // TODO: Rename to /remix-logs
+    await fetch(`${env.STRAPI_URL}/api/download-logs`, {
+      // TODO: Rename to /remix-logs
       method: "POST",
       headers: {
         "Content-Type": "application/json",
