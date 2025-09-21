@@ -2,7 +2,13 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { AlertCircle, CheckCircle, Download, Loader2 } from "lucide-react"
+import {
+  AlertCircle,
+  CheckCircle,
+  ExternalLink,
+  Layers,
+  Loader2,
+} from "lucide-react"
 import { useSession } from "next-auth/react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -17,7 +23,7 @@ import {
 } from "@/components/ui/dialog"
 import { Progress } from "@/components/ui/progress"
 
-interface DownloadModalProps {
+interface RemixModalProps {
   isOpen: boolean
   onClose: () => void
   template: {
@@ -25,6 +31,7 @@ interface DownloadModalProps {
     title: string
     description?: string
     requiredPlan?: string
+    remixUrl?: string
   }
   userQuota?: {
     used: number
@@ -33,33 +40,33 @@ interface DownloadModalProps {
   }
 }
 
-export function DownloadModal({
+export function RemixModal({
   isOpen,
   onClose,
   template,
   userQuota,
-}: DownloadModalProps) {
+}: RemixModalProps) {
   const { data: session } = useSession()
   const router = useRouter()
-  const [isDownloading, setIsDownloading] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [downloadSuccess, setDownloadSuccess] = useState(false)
+  const [remixSuccess, setRemixSuccess] = useState(false)
 
   const quotaPercentage = userQuota
     ? (userQuota.used / userQuota.limit) * 100
     : 0
 
-  const handleDownload = async () => {
+  const handleRemix = async () => {
     if (!session) {
       router.push("/auth/signin")
       return
     }
 
-    setIsDownloading(true)
+    setIsProcessing(true)
     setError(null)
 
     try {
-      const response = await fetch(`/api/download/${template.id}`)
+      const response = await fetch(`/api/remix/${template.id}`)
       const data = await response.json()
 
       if (!response.ok) {
@@ -75,37 +82,32 @@ export function DownloadModal({
           setError(data.message)
           return
         } else {
-          throw new Error(data.error || "Download failed")
+          throw new Error(data.error || "Remix failed")
         }
       }
 
-      // Success - trigger download
-      if (data.downloadUrl) {
-        // Create a temporary link and click it
-        const link = document.createElement("a")
-        link.href = data.downloadUrl
-        link.download = `${template.title.replace(/\s+/g, "-").toLowerCase()}.zip`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+      // Success - open Framer remix link
+      if (data.remixUrl || template.remixUrl) {
+        const remixUrl = data.remixUrl || template.remixUrl
 
-        setDownloadSuccess(true)
+        setRemixSuccess(true)
 
         // Update local quota display if provided
         if (data.quota && userQuota) {
           userQuota.used = data.quota.used
         }
 
-        // Close modal after a delay
+        // Open remix link in new tab after a brief delay
         setTimeout(() => {
+          window.open(remixUrl, "_blank", "noopener,noreferrer")
           onClose()
-          setDownloadSuccess(false)
-        }, 2000)
+          setRemixSuccess(false)
+        }, 1500)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
-      setIsDownloading(false)
+      setIsProcessing(false)
     }
   }
 
@@ -113,9 +115,9 @@ export function DownloadModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Download Template</DialogTitle>
+          <DialogTitle>Remix Template</DialogTitle>
           <DialogDescription>
-            Confirm download for &quot;{template.title}&quot;
+            Get ready to remix &quot;{template.title}&quot; in Framer
           </DialogDescription>
         </DialogHeader>
 
@@ -124,7 +126,7 @@ export function DownloadModal({
           {userQuota && userQuota.limit !== -1 && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Download Quota</span>
+                <span className="text-muted-foreground">Template Quota</span>
                 <span className="font-medium">
                   {userQuota.used} / {userQuota.limit}
                 </span>
@@ -134,9 +136,9 @@ export function DownloadModal({
                 <Alert className="py-2">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-xs">
-                    You&apos;re approaching your monthly download limit.
+                    You&apos;re approaching your monthly template limit.
                     {quotaPercentage >= 100 &&
-                      " This will be your last download until quota resets."}
+                      " This will be your last template until quota resets."}
                   </AlertDescription>
                 </Alert>
               )}
@@ -153,22 +155,36 @@ export function DownloadModal({
             )}
           </div>
 
+          {/* How it Works */}
+          <div className="bg-muted/30 space-y-2 rounded-lg p-3">
+            <h5 className="flex items-center text-sm font-medium">
+              <Layers className="mr-2 h-4 w-4" />
+              How Remix Works
+            </h5>
+            <ul className="text-muted-foreground ml-6 space-y-1 text-xs">
+              <li>• Opens template in Framer</li>
+              <li>• Creates a copy in your account</li>
+              <li>• Full editing capabilities</li>
+              <li>• Publish to your own domain</li>
+            </ul>
+          </div>
+
           {/* Error Message */}
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Download Failed</AlertTitle>
+              <AlertTitle>Remix Failed</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           {/* Success Message */}
-          {downloadSuccess && (
+          {remixSuccess && (
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertTitle className="text-green-900">Success!</AlertTitle>
               <AlertDescription className="text-green-700">
-                Your download will start shortly.
+                Opening template in Framer...
               </AlertDescription>
             </Alert>
           )}
@@ -176,7 +192,7 @@ export function DownloadModal({
           {/* License Agreement */}
           <div className="bg-muted/50 rounded-lg p-3">
             <p className="text-muted-foreground text-xs">
-              By downloading this template, you agree to our{" "}
+              By remixing this template, you agree to our{" "}
               <a href="/terms" className="underline">
                 Terms of Service
               </a>{" "}
@@ -190,27 +206,24 @@ export function DownloadModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isDownloading}>
+          <Button variant="outline" onClick={onClose} disabled={isProcessing}>
             Cancel
           </Button>
-          <Button
-            onClick={handleDownload}
-            disabled={isDownloading || downloadSuccess}
-          >
-            {isDownloading ? (
+          <Button onClick={handleRemix} disabled={isProcessing || remixSuccess}>
+            {isProcessing ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Processing...
               </>
-            ) : downloadSuccess ? (
+            ) : remixSuccess ? (
               <>
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Downloaded
+                Opening Framer...
               </>
             ) : (
               <>
-                <Download className="mr-2 h-4 w-4" />
-                Download Now
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Remix in Framer
               </>
             )}
           </Button>

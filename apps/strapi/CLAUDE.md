@@ -7,6 +7,7 @@
 This platform provides **Framer templates** that users can **remix** directly in their Framer account. We DO NOT use "download" terminology for templates.
 
 **Correct terminology:**
+
 - ✅ "Remix template" / "Remix in Framer"
 - ✅ "Access template" / "Get template"
 - ✅ "Use template" / "Start with template"
@@ -14,6 +15,7 @@ This platform provides **Framer templates** that users can **remix** directly in
 - ✅ "Template remix link"
 
 **Incorrect terminology:**
+
 - ❌ "Download template"
 - ❌ "Download files"
 - ❌ "Template download"
@@ -22,6 +24,7 @@ This platform provides **Framer templates** that users can **remix** directly in
 
 **TODO: Future Schema Updates**
 The current Strapi schema uses legacy "download" field names that need to be renamed:
+
 - `downloadUrl` → `remixUrl` or `accessUrl`
 - `downloadCount` → `remixCount` or `useCount`
 - `download-log` → `template-access-log` or `remix-log`
@@ -31,6 +34,7 @@ These field names remain unchanged in the database for now to avoid breaking cha
 ## Project Overview
 
 This is a monorepo starter template combining:
+
 - **Strapi v5**: Headless CMS backend with PostgreSQL
 - **Next.js v15**: Frontend with App Router, Shadcn/ui, and TailwindCSS v4
 - **Turborepo**: Monorepo management
@@ -40,6 +44,7 @@ The platform provides a marketplace for Framer templates where users can browse,
 ## Key Concepts
 
 ### Template Access Flow
+
 1. User browses template catalogue
 2. User clicks "Remix Template" button
 3. System checks user's subscription tier
@@ -48,13 +53,16 @@ The platform provides a marketplace for Framer templates where users can browse,
 6. System logs the template access (currently in `download-log` table)
 
 ### Subscription Tiers
+
 - **Free**: Limited template access per month
 - **Starter**: More templates, basic support
 - **Professional**: Unlimited standard templates
 - **Enterprise**: All templates plus premium support
 
 ### Template Types
+
 Templates are Framer projects that users can:
+
 - Preview via live demo links
 - Remix using Framer's duplication system
 - Customize completely in their Framer account
@@ -82,18 +90,21 @@ yarn typecheck    # Type checking
 ## Architecture Notes
 
 ### Frontend (apps/ui)
+
 - Uses server components by default
 - Authentication via NextAuth.js
 - Two API clients: PublicStrapiClient and PrivateStrapiClient
 - Dynamic routing with locale support
 
 ### Backend (apps/strapi)
+
 - Content types: projects, plans, user-profiles, template-access-logs
 - Stripe webhook integration for subscriptions
 - R2 storage for template assets (when needed)
 - Row-level security for template access
 
 ### Important Files
+
 - `apps/strapi/src/api/project/` - Template/project management
 - `apps/strapi/src/api/download-log/` - Template access tracking (needs rename)
 - `apps/ui/src/app/[locale]/templates/` - Template browsing UI
@@ -102,6 +113,7 @@ yarn typecheck    # Type checking
 ## UI Copy Guidelines
 
 When working on UI components:
+
 1. Use "Remix" or "Get Template" for CTAs
 2. Show "Remix in Framer" as the action description
 3. Display "Templates accessed" instead of "Downloads" in user dashboards
@@ -132,6 +144,7 @@ curl http://localhost:1337/api/users/me?populate=download_logs
 ## Contributing
 
 When adding new features:
+
 - Always use "remix" terminology for Framer templates
 - Comment any code using legacy "download" field names
 - Update this document with new patterns or decisions
@@ -139,5 +152,5 @@ When adding new features:
 
 ---
 
-*Last updated: 2024-01-20*
-*Platform: Framer Template Marketplace*
+_Last updated: 2024-01-20_
+_Platform: Framer Template Marketplace_

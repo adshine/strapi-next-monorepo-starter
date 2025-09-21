@@ -3,8 +3,8 @@ export interface User {
   email: string
   name?: string
   planId?: string
-  downloadsToday?: number
-  downloadsReset?: string
+  remixesToday?: number // TODO: Backend still uses downloadsToday
+  remixesReset?: string // TODO: Backend still uses downloadsReset
   requestsThisMonth?: number
   requestsReset?: string
   favorites?: string[]

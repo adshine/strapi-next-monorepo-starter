@@ -3,6 +3,9 @@ import { Core } from "@strapi/strapi"
 import { errors } from "@strapi/utils"
 
 /**
+ * TODO: Rename this file to template-access-log.ts or remix-log.ts
+ * TODO: Update all references from "download" to "remix" or "template access"
+ *
  * Download Log Lifecycle Hook
  * Enforces append-only behavior for download logs as audit records.
  * Download logs cannot be deleted and have restricted update capabilities.

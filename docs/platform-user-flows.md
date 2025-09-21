@@ -6,7 +6,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
 
 - **Visitor**: Unauthenticated user discovering templates and pricing.
 - **Prospective Subscriber**: Registered user without an active plan who is evaluating or purchasing access.
-- **Active Subscriber**: Authenticated user with a current plan (day pass, monthly tier, or lifetime) who downloads templates and submits requests.
+- **Active Subscriber**: Authenticated user with a current plan (day pass, monthly tier, or lifetime) who remixes templates and submits requests.
 - **Admin**: Operator managing catalogue content, plans, and request fulfillment inside Strapi.
 
 ## 1. Visitor Browsing → Signup
@@ -18,9 +18,9 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Full template preview with live demo link or embedded video
    - Version history and changelog
    - Required plan badge with comparison link
-   - Download count and user ratings (if available)
+   - Remix count and user ratings (if available)
    - Related templates section
-5. Visitor clicks "Download" or "Get access" → auth wall appears as accessible modal overlay.
+5. Visitor clicks "Remix" or "Get access" → auth wall appears as accessible modal overlay.
 6. Modal offers simple options:
    - Email/password registration with strength indicator
    - "Already have account?" login link
@@ -54,7 +54,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - If active plan → last viewed page or dashboard
 5. UI hydrates with user state:
    - Plan badge in header with quota remaining
-   - Personalized recommendations based on download history
+   - Personalized recommendations based on remix history
    - Subscription state indicator (Active/Trial/Grace/Expired)
 
 ## 3. Plan Selection & Checkout
@@ -89,7 +89,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
 6. On activation success:
    - Confetti animation with plan name
    - Quota summary card (daily/monthly limits)
-   - Quick actions: "Browse Templates", "Download History", "Invite Team" (if applicable)
+   - Quick actions: "Browse Templates", "Remix History", "Invite Team" (if applicable)
    - Email confirmation sent with receipt
 7. On timeout/failure:
    - Show support ticket auto-created with reference number
@@ -107,8 +107,8 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Thumbnail with hover video preview
    - Title, category, and description excerpt
    - Required plan badge (highlighted if user lacks access)
-   - Download count and freshness indicator
-   - Remaining daily quota badge (e.g., "3 downloads left today")
+   - Remix count and freshness indicator
+   - Remaining daily quota badge (e.g., "3 remixes left today")
    - Favorite heart icon (tier-gated with tooltip if unavailable)
 3. Search and filter behavior:
    - URL updates for shareable filtered views
@@ -121,13 +121,13 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Favorites section in account shows collections
    - "Upgrade to use favorites" upsell for lower tiers
 
-## 5. Download Flow (Quota-Enforced)
+## 5. Remix Flow (Quota-Enforced)
 
-1. User clicks "Download template" with smart pre-validation:
-   - Button shows quota state: "Download (3 left today)"
+1. User clicks "Remix template" with smart pre-validation:
+   - Button shows quota state: "Remix (3 left today)"
    - Disabled with tooltip if quota exhausted
-   - Warning badge if last download of the day
-2. Download confirmation modal displays:
+   - Warning badge if last remix of the day
+2. Remix confirmation modal displays:
    - Template name and version
    - File size estimate
    - Current quota usage bar (visual)
@@ -273,7 +273,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
 3. Favorites management (`/account/favorites`):
    - Grid view of saved templates with sorting
    - Create collections (e.g., "Client Project", "Inspiration")
-   - Bulk actions: download multiple, remove from favorites
+   - Bulk actions: remix multiple, remove from favorites
    - Share collection via private link (premium feature)
 4. Smart recommendations:
    - "Since you liked X, try Y" suggestions

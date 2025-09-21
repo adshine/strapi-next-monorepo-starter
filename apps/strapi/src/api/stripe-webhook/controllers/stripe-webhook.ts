@@ -1,6 +1,12 @@
 import { Core } from "@strapi/strapi"
 import Stripe from "stripe"
 
+// TODO: Update field references throughout this file:
+// - monthlyDownloadsLimit → monthlyTemplateLimit
+// - monthlyDownloadsUsed → monthlyTemplateAccesses
+// - totalDownloads → totalRemixes
+// These fields appear when updating user profiles in subscription events
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-08-27.basil",
 })

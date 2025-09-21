@@ -70,6 +70,7 @@ export async function GET(
     }
 
     // Check quota
+    // TODO: Rename fields to monthlyTemplateLimit and monthlyTemplateAccesses in backend
     const quotaLimit = userProfile.attributes.monthlyDownloadsLimit
     const quotaUsed = userProfile.attributes.monthlyDownloadsUsed
 
@@ -83,7 +84,7 @@ export async function GET(
           {
             error: "Quota exceeded",
             message:
-              "Monthly download quota exceeded. Please upgrade your plan or wait for quota reset.",
+              "Monthly template quota exceeded. Please upgrade your plan or wait for quota reset.",
             quotaResetDate: resetDate,
             quotaLimit,
             quotaUsed,
@@ -99,7 +100,7 @@ export async function GET(
             method: "PUT",
             body: JSON.stringify({
               data: {
-                monthlyDownloadsUsed: 0,
+                monthlyDownloadsUsed: 0, // TODO: Rename to monthlyTemplateAccesses
                 quotaResetDate: new Date(now.setMonth(now.getMonth() + 1)),
               },
             }),
@@ -109,7 +110,8 @@ export async function GET(
       }
     }
 
-    // Log the download
+    // Log the template access
+    // TODO: Rename endpoint to /template-access-logs or /remix-logs
     await PrivateStrapiClient.fetchAPI(
       `/download-logs`,
       undefined,
@@ -119,7 +121,7 @@ export async function GET(
           data: {
             userId: session.user.userId,
             projectId: params.projectId,
-            downloadedAt: new Date(),
+            downloadedAt: new Date(), // TODO: Rename to remixedAt or accessedAt
             templateTitle: project.attributes.title,
             userPlan,
           },
@@ -128,7 +130,7 @@ export async function GET(
       { userJWT: session.strapiJWT }
     )
 
-    // Update user's download count
+    // Update user's template access count
     await PrivateStrapiClient.fetchAPI(
       `/user-profiles/${userProfile.id}`,
       undefined,
@@ -136,25 +138,24 @@ export async function GET(
         method: "PUT",
         body: JSON.stringify({
           data: {
-            monthlyDownloadsUsed: quotaUsed + 1,
-            totalDownloads: (userProfile.attributes.totalDownloads || 0) + 1,
+            monthlyDownloadsUsed: quotaUsed + 1, // TODO: Rename to monthlyTemplateAccesses
+            totalDownloads: (userProfile.attributes.totalDownloads || 0) + 1, // TODO: Rename to totalRemixes
           },
         }),
       },
       { userJWT: session.strapiJWT }
     )
 
-    // Generate signed download URL (in production, this would be R2 signed URL)
-    const downloadUrl = project.attributes.downloadUrl || "#"
+    // Get remix URL (Framer template link)
+    // TODO: Rename field to remixUrl in backend
+    const remixUrl = project.attributes.downloadUrl || "#"
 
-    // In production, you would:
-    // 1. Generate R2 signed URL with expiration
-    // 2. Return that URL for direct download
-    // For now, we'll return the URL and metadata
+    // The remix URL is a Framer link that opens the template
+    // for duplication in the user's Framer account
 
     return NextResponse.json({
       success: true,
-      downloadUrl,
+      remixUrl,
       template: {
         id: project.id,
         title: project.attributes.title,
@@ -167,9 +168,9 @@ export async function GET(
       },
     })
   } catch (error) {
-    console.error("Download error:", error)
+    console.error("Remix error:", error)
     return NextResponse.json(
-      { error: "Failed to process download" },
+      { error: "Failed to process template access" },
       { status: 500 }
     )
   }

@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Download, Heart, Menu, User, X } from "lucide-react"
+import { Heart, Layers, Menu, User, X } from "lucide-react"
 
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/styles"
@@ -70,8 +70,8 @@ export function AppHeader() {
                     </span>
                     <span className="text-[var(--text-muted)]">
                       {userPlan.dailyDownloads === -1
-                        ? "∞ downloads"
-                        : `${userPlan.dailyDownloads} downloads`}
+                        ? "∞ templates"
+                        : `${userPlan.dailyDownloads} templates`}
                     </span>
                   </div>
                 )}
@@ -90,9 +90,9 @@ export function AppHeader() {
                   variant="ghost"
                   size="icon"
                   className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                  onClick={() => router.push("/dashboard/downloads")}
+                  onClick={() => router.push("/dashboard/remixes")}
                 >
-                  <Download className="h-4 w-4" />
+                  <Layers className="h-4 w-4" />
                 </Button>
 
                 {/* User menu trigger */}
@@ -162,8 +162,8 @@ export function AppHeader() {
                     </span>
                     <span className="text-[var(--text-muted)]">
                       {userPlan.dailyDownloads === -1
-                        ? "∞ downloads"
-                        : `${userPlan.dailyDownloads} downloads`}
+                        ? "∞ templates"
+                        : `${userPlan.dailyDownloads} templates`}
                     </span>
                   </div>
                 )}

@@ -5,10 +5,10 @@ import Image from "next/image"
 import {
   CheckCircle,
   Clock,
-  Download,
-  DownloadIcon,
+  Copy,
   ExternalLink,
   Filter,
+  Layers,
   XCircle,
 } from "lucide-react"
 
@@ -18,37 +18,37 @@ import { useUserProfile } from "@/hooks/use-user-profile"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
-type DownloadStatus = "completed" | "failed" | "pending"
+type RemixStatus = "completed" | "failed" | "pending"
 
-interface DownloadRecord {
+interface RemixRecord {
   id: string
   templateId: string
-  status: DownloadStatus
-  downloadedAt: string
+  status: RemixStatus
+  remixedAt: string
   fileSize: string
   expiresAt?: string
 }
 
-export default function DownloadsPage() {
+export default function RemixesPage() {
   const { user } = useAuth()
   const { profile } = useUserProfile() // eslint-disable-line @typescript-eslint/no-unused-vars
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [downloads, setDownloads] = useState<DownloadRecord[]>([])
+  const [remixes, setRemixes] = useState<RemixRecord[]>([])
   const [templates, setTemplates] = useState<Map<string, any>>(new Map())
   const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
-    const fetchDownloads = async () => {
+    const fetchRemixes = async () => {
       try {
-        // Fetch download logs from API
-        const response = await fetch("/api/downloads")
+        // Fetch remix logs from API
+        const response = await fetch("/api/remixes")
         if (response.ok) {
-          const downloadData = await response.json()
-          setDownloads(downloadData)
+          const remixData = await response.json()
+          setRemixes(remixData)
 
-          // Fetch template data for each download
+          // Fetch template data for each remix
           const templateIds = [
-            ...new Set(downloadData.map((d: DownloadRecord) => d.templateId)),
+            ...new Set(remixData.map((d: RemixRecord) => d.templateId)),
           ]
           const templatePromises = templateIds.map((id) =>
             projectsAPI.getProjectById(id).catch(() => null)
@@ -63,41 +63,41 @@ export default function DownloadsPage() {
           setTemplates(templateMap)
         }
       } catch (error) {
-        console.error("Failed to fetch downloads:", error)
+        console.error("Failed to fetch remixes:", error)
         // Use mock data as fallback
-        setDownloads([])
+        setRemixes([])
       } finally {
         setLoading(false)
       }
     }
 
     if (user) {
-      fetchDownloads()
+      fetchRemixes()
     }
   }, [user])
 
   if (!user) return null
 
-  // Filter downloads for current user and apply status filter
-  const userDownloads = useMemo(() => {
-    let filtered = downloads.filter((download) => {
+  // Filter remixes for current user and apply status filter
+  const userRemixes = useMemo(() => {
+    let filtered = remixes.filter((remix) => {
       // eslint-disable-line @typescript-eslint/no-unused-vars
       // In a real app, this would check ownership or be filtered server-side
       return true // Show all for demo
     })
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter((download) => download.status === statusFilter) // eslint-disable-line @typescript-eslint/no-unused-vars
+      filtered = filtered.filter((remix) => remix.status === statusFilter) // eslint-disable-line @typescript-eslint/no-unused-vars
     }
 
-    // Sort by download date (newest first)
+    // Sort by remix date (newest first)
     return filtered.sort(
       (a, b) =>
-        new Date(b.downloadedAt).getTime() - new Date(a.downloadedAt).getTime()
+        new Date(b.remixedAt).getTime() - new Date(a.remixedAt).getTime()
     )
-  }, [downloads, statusFilter])
+  }, [remixes, statusFilter])
 
-  const getStatusIcon = (status: DownloadStatus) => {
+  const getStatusIcon = (status: RemixStatus) => {
     switch (status) {
       case "completed":
         return <CheckCircle className="h-4 w-4 text-green-500" />
@@ -106,11 +106,11 @@ export default function DownloadsPage() {
       case "pending":
         return <Clock className="h-4 w-4 text-yellow-500" />
       default:
-        return <Download className="h-4 w-4 text-gray-400" />
+        return <Copy className="h-4 w-4 text-gray-400" />
     }
   }
 
-  const getStatusColor = (status: DownloadStatus) => {
+  const getStatusColor = (status: RemixStatus) => {
     switch (status) {
       case "completed":
         return "bg-green-50 text-green-700 border-green-200"
@@ -123,26 +123,26 @@ export default function DownloadsPage() {
     }
   }
 
-  if (userDownloads.length === 0) {
+  if (userRemixes.length === 0) {
     return (
       <div className="space-y-8">
         <div>
           <h1 className="text-text-primary mb-4 text-3xl font-bold">
-            Download History
+            Remix History
           </h1>
           <p className="text-text-muted">
-            Your previous template downloads will appear here for easy access.
+            Your previous template remixes will appear here for easy access.
           </p>
         </div>
 
         <div className="py-12 text-center">
-          <Download className="text-text-muted/50 mx-auto mb-4 h-16 w-16" />
+          <Layers className="text-text-muted/50 mx-auto mb-4 h-16 w-16" />
           <h3 className="text-text-primary mb-2 text-lg font-semibold">
-            No downloads yet
+            No remixes yet
           </h3>
           <p className="text-text-muted mx-auto mb-6 max-w-md">
-            Start browsing templates and downloading them to see your history
-            here.
+            Start browsing templates and remixing them in Framer to see your
+            history here.
           </p>
           <Button asChild>
             <a href="/templates">Browse Templates</a>
@@ -159,8 +159,8 @@ export default function DownloadsPage() {
           Download History
         </h1>
         <p className="text-text-muted">
-          {userDownloads.length} download{userDownloads.length !== 1 ? "s" : ""}{" "}
-          • Previously downloaded templates
+          {userRemixes.length} remix{userRemixes.length !== 1 ? "es" : ""} •
+          Previously remixed templates
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export default function DownloadsPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: "all", label: "All Downloads" },
+            { value: "all", label: "All Remixes" },
             { value: "completed", label: "Completed" },
             { value: "pending", label: "Pending" },
             { value: "failed", label: "Failed" },
@@ -194,17 +194,14 @@ export default function DownloadsPage() {
         </div>
       </div>
 
-      {/* Downloads List */}
+      {/* Remixes List */}
       <div className="space-y-4">
-        {userDownloads.map((download) => {
-          const template = templates.get(download.templateId)
+        {userRemixes.map((remix) => {
+          const template = templates.get(remix.templateId)
           if (!template) return null
 
           return (
-            <Card
-              key={download.id}
-              className="bg-elevated border-border-neutral"
-            >
+            <Card key={remix.id} className="bg-elevated border-border-neutral">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -228,12 +225,11 @@ export default function DownloadsPage() {
                         by {template.creator} • {template.category}
                       </p>
 
-                      {/* Download Date */}
+                      {/* Remix Date */}
                       <p className="text-text-muted text-xs">
-                        Downloaded on{" "}
-                        {new Date(download.downloadedAt).toLocaleDateString()}{" "}
-                        at{" "}
-                        {new Date(download.downloadedAt).toLocaleTimeString()}
+                        Remixed on{" "}
+                        {new Date(remix.remixedAt).toLocaleDateString()} at{" "}
+                        {new Date(remix.remixedAt).toLocaleTimeString()}
                       </p>
                     </div>
                   </div>
@@ -241,18 +237,18 @@ export default function DownloadsPage() {
                   <div className="flex items-center space-x-4">
                     {/* Status */}
                     <div
-                      className={`flex items-center space-x-2 rounded-full border px-3 py-1 text-xs font-medium ${getStatusColor(download.status)}`}
+                      className={`flex items-center space-x-2 rounded-full border px-3 py-1 text-xs font-medium ${getStatusColor(remix.status)}`}
                     >
-                      {getStatusIcon(download.status)}
+                      {getStatusIcon(remix.status)}
                       <span>
-                        {download.status.charAt(0).toUpperCase() +
-                          download.status.slice(1)}
+                        {remix.status.charAt(0).toUpperCase() +
+                          remix.status.slice(1)}
                       </span>
                     </div>
 
                     {/* Actions */}
                     <div className="flex items-center space-x-2">
-                      {download.status === "completed" && (
+                      {remix.status === "completed" && (
                         <>
                           <Button variant="outline" size="sm" asChild>
                             <a
@@ -272,8 +268,8 @@ export default function DownloadsPage() {
                             asChild
                           >
                             <a href={`/templates/${template.slug}`}>
-                              <DownloadIcon className="mr-1 h-4 w-4" />
-                              Download Again
+                              <Layers className="mr-1 h-4 w-4" />
+                              Remix Again
                             </a>
                           </Button>
                         </>
@@ -282,12 +278,12 @@ export default function DownloadsPage() {
                   </div>
                 </div>
 
-                {/* Additional Info for Failed Downloads */}
-                {download.status === "failed" && (
+                {/* Additional Info for Failed Remixes */}
+                {remix.status === "failed" && (
                   <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3">
                     <p className="text-sm text-red-800">
-                      This download failed. Please try downloading again or
-                      contact support if the issue persists.
+                      This remix failed. Please try remixing again or contact
+                      support if the issue persists.
                     </p>
                   </div>
                 )}
@@ -302,27 +298,27 @@ export default function DownloadsPage() {
         <Card className="bg-elevated border-border-neutral">
           <CardContent className="p-6 text-center">
             <div className="text-accent-success mb-2 text-2xl font-bold">
-              {userDownloads.filter((d) => d.status === "completed").length}
+              {userRemixes.filter((d) => d.status === "completed").length}
             </div>
-            <p className="text-text-muted text-sm">Successful Downloads</p>
+            <p className="text-text-muted text-sm">Successful Remixes</p>
           </CardContent>
         </Card>
 
         <Card className="bg-elevated border-border-neutral">
           <CardContent className="p-6 text-center">
             <div className="text-accent-warning mb-2 text-2xl font-bold">
-              {userDownloads.filter((d) => d.status === "pending").length}
+              {userRemixes.filter((d) => d.status === "pending").length}
             </div>
-            <p className="text-text-muted text-sm">Pending Downloads</p>
+            <p className="text-text-muted text-sm">Pending Remixes</p>
           </CardContent>
         </Card>
 
         <Card className="bg-elevated border-border-neutral">
           <CardContent className="p-6 text-center">
             <div className="text-accent-danger mb-2 text-2xl font-bold">
-              {userDownloads.filter((d) => d.status === "failed").length}
+              {userRemixes.filter((d) => d.status === "failed").length}
             </div>
-            <p className="text-text-muted text-sm">Failed Downloads</p>
+            <p className="text-text-muted text-sm">Failed Remixes</p>
           </CardContent>
         </Card>
       </div>

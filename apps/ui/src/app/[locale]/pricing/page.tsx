@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Check, Download, MessageSquare, Star } from "lucide-react"
+import { ArrowRight, Check, Layers, MessageSquare, Star } from "lucide-react"
 
 import { plansAPI } from "@/lib/api/plans"
 import { useAuth } from "@/lib/auth-context"
@@ -268,7 +268,7 @@ export default function PricingPage() {
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="text-center">
                             <div className="mb-1 flex items-center justify-center gap-2">
-                              <Download className="text-accent-primary h-4 w-4" />
+                              <Layers className="text-accent-primary h-4 w-4" />
                               <span className="font-semibold">
                                 {plan.dailyDownloadLimit === -1 ||
                                 plan.dailyDownloadLimit === 0
@@ -277,7 +277,7 @@ export default function PricingPage() {
                               </span>
                             </div>
                             <div className="text-text-muted">
-                              Daily Downloads
+                              Daily Templates
                             </div>
                           </div>
                           <div className="text-center">
@@ -471,10 +471,10 @@ export default function PricingPage() {
 
               <div>
                 <h3 className="text-text-primary mb-2 text-lg font-semibold">
-                  What happens to my downloads if I downgrade?
+                  What happens to my templates if I downgrade?
                 </h3>
                 <p className="text-text-muted">
-                  Your existing downloads remain accessible. Future downloads
+                  Your existing templates remain accessible. Future templates
                   will be subject to your new plan limits.
                 </p>
               </div>

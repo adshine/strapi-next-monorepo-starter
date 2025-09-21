@@ -4,12 +4,12 @@ import { use, useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowRight, Download, Heart, Share2, Star, Users } from "lucide-react"
+import { ArrowRight, Heart, Layers, Share2, Star, Users } from "lucide-react"
 
 import { plansAPI } from "@/lib/api/plans"
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
-import { DownloadModal } from "@/components/download-modal"
+import { RemixModal } from "@/components/remix-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,7 +27,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   const [template, setTemplate] = useState<any>(null)
   const [requiredPlan, setRequiredPlan] = useState<any>(null)
   const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [showRemixModal, setShowRemixModal] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [relatedTemplates, setRelatedTemplates] = useState<any[]>([])
 
@@ -156,13 +156,13 @@ export default function TemplatePage({ params }: TemplatePageProps) {
 
   const isFreePlan = requiredPlan?.slug === "solo"
 
-  const handleDownload = () => {
+  const handleRemix = () => {
     if (!user) {
       showAuthModal("signup")
       return
     }
 
-    setShowDownloadModal(true)
+    setShowRemixModal(true)
   }
 
   const handleFavorite = () => {
@@ -246,7 +246,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     <span>
-                      {template.downloadCount.toLocaleString()} downloads
+                      {template.downloadCount.toLocaleString()} remixes
                     </span>
                   </div>
                 </div>
@@ -256,12 +256,12 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                 <Button
                   className="flex-1 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90"
                   size="lg"
-                  onClick={handleDownload}
+                  onClick={handleRemix}
                 >
-                  <Download className="mr-2 h-5 w-5" />
+                  <Layers className="mr-2 h-5 w-5" />
                   {isFreePlan
-                    ? "Get for Free"
-                    : `Unlock with ${requiredPlan?.name}`}
+                    ? "Remix for Free"
+                    : `Remix with ${requiredPlan?.name}`}
                 </Button>
                 <Button
                   variant="outline"
@@ -288,8 +288,8 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                       </p>
                       <p className="text-sm text-[var(--text-muted)]">
                         {isFreePlan
-                          ? "Includes daily free downloads and core components."
-                          : "Includes premium downloads, requests, and support."}
+                          ? "Includes daily free templates and core components."
+                          : "Includes premium templates, requests, and support."}
                       </p>
                     </div>
                     <Badge
@@ -307,7 +307,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                           ? "Unlimited"
                           : `${requiredPlan?.dailyDownloads ?? 3}`}
                       </p>
-                      <p>Daily downloads</p>
+                      <p>Daily templates</p>
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--text-primary)]">
@@ -444,11 +444,11 @@ export default function TemplatePage({ params }: TemplatePageProps) {
         )}
       </div>
 
-      {showDownloadModal && (
-        <DownloadModal
+      {showRemixModal && (
+        <RemixModal
           template={template}
-          isOpen={showDownloadModal}
-          onClose={() => setShowDownloadModal(false)}
+          isOpen={showRemixModal}
+          onClose={() => setShowRemixModal(false)}
         />
       )}
     </div>

@@ -3,9 +3,9 @@
 import {
   Calendar,
   Clock,
-  Download,
   FileText,
   Heart,
+  Layers,
   TrendingUp,
 } from "lucide-react"
 
@@ -29,9 +29,9 @@ export default function DashboardPage() {
     userPlan && ["studio", "agency", "lifetime"].includes(userPlan.slug)
 
   // Calculate quota usage
-  const dailyQuotaUsed = profile.downloadsUsed || 0
+  const dailyQuotaUsed = profile.downloadsUsed || 0 // TODO: Rename to remixesUsed in backend
   const dailyQuotaLimit =
-    userPlan?.dailyDownloadLimit === -1
+    userPlan?.dailyDownloadLimit === -1 // TODO: Rename to dailyTemplateLimit in backend
       ? 100
       : userPlan?.dailyDownloadLimit || 0
   const dailyQuotaPercent =
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       ? (monthlyRequestsUsed / monthlyRequestsLimit) * 100
       : 0
 
-  const downloadsResetDate = profile.nextQuotaReset
+  const remixesResetDate = profile.nextQuotaReset
     ? new Date(profile.nextQuotaReset)
     : new Date()
   const requestsResetDate = new Date(
@@ -86,10 +86,10 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="bg-accent-primary/10 rounded-lg p-3">
-                <Download className="text-accent-primary h-6 w-6" />
+                <Layers className="text-accent-primary h-6 w-6" />
               </div>
               <div>
-                <p className="text-text-muted text-sm">Downloads Today</p>
+                <p className="text-text-muted text-sm">Templates Today</p>
                 <p className="text-text-primary text-2xl font-bold">
                   {dailyQuotaUsed}/
                   {dailyQuotaLimit === -1 ? "∞" : dailyQuotaLimit}
@@ -153,12 +153,12 @@ export default function DashboardPage() {
 
       {/* Usage Stats */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Daily Downloads */}
+        {/* Daily Templates */}
         <Card className="bg-elevated border-border-neutral">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Download className="text-accent-primary h-5 w-5" />
-              <span>Daily Download Quota</span>
+              <Layers className="text-accent-primary h-5 w-5" />
+              <span>Daily Template Quota</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -166,7 +166,7 @@ export default function DashboardPage() {
               <span className="text-text-muted text-sm">
                 {dailyQuotaUsed} of{" "}
                 {dailyQuotaLimit === -1 ? "Unlimited" : dailyQuotaLimit}{" "}
-                downloads used
+                templates accessed
               </span>
               <span className="text-text-muted text-sm">
                 {dailyQuotaLimit === -1
@@ -201,8 +201,7 @@ export default function DashboardPage() {
                 {Math.max(
                   0,
                   Math.floor(
-                    (downloadsResetDate.getTime() - Date.now()) /
-                      (1000 * 60 * 60)
+                    (remixesResetDate.getTime() - Date.now()) / (1000 * 60 * 60)
                   )
                 )}{" "}
                 hours
@@ -273,7 +272,7 @@ export default function DashboardPage() {
           <div className="flex flex-wrap gap-4">
             <Button className="flex items-center space-x-2" asChild>
               <a href="/templates">
-                <Download className="h-4 w-4" />
+                <Layers className="h-4 w-4" />
                 <span>Browse Templates</span>
               </a>
             </Button>
@@ -294,9 +293,9 @@ export default function DashboardPage() {
               className="flex items-center space-x-2"
               asChild
             >
-              <a href="/dashboard/downloads">
-                <Download className="h-4 w-4" />
-                <span>Download History</span>
+              <a href="/dashboard/remixes">
+                <Layers className="h-4 w-4" />
+                <span>Remix History</span>
               </a>
             </Button>
           </div>
@@ -311,7 +310,7 @@ export default function DashboardPage() {
               Unlock More Features
             </h3>
             <p className="text-text-muted mb-4">
-              Upgrade your plan for unlimited downloads, priority support, and
+              Upgrade your plan for unlimited templates, priority support, and
               exclusive templates.
             </p>
             <Button asChild>
