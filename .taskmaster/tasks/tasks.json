@@ -76,7 +76,7 @@
               "3.1"
             ],
             "details": "In the Cloudflare dashboard, navigate to R2 and create one or more buckets for storage needs. Set bucket permissions and generate access keys with least privilege. Configure CORS and bucket policies as required for integration with Workers and Pages. Store access keys securely.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Upload a test file to the R2 bucket and verify access from both Workers and Pages using the configured keys and permissions."
           },
           {
@@ -1285,7 +1285,7 @@
     ],
     "metadata": {
       "created": "2025-09-20T01:11:59.758Z",
-      "updated": "2025-09-21T00:39:18.280Z",
+      "updated": "2025-09-21T00:45:07.596Z",
       "description": "Tasks for master context"
     }
   }

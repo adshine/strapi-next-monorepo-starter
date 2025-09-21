@@ -22,29 +22,20 @@
 - [x] Setup automation script at `scripts/setup-cloudflare.sh`
 - [x] Environment template updated
 
-## 🔄 In Progress
-
 ### R2 Storage Setup
 
-**Action Required:** Enable R2 in your Cloudflare Dashboard
+- [x] R2 enabled in Cloudflare account
+- [x] All buckets created successfully:
+  - framer-templates-dev (created 2025-09-21T00:42:48)
+  - framer-templates-staging (created 2025-09-21T00:42:58)
+  - framer-templates-prod (created 2025-09-21T00:43:09)
+  - framer-templates-backups (created 2025-09-21T00:43:19)
 
-1. Visit: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/r2/overview
-2. Click "Enable R2" if prompted
-3. Once enabled, run these commands:
+**Next Step:** Generate R2 API credentials
 
-```bash
-# Create R2 buckets
-export CLOUDFLARE_API_TOKEN=MpTHyC9tlf3lcP7pf3UExT24Ia_8CpMsUqLcUIAd
-wrangler r2 bucket create framer-templates-dev
-wrangler r2 bucket create framer-templates-staging
-wrangler r2 bucket create framer-templates-prod
-wrangler r2 bucket create framer-templates-backups
-
-# Generate R2 API credentials
-# Go to: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/r2/api-tokens
-# Create a new API token with R2 permissions
-# Update .env with R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
-```
+- Go to: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/r2/api-tokens
+- Create a new API token with R2 Admin Read & Write permissions
+- Update .env with R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
 
 ## ⏳ Pending
 
