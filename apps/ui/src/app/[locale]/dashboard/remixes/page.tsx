@@ -156,7 +156,7 @@ export default function RemixesPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-text-primary mb-4 text-3xl font-bold">
-          Download History
+          Template History
         </h1>
         <p className="text-text-muted">
           {userRemixes.length} remix{userRemixes.length !== 1 ? "es" : ""} •

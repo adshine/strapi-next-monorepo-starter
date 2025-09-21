@@ -11,7 +11,7 @@ export interface UserProfile {
   stripeCustomerId?: string
   plan?: Plan
   planExpiresAt?: string
-  dailyDownloadsUsed: number
+  dailyDownloadsUsed: number // TODO: Backend still uses this field name
   dailyResetAt?: string
   templateRequestsUsed: number
   subscriptionState:
@@ -25,10 +25,10 @@ export interface UserProfile {
   subscriptionStatus: string
   subscriptionStartDate?: string
   subscriptionEndDate?: string
-  monthlyDownloadsUsed: number
-  monthlyDownloadsLimit: number
+  monthlyDownloadsUsed: number // TODO: Backend still uses this field name
+  monthlyDownloadsLimit: number // TODO: Backend still uses this field name
   quotaResetDate?: string
-  totalDownloads: number
+  totalDownloads: number // TODO: Backend still uses this field name
   timezone: string
   emailVerified: boolean
   preferences?: any
@@ -40,7 +40,7 @@ export interface UserProfile {
   activeSessions?: any
   favorites?: any[]
   collections?: any
-  downloadLockVersion?: number
+  downloadLockVersion?: number // TODO: Backend still uses this field name
   lastLoginAt?: string
   accountCreatedAt?: string
   referralSource?: string
@@ -119,10 +119,10 @@ class UserProfileAPI {
     }
   }
 
-  async updateQuotaUsage(downloads: number): Promise<boolean> {
+  async updateQuotaUsage(remixes: number): Promise<boolean> {
     try {
       await this.client.post("/user-profiles/update-quota", {
-        downloads,
+        remixes, // TODO: Backend still uses downloads field name
       })
       return true
     } catch (error) {
@@ -141,7 +141,7 @@ class UserProfileAPI {
       stripeCustomerId: data.stripeCustomerId,
       plan: data.plan,
       planExpiresAt: data.planExpiresAt,
-      dailyDownloadsUsed: data.dailyDownloadsUsed || 0,
+      dailyDownloadsUsed: data.dailyDownloadsUsed || 0, // TODO: Backend still uses this field name
       dailyResetAt: data.dailyResetAt,
       templateRequestsUsed: data.templateRequestsUsed || 0,
       subscriptionState: data.subscriptionState || "active",
@@ -149,11 +149,11 @@ class UserProfileAPI {
       subscriptionStatus: data.subscriptionStatus || "active",
       subscriptionStartDate: data.subscriptionStartDate,
       subscriptionEndDate: data.subscriptionEndDate,
-      monthlyDownloadsUsed: data.monthlyDownloadsUsed || 0,
+      monthlyDownloadsUsed: data.monthlyDownloadsUsed || 0, // TODO: Backend still uses this field name
       monthlyDownloadsLimit:
-        data.monthlyDownloadsLimit || data.plan?.monthlyDownloadLimit || 0,
+        data.monthlyDownloadsLimit || data.plan?.monthlyDownloadLimit || 0, // TODO: Backend still uses this field name
       quotaResetDate: data.quotaResetDate,
-      totalDownloads: data.totalDownloads || 0,
+      totalDownloads: data.totalDownloads || 0, // TODO: Backend still uses this field name
       timezone: data.timezone || "UTC",
       emailVerified: data.emailVerified || false,
       preferences: data.preferences,
@@ -165,7 +165,7 @@ class UserProfileAPI {
       activeSessions: data.activeSessions,
       favorites: data.favorites || [],
       collections: data.collections,
-      downloadLockVersion: data.downloadLockVersion,
+      downloadLockVersion: data.downloadLockVersion, // TODO: Backend still uses this field name
       lastLoginAt: data.lastLoginAt,
       accountCreatedAt: data.accountCreatedAt,
       referralSource: data.referralSource,

@@ -1,11 +1,11 @@
-# Project Download Platform — Implementation Spec
+# Project Template Platform — Implementation Spec
 
 ## 1. Vision & Success Criteria
 
 - Deliver a subscription-gated catalogue of premium Framer templates.
-- Guarantee authenticated delivery backed by clear, enforceable daily download limits and template request quotas.
+- Guarantee authenticated delivery backed by clear, enforceable daily remix limits and template request quotas.
 - Leverage Cloudflare Pages for the UI, Strapi v5 (with PostgreSQL) for content + billing state, and Cloudflare Workers as an edge API/cache layer.
-- Provide instant in-app downloads (copy/open link) while logging auditable transactions for billing and compliance.
+- Provide instant in-app template access (copy/open link) while logging auditable transactions for billing and compliance.
 - Keep operations lightweight so a solo founder can manage catalogue, user support, and growth experiments without heavy DevOps overhead.
 
 Success metrics: paid conversion rate, quota accuracy (no over-delivery), Stripe churn/failed payment recovery rate, and ability to recover from incidents (RTO < 4 hours).
@@ -23,12 +23,12 @@ Success metrics: paid conversion rate, quota accuracy (no over-delivery), Stripe
    - Run Strapi on Fly.io, Railway, Render, or VPS with persistent filesystem access.
    - PostgreSQL (managed) as primary database with automated backups/PITR.
    - REST endpoints secured via API tokens + session cookies proxied through Worker.
-   - Maintain append-only audit logs for downloads, quota changes, Stripe events.
+   - Maintain append-only audit logs for template access, quota changes, Stripe events.
 
 3. **Edge Gateway (Cloudflare Worker)**
    - Terminates TLS, validates session cookies, injects origin headers.
 
-- Applies per-user/IP rate limits on sensitive routes (downloads, template requests, auth).
+- Applies per-user/IP rate limits on sensitive routes (template access, template requests, auth).
 - Caches public catalogue responses with short TTL and revalidation tokens.
 
 4. **Asset Storage (Cloudflare R2)**
@@ -54,32 +54,32 @@ Success metrics: paid conversion rate, quota accuracy (no over-delivery), Stripe
 - **`Project`**
 
   - Fields: title, slug, summary, heroMedia (Asset), remixLink, tag taxonomy, requiredPlan (enum), status, currentVersion, r2ObjectPath, previewGallery (repeatable media), featured, releasedAt
-  - Additional: downloadCount (int), lastUpdated, videoPreviewUrl, livePreviewUrl, complexity (enum: beginner/intermediate/advanced)
+  - Additional: remixCount (int), lastUpdated, videoPreviewUrl, livePreviewUrl, complexity (enum: beginner/intermediate/advanced)
   - SEO: metaTitle, metaDescription, ogImage
   - Component: `project_version` (version label, changelog, R2 path, releasedAt) to retain history
 
 - **`Plan`**
 
-  - Fields: name, slug, stripePriceId, stripePriceIdAnnual, billingCycle (day/month/year/lifetime), dailyDownloadLimit, templateRequestLimit (per cycle), isLifetime, perksRichText, priority, promoBadge
+  - Fields: name, slug, stripePriceId, stripePriceIdAnnual, billingCycle (day/month/year/lifetime), dailyRemixLimit, templateRequestLimit (per cycle), isLifetime, perksRichText, priority, promoBadge
   - Additional: monthlyPrice, annualPrice, savings, popularBadge (bool), features (JSON array), supportSLA (hours)
-  - Tier-gating: allowsFavorites (bool), allowsBulkDownload (bool), allowsCollections (bool)
+  - Tier-gating: allowsFavorites (bool), allowsBulkRemix (bool), allowsCollections (bool)
 
 - **`UserProfile`**
 
   - Relation: 1:1 with Strapi user
-  - Core: plan (relation), planExpiresAt, dailyDownloadsUsed, dailyResetAt, templateRequestsUsed, stripeCustomerId
+  - Core: plan (relation), planExpiresAt, dailyRemixesUsed, dailyResetAt, templateRequestsUsed, stripeCustomerId
   - Preferences: timezone (string), theme (light/dark/system), language, emailNotifications (JSON)
   - Security: twoFactorEnabled (bool), lastPasswordChange, activeSessions (JSON)
   - State: subscriptionState (enum: active/trial/past_due/grace/suspended/canceled), gracePeriodUntil
-  - Features: favorites (many-to-many Projects), collections (JSON), downloadLockVersion
-  - Analytics: lastLoginAt, totalDownloads, accountCreatedAt, referralSource
+  - Features: favorites (many-to-many Projects), collections (JSON), remixLockVersion
+  - Analytics: lastLoginAt, totalRemixes, accountCreatedAt, referralSource
 
-- **`DownloadLog`**
+- **`TemplateAccessLog`**
 
   - Fields: project (relation), user (relation), status (pending/success/failed/expired), signedUrlHash, issuedAt, completedAt
   - Tracking: sourceIp, userAgent, attemptNumber (1-3), retryOf (self-relation)
   - Error handling: errorReason, errorCode, supportTicketId
-  - Performance: downloadDuration (ms), fileSize (bytes)
+  - Performance: accessDuration (ms), fileSize (bytes)
   - Append-only via lifecycle hooks
 
 - **`TemplateRequest`**
@@ -111,7 +111,7 @@ Success metrics: paid conversion rate, quota accuracy (no over-delivery), Stripe
 - **`SupportTicket`**
 
   - Fields: user (relation), type (enum), subject, description, status
-  - Relations: relatedDownload, relatedRequest
+  - Relations: relatedTemplateAccess, relatedRequest
   - Tracking: priority, assignee, resolvedAt
 
 - **`AuditLog`**
@@ -124,8 +124,8 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
 
 - NextAuth credentials provider backed by Strapi; sessions stored in httpOnly, Secure cookies (SameSite=Lax).
 - Worker injects CSRF token for POST/PUT/DELETE; frontend includes header.
-- Per-route rate limits (downloads, login, template requests, Stripe webhooks).
-- Signed download URLs scoped to user + request; store hash only. On access, Strapi validates the hash, marks the token used, and blocks subsequent attempts. Retries issue a fresh token while marking the original as spent.
+- Per-route rate limits (template access, login, template requests, Stripe webhooks).
+- Signed template access URLs scoped to user + request; store hash only. On access, Strapi validates the hash, marks the token used, and blocks subsequent attempts. Retries issue a fresh token while marking the original as spent.
 - Allowlist remix domains; validate all user inputs server-side.
 
 ## 5. Core Flows
@@ -153,18 +153,18 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
    - Add-on purchases (Fast Turnaround)
    - Timezone updates affecting quota reset
 
-### 5.2 Download Flow
+### 5.2 Template Access Flow
 
-1. User clicks Download with pre-validation:
+1. User clicks Remix with pre-validation:
    - Button displays remaining quota inline
    - Disabled state if quota exhausted
-   - Warning indicator for last download
-2. Frontend POST `/api/downloads` with projectId + CSRF token.
+   - Warning indicator for last remix
+2. Frontend POST `/api/remix` with projectId + CSRF token.
 3. Worker verifies session, forwards to Strapi service which:
    - Begins Postgres transaction with timeout (5s max)
    - `SELECT ... FOR UPDATE NOWAIT` on `UserProfile` (fail fast on lock)
-   - Validates: `dailyDownloadsUsed < dailyDownloadLimit`, plan active, subscription state
-   - Inserts `DownloadLog` (status: pending, attempt: 1 of 3)
+   - Validates: `dailyRemixesUsed < dailyRemixLimit`, plan active, subscription state
+   - Inserts `TemplateAccessLog` (status: pending, attempt: 1 of 3)
    - Generates signed R2 URL (15-minute expiry, allows Range headers for resume)
    - Increments counters, commits transaction
 4. Response includes:
@@ -173,14 +173,14 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
      "link": "signed_url",
      "expiresAt": "ISO8601",
      "quotaRemaining": { "daily": 5, "resetAt": "ISO8601" },
-     "downloadId": "uuid"
+     "accessId": "uuid"
    }
    ```
 5. Frontend behavior:
    - Auto-copies link to clipboard
-   - Initiates download via hidden iframe
+   - Initiates template access via hidden iframe
    - Shows non-blocking toast with progress
-   - Tracks completion: POST `/api/downloads/{id}/complete`
+   - Tracks completion: POST `/api/remix/{id}/complete`
 6. Error handling:
    - Quota exceeded: Shows visual timeline, exact reset time, upgrade CTA
    - Lock timeout: Retry with exponential backoff (1s, 2s, 4s)
@@ -206,7 +206,7 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
    - Comment thread between user and admin
 5. Fulfillment:
    - Admin uploads to designated Project
-   - User notified with direct download link
+   - User notified with direct template access link
    - Request marked complete with satisfaction tracking
 
 ### 5.4 Quota Reset & Management
@@ -226,7 +226,7 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
    - Downgrade: Applies at next billing cycle
    - Add-on purchase: Instant feature activation
 4. **Retry & recovery logic**:
-   - Failed downloads get 3 retry attempts (no quota charge)
+   - Failed template access gets 3 retry attempts (no quota charge)
    - Each retry invalidates previous link
    - Manual support override for edge cases
    - Bulk retry for multiple failures
@@ -247,7 +247,7 @@ Active → Past Due → Grace → Suspended → Active (on recovery)
 - **Trial**: Time-limited full access (7 days), conversion prompts
 - **Past Due**: Payment failed, yellow warnings, full access maintained
 - **Grace** (3 days): Orange warnings, countdown timer, deprioritized support
-- **Suspended**: Red alerts, downloads blocked, read-only access
+- **Suspended**: Red alerts, template access blocked, read-only access
 - **Canceled**: Voluntary cancellation, immediate downgrade to free
 
 #### UI Requirements by State
@@ -317,7 +317,7 @@ Active → Past Due → Grace → Suspended → Active (on recovery)
 
 #### Retry Mechanisms
 
-- Downloads: 3 attempts per link, no quota charge
+- Template Access: 3 attempts per link, no quota charge
 - API calls: Automatic retry for idempotent operations
 - Payments: Manual retry with saved card
 - Form submissions: Draft saved locally
@@ -327,17 +327,17 @@ Active → Past Due → Grace → Suspended → Active (on recovery)
 Market scan (UI8, Framer Marketplace, Flowbase, Gumroad sellers) shows:
 
 - Single templates: $29–$99.
-- Subscription clubs: $12–$29/month, often unlimited downloads.
+- Subscription clubs: $12–$29/month, often unlimited template access.
 - Lifetime bundles: $199–$599 with ongoing updates.
 
 Recommended tiers:
 
-- `day-pass` — $12 one-time, 4 downloads in 24h.
-- `solo-monthly` — $24/month, 6 downloads/day, 1 template request/month.
-- `studio-monthly` — $49/month, 15 downloads/day, 3 template requests/month, favorites collection.
-- `agency-monthly` — $89/month, 40 downloads/day, 8 template requests/month, priority support (typical response within 12–24h).
-- `lifetime-core` — $249 one-time, 8 downloads/day, 30 template requests lifetime, ongoing catalogue updates (targets 48h responses).
-- `lifetime-plus` — $499 one-time, 20 downloads/day, unlimited template requests, dedicated support channel (24h typical).
+- `day-pass` — $12 one-time, 4 remixes in 24h.
+- `solo-monthly` — $24/month, 6 remixes/day, 1 template request/month.
+- `studio-monthly` — $49/month, 15 remixes/day, 3 template requests/month, favorites collection.
+- `agency-monthly` — $89/month, 40 remixes/day, 8 template requests/month, priority support (typical response within 12–24h).
+- `lifetime-core` — $249 one-time, 8 remixes/day, 30 template requests lifetime, ongoing catalogue updates (targets 48h responses).
+- `lifetime-plus` — $499 one-time, 20 remixes/day, unlimited template requests, dedicated support channel (24h typical).
 
 Add-ons & promos:
 
@@ -367,7 +367,7 @@ interface TemplateCardProps {
   userPlan: Plan
   isFavorited: boolean
   onFavorite: () => void
-  onDownload: () => void
+  onRemix: () => void
 }
 ```
 
@@ -391,10 +391,10 @@ interface StateBannerProps {
 - Dismissible for active state only
 - Countdown timer for grace period
 
-#### Download Modal
+#### Template Access Modal
 
 ```typescript
-interface DownloadModalProps {
+interface TemplateAccessModalProps {
   template: Project
   quota: QuotaInfo
   onConfirm: () => void
@@ -404,7 +404,7 @@ interface DownloadModalProps {
 
 - Progressive disclosure: Basic info → Details on expand
 - Auto-copy functionality with fallback
-- Download progress indication
+- Template access progress indication
 - Error recovery UI inline
 
 #### Search Component
@@ -474,7 +474,7 @@ interface SearchProps {
   - Stripe webhook processing
   - Authentication flows
 - E2E tests (Playwright):
-  - Critical paths: Signup → Purchase → Download
+  - Critical paths: Signup → Purchase → Template Access
   - Error scenarios: Payment failure, quota exceeded
   - Mobile and desktop viewports
 
@@ -482,13 +482,13 @@ interface SearchProps {
 
 ```javascript
 // Example E2E test
-test("download flow with quota enforcement", async ({ page }) => {
+test("template access flow with quota enforcement", async ({ page }) => {
   await page.goto("/templates/premium-template")
-  await page.click('[data-testid="download-btn"]')
+  await page.click('[data-testid="remix-btn"]')
   await expect(page.locator('[data-testid="quota-display"]')).toBeVisible()
-  await page.click('[data-testid="confirm-download"]')
+  await page.click('[data-testid="confirm-remix"]')
   await expect(page.locator('[data-testid="success-toast"]')).toContainText(
-    "Download started"
+    "Template access started"
   )
 })
 ```
@@ -498,7 +498,7 @@ test("download flow with quota enforcement", async ({ page }) => {
 - Page load: <3s on 3G
 - Time to interactive: <5s
 - API response: p95 <500ms
-- Download initiation: <2s
+- Template access initiation: <2s
 - Search results: <300ms
 
 ### CI/CD Pipeline
@@ -518,20 +518,20 @@ test("download flow with quota enforcement", async ({ page }) => {
 
 ## 9. Security & Compliance
 
-- Immutable audit trail for downloads/subscription changes/admin actions.
+- Immutable audit trail for template access/subscription changes/admin actions.
 - GDPR/CCPA: user data export/delete, documented retention (delete inactive users after 24 months), cookie/analytics consent.
 - Dependency scanning, periodic security reviews (OWASP checklist).
 
 ## 10. Analytics & Growth
 
-- Implement PostHog or Plausible for funnel tracking; key events: signup, checkout start/complete, download success/fail, template request submit, plan upgrade.
+- Implement PostHog or Plausible for funnel tracking; key events: signup, checkout start/complete, template access success/fail, template request submit, plan upgrade.
 - Feature flag service (GrowthBook) for pricing/CTA experiments.
-- Weekly KPI digest email (downloads by plan, churn, revenue, request backlog).
+- Weekly KPI digest email (template access by plan, churn, revenue, request backlog).
 
 ## 11. Roadmap & Phasing
 
 1. **Phase 0**: Provision hosting (Strapi, Postgres), Cloudflare assets (Pages, Worker, R2), Stripe products, logging/monitoring, backup policies.
-2. **Phase 1**: Implement data model, auth, catalogue listing, daily quota enforcement, download logging, pricing page.
+2. **Phase 1**: Implement data model, auth, catalogue listing, daily quota enforcement, template access logging, pricing page.
 3. **Phase 2**: Template requests, account dashboard, favorites, analytics instrumentation.
 4. **Phase 3**: Promotions/coupons, add-on purchase flow, failure/retry UX, webhook retry queue.
 5. **Phase 4**: Admin tooling, A/B testing, multi-region caching, growth experiments.
@@ -553,10 +553,10 @@ test("download flow with quota enforcement", async ({ page }) => {
 - `GET /api/me` - User profile with plan/quota
 - `POST /api/me/refresh` - Force cache refresh
 - `PATCH /api/me/preferences` - Update timezone/theme
-- `POST /api/downloads` - Initiate download
-- `POST /api/downloads/:id/complete` - Mark download complete
-- `POST /api/downloads/:id/retry` - Retry failed download
-- `GET /api/downloads/history` - Download history
+- `POST /api/remix` - Initiate template access
+- `POST /api/remix/:id/complete` - Mark template access complete
+- `POST /api/remix/:id/retry` - Retry failed template access
+- `GET /api/remix/history` - Template access history
 - `POST /api/favorites/toggle` - Add/remove favorite
 - `GET /api/favorites` - List favorites
 - `POST /api/template-requests` - Submit request
@@ -608,7 +608,7 @@ if ('serviceWorker' in navigator) {
 
 ### App Install Prompt
 
-- Show after 3 visits or 1 download
+- Show after 3 visits or 1 template access
 - Dismissible with "Not now" option
 - Re-prompt after 30 days
 

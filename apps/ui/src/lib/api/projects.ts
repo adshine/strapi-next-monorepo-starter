@@ -138,7 +138,7 @@ class ProjectsAPI {
   }
 
   /**
-   * Get trending projects (most downloads)
+   * Get trending projects (most remixes)
    */
   async getTrendingProjects(limit = 10) {
     const response = await this.publicClient.find<ProjectsResponse>(
@@ -150,7 +150,7 @@ class ProjectsAPI {
           },
         },
         populate: "plan,tags,screenshots,category",
-        sort: ["downloadCount:desc"],
+        sort: ["downloadCount:desc"], // TODO: Backend still uses downloadCount field
         pagination: {
           limit,
         },
@@ -172,11 +172,11 @@ class ProjectsAPI {
   }
 
   /**
-   * Increment download count for a project
+   * Increment remix count for a project
    */
-  async trackDownload(projectId: string | number) {
-    // This should be called after successful download
-    return this.privateClient.post(`projects/${projectId}/download`, {})
+  async trackRemix(projectId: string | number) {
+    // This should be called after successful template access
+    return this.privateClient.post(`projects/${projectId}/download`, {}) // TODO: Backend still uses download endpoint
   }
 
   /**

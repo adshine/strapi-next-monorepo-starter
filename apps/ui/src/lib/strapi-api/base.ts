@@ -21,7 +21,7 @@ export const API_ENDPOINTS: { [key in UID.ContentType]?: string } = {
   "api::plan.plan": "/plans",
   "api::user-profile.user-profile": "/user-profiles",
   "api::project.project": "/projects",
-  "api::download-log.download-log": "/download-logs",
+  "api::download-log.download-log": "/download-logs", // TODO: Backend still uses download-logs endpoint
   "api::template-request.template-request": "/template-requests",
   "api::subscription-event.subscription-event": "/subscription-events",
 } as const

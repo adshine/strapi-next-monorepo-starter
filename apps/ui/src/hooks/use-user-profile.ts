@@ -8,10 +8,10 @@ interface UserProfile {
   userId: number
   email: string
   currentPlan: string
-  monthlyDownloadsLimit: number
-  monthlyDownloadsUsed: number
+  monthlyDownloadsLimit: number // TODO: Backend still uses this field name
+  monthlyDownloadsUsed: number // TODO: Backend still uses this field name
   quotaResetDate: string
-  totalDownloads: number
+  totalDownloads: number // TODO: Backend still uses this field name
   subscriptionStatus: string
   stripeCustomerId?: string
   stripeSubscriptionId?: string
@@ -76,12 +76,12 @@ export function useUserProfile() {
     }
   }
 
-  const incrementDownloadCount = async () => {
+  const incrementRemixCount = async () => {
     if (!profile) return
 
     const updated = await updateProfile({
-      monthlyDownloadsUsed: profile.monthlyDownloadsUsed + 1,
-      totalDownloads: profile.totalDownloads + 1,
+      monthlyDownloadsUsed: profile.monthlyDownloadsUsed + 1, // TODO: Backend still uses monthlyDownloadsUsed
+      totalDownloads: profile.totalDownloads + 1, // TODO: Backend still uses totalDownloads
     })
 
     return updated
@@ -92,6 +92,6 @@ export function useUserProfile() {
     loading,
     error,
     updateProfile,
-    incrementDownloadCount,
+    incrementRemixCount,
   }
 }

@@ -28,11 +28,12 @@ export const registerDownloadLogSubscriber = async ({
       data.initiatedAt = data.initiatedAt || new Date()
       data.status = data.status || "pending"
 
-      // Generate unique downloadId if not provided
+      // Generate unique accessId if not provided
+      // TODO: Rename downloadId → accessId or remixId
       if (!data.downloadId) {
         const timestamp = Date.now()
         const random = Math.random().toString(36).substring(7)
-        data.downloadId = `dl_${timestamp}_${random}`
+        data.downloadId = `dl_${timestamp}_${random}` // TODO: Use accessId prefix instead
       }
 
       // Set issuedAt if not provided
@@ -64,7 +65,7 @@ export const registerDownloadLogSubscriber = async ({
       // Set attempt number based on retryOf relationship
       if (data.retryOf) {
         try {
-          // Find the original download and count retry attempts
+          // Find the original template access and count retry attempts
           const originalLog = await strapi.entityService.findOne(
             "api::download-log.download-log",
             data.retryOf,
@@ -77,7 +78,7 @@ export const registerDownloadLogSubscriber = async ({
             // Enforce maximum retry limit
             if (data.attemptNumber > 3) {
               throw new errors.ForbiddenError(
-                "Maximum retry attempts (3) exceeded for this download"
+                "Maximum retry attempts (3) exceeded for this template access"
               )
             }
           }
@@ -88,7 +89,7 @@ export const registerDownloadLogSubscriber = async ({
           // If we can't find the original, default to attempt 1
           data.attemptNumber = 1
           strapi.log.warn(
-            "Could not find original download log for retry:",
+            "Could not find original template access log for retry:",
             error
           )
         }
@@ -104,7 +105,7 @@ export const registerDownloadLogSubscriber = async ({
     async beforeUpdate(event: Event) {
       const { data, where } = event.params
 
-      // Get the existing download log
+      // Get the existing template access log
       const existingLog = await strapi.entityService.findOne(
         "api::download-log.download-log",
         where.id,
@@ -114,12 +115,12 @@ export const registerDownloadLogSubscriber = async ({
       )
 
       if (!existingLog) {
-        throw new errors.NotFoundError("Download log not found")
+        throw new errors.NotFoundError("Template access log not found")
       }
 
       // Define immutable fields that cannot be changed once set
       const immutableFields = [
-        "downloadId",
+        "downloadId", // TODO: Rename to accessId or remixId
         "user",
         "project",
         "initiatedAt",
@@ -137,7 +138,7 @@ export const registerDownloadLogSubscriber = async ({
           // Allow setting null fields for the first time, but not modifying existing values
           if (existingLog[field] !== data[field]) {
             throw new errors.ForbiddenError(
-              `Field '${field}' is immutable and cannot be modified once set. Download logs are append-only audit records.`
+              `Field '${field}' is immutable and cannot be modified once set. Template access logs are append-only audit records.`
             )
           }
         }
@@ -157,7 +158,7 @@ export const registerDownloadLogSubscriber = async ({
 
         if (!allowedNextStatuses.includes(data.status)) {
           throw new errors.ForbiddenError(
-            `Invalid status transition from '${currentStatus}' to '${data.status}'. Download logs enforce append-only audit trail.`
+            `Invalid status transition from '${currentStatus}' to '${data.status}'. Template access logs enforce append-only audit trail.`
           )
         }
 
@@ -168,8 +169,9 @@ export const registerDownloadLogSubscriber = async ({
         ) {
           data.completedAt = data.completedAt || new Date()
 
-          // Calculate download duration if not already set
+          // Calculate access duration if not already set
           if (!data.downloadDuration && existingLog.initiatedAt) {
+            // TODO: Rename downloadDuration → accessDuration
             const duration =
               new Date().getTime() - new Date(existingLog.initiatedAt).getTime()
             data.downloadDuration = Math.floor(duration / 1000) // Convert to seconds
@@ -204,11 +206,11 @@ export const registerDownloadLogSubscriber = async ({
     },
 
     /**
-     * Completely prevent deletion of download logs - they are permanent audit records.
+     * Completely prevent deletion of template access logs - they are permanent audit records.
      */
     async beforeDelete(event: Event) {
       throw new errors.ForbiddenError(
-        "Download logs cannot be deleted. They are append-only audit records required for compliance and tracking."
+        "Template access logs cannot be deleted. They are append-only audit records required for compliance and tracking."
       )
     },
 
@@ -217,7 +219,7 @@ export const registerDownloadLogSubscriber = async ({
      */
     async beforeDeleteMany(event: Event) {
       throw new errors.ForbiddenError(
-        "Download logs cannot be deleted. They are append-only audit records required for compliance and tracking."
+        "Template access logs cannot be deleted. They are append-only audit records required for compliance and tracking."
       )
     },
 
@@ -229,7 +231,7 @@ export const registerDownloadLogSubscriber = async ({
 
       // Log creation for audit purposes
       strapi.log.info(
-        `Download log created: ${result.downloadId} for user ${result.user?.id || "anonymous"} - Project: ${result.project?.id || "unknown"}`
+        `Template access log created: ${result.downloadId} for user ${result.user?.id || "anonymous"} - Project: ${result.project?.id || "unknown"}`
       )
 
       // Schedule automatic expiration check
@@ -267,12 +269,12 @@ export const registerDownloadLogSubscriber = async ({
                 )
 
                 strapi.log.info(
-                  `Download log ${result.downloadId} automatically expired`
+                  `Template access log ${result.downloadId} automatically expired`
                 )
               }
             } catch (error) {
               strapi.log.error(
-                `Failed to expire download log ${result.downloadId}:`,
+                `Failed to expire template access log ${result.downloadId}:`,
                 error
               )
             }
@@ -290,12 +292,12 @@ export const registerDownloadLogSubscriber = async ({
       // Log significant status changes
       if (result.status === "success") {
         strapi.log.info(
-          `Download completed: ${result.downloadId} for user ${result.user?.id || "anonymous"} - Duration: ${result.downloadDuration}s`
+          `Template access completed: ${result.downloadId} for user ${result.user?.id || "anonymous"} - Duration: ${result.downloadDuration}s`
         )
 
         // Send analytics event if enabled
         if (process.env.ENABLE_ANALYTICS === "true") {
-          strapi.log.debug("Analytics event: download_completed", {
+          strapi.log.debug("Analytics event: template_access_completed", {
             downloadId: result.downloadId,
             projectId: result.project?.id,
             userId: result.user?.id,
@@ -304,7 +306,7 @@ export const registerDownloadLogSubscriber = async ({
           })
         }
       } else if (result.status === "failed") {
-        strapi.log.warn(`Download failed: ${result.downloadId}`, {
+        strapi.log.warn(`Template access failed: ${result.downloadId}`, {
           errorReason: result.errorReason,
           errorCode: result.errorCode,
           userId: result.user?.id || "anonymous",
@@ -312,7 +314,7 @@ export const registerDownloadLogSubscriber = async ({
 
         // Track failure metrics
         if (process.env.ENABLE_ANALYTICS === "true") {
-          strapi.log.debug("Analytics event: download_failed", {
+          strapi.log.debug("Analytics event: template_access_failed", {
             downloadId: result.downloadId,
             errorCode: result.errorCode,
             projectId: result.project?.id,
@@ -321,7 +323,7 @@ export const registerDownloadLogSubscriber = async ({
         }
       } else if (result.status === "expired") {
         strapi.log.info(
-          `Download expired: ${result.downloadId} for user ${result.user?.id || "anonymous"}`
+          `Template access expired: ${result.downloadId} for user ${result.user?.id || "anonymous"}`
         )
       }
     },

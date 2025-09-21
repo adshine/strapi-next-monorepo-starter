@@ -270,10 +270,10 @@ export default function PricingPage() {
                             <div className="mb-1 flex items-center justify-center gap-2">
                               <Layers className="text-accent-primary h-4 w-4" />
                               <span className="font-semibold">
-                                {plan.dailyDownloadLimit === -1 ||
-                                plan.dailyDownloadLimit === 0
+                                {plan.dailyRemixLimit === -1 ||
+                                plan.dailyRemixLimit === 0
                                   ? "∞"
-                                  : plan.dailyDownloadLimit}
+                                  : plan.dailyRemixLimit}
                               </span>
                             </div>
                             <div className="text-text-muted">

@@ -131,32 +131,32 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Template name and version
    - File size estimate
    - Current quota usage bar (visual)
-   - "After this: X downloads remaining until [reset time]"
-   - Checkbox: "Add to download queue" (for bulk operations)
+   - "After this: X remixes remaining until [reset time]"
+   - Checkbox: "Add to remix queue" (for bulk operations)
 3. On confirmation:
-   - UI immediately shows "Preparing download..." spinner
-   - POSTs `/api/downloads` with projectId + CSRF token
+   - UI immediately shows "Preparing remix..." spinner
+   - POSTs `/api/remix` with projectId + CSRF token
    - Optimistic UI: decrements quota badge
 4. Backend processing:
    - Worker validates session and rate limits
    - Strapi service with transaction:
      - Locks UserProfile row (with timeout handling)
      - Validates plan state and quota
-     - Creates DownloadLog entry
+     - Creates TemplateAccessLog entry
      - Generates signed R2 URL (15-minute expiry, 3 attempts allowed)
      - Updates counters atomically
 5. Success response handling:
    - Auto-copies link to clipboard
-   - Shows non-modal toast: "Link copied! Download starting..."
-   - Initiates download in hidden iframe (better than new tab)
-   - Updates download history in background
-6. Download completion tracking:
-   - Client sends POST `/api/downloads/{id}/complete` when iframe loads
-   - Marks DownloadLog as completed for accurate analytics
+   - Shows non-modal toast: "Link copied! Remix starting..."
+   - Initiates remix in hidden iframe (better than new tab)
+   - Updates remix history in background
+6. Remix completion tracking:
+   - Client sends POST `/api/remix/{id}/complete` when iframe loads
+   - Marks TemplateAccessLog as completed for accurate analytics
    - Shows subtle success indicator in UI
 7. Error recovery:
-   - Network failure: "Download interrupted" with retry button
-   - Retry uses `/api/downloads/{id}/retry` (no quota charge)
+   - Network failure: "Remix interrupted" with retry button
+   - Retry uses `/api/remix/{id}/retry` (no quota charge)
    - Expired link: auto-generates new one if within 1 hour
    - After 3 failed attempts: creates support ticket
 8. Quota exceeded flow:
@@ -222,12 +222,12 @@ This document maps end-to-end flows for the subscription-gated Framer template p
      - Daily/monthly quotas with progress bars
      - Time until next quota reset in user timezone
    - **Quick Stats**:
-     - Templates downloaded this month
+     - Templates remixed this month
      - Requests submitted/remaining
      - Favorites saved (if available)
      - Account age and loyalty badge
    - **Recent Activity Feed**:
-     - Last 5 downloads with one-click re-download
+     - Last 5 remixes with one-click re-remix
      - Template request updates
      - New templates matching interests
 3. Billing management (`/account/billing`):
@@ -237,13 +237,13 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Payment method on file with update option
    - Invoice history with PDF downloads
    - "Manage in Stripe" for advanced options
-4. Download history (`/account/downloads`):
+4. Remix history (`/account/remixes`):
    - Filterable list (date range, status, template name)
    - Each entry shows:
      - Template thumbnail and name
-     - Download timestamp and status
+     - Remix timestamp and status
      - Retry button if failed (within 24h)
-     - "Download again" if quota available
+     - "Remix again" if quota available
    - Bulk retry for failed downloads
    - Export history as CSV
 5. Account settings (`/account/settings`):

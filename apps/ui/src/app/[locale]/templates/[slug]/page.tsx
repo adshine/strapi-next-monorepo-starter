@@ -245,9 +245,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
-                    <span>
-                      {template.downloadCount.toLocaleString()} remixes
-                    </span>
+                    <span>{template.remixCount.toLocaleString()} remixes</span>
                   </div>
                 </div>
               </div>
@@ -303,9 +301,9 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                   <div className="grid grid-cols-2 gap-4 text-sm text-[var(--text-muted)]">
                     <div>
                       <p className="font-semibold text-[var(--text-primary)]">
-                        {requiredPlan?.dailyDownloads === -1
+                        {requiredPlan?.dailyRemixes === -1
                           ? "Unlimited"
-                          : `${requiredPlan?.dailyDownloads ?? 3}`}
+                          : `${requiredPlan?.dailyRemixes ?? 3}`}
                       </p>
                       <p>Daily templates</p>
                     </div>

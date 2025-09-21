@@ -70,7 +70,7 @@ export async function GET(
     }
 
     // Check quota
-    // TODO: Rename fields to monthlyTemplateLimit and monthlyTemplateAccesses in backend
+    // TODO: Backend still uses monthlyDownloadsLimit and monthlyDownloadsUsed
     const quotaLimit = userProfile.attributes.monthlyDownloadsLimit
     const quotaUsed = userProfile.attributes.monthlyDownloadsUsed
 
@@ -113,7 +113,7 @@ export async function GET(
     // Log the template access
     // TODO: Rename endpoint to /template-access-logs or /remix-logs
     await PrivateStrapiClient.fetchAPI(
-      `/download-logs`,
+      `/download-logs`, // TODO: Backend still uses download-logs endpoint
       undefined,
       {
         method: "POST",
@@ -121,7 +121,7 @@ export async function GET(
           data: {
             userId: session.user.userId,
             projectId: params.projectId,
-            downloadedAt: new Date(), // TODO: Rename to remixedAt or accessedAt
+            downloadedAt: new Date(), // TODO: Backend still uses downloadedAt field
             templateTitle: project.attributes.title,
             userPlan,
           },
@@ -138,8 +138,8 @@ export async function GET(
         method: "PUT",
         body: JSON.stringify({
           data: {
-            monthlyDownloadsUsed: quotaUsed + 1, // TODO: Rename to monthlyTemplateAccesses
-            totalDownloads: (userProfile.attributes.totalDownloads || 0) + 1, // TODO: Rename to totalRemixes
+            monthlyDownloadsUsed: quotaUsed + 1, // TODO: Backend still uses monthlyDownloadsUsed
+            totalDownloads: (userProfile.attributes.totalDownloads || 0) + 1, // TODO: Backend still uses totalDownloads
           },
         }),
       },

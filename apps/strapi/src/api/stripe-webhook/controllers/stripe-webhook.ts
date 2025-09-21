@@ -2,6 +2,7 @@ import { Core } from "@strapi/strapi"
 import Stripe from "stripe"
 
 // TODO: Update field references throughout this file:
+// TODO: Backend field renames planned:
 // - monthlyDownloadsLimit → monthlyTemplateLimit
 // - monthlyDownloadsUsed → monthlyTemplateAccesses
 // - totalDownloads → totalRemixes
@@ -180,8 +181,8 @@ async function handleCheckoutSessionCompleted(
       subscriptionEndDate: new Date(
         (subscription as any).current_period_end * 1000
       ),
-      monthlyDownloadsLimit: plan.monthlyDownloadLimit,
-      monthlyDownloadsUsed: 0,
+      monthlyDownloadsLimit: plan.monthlyDownloadLimit, // TODO: Rename to monthlyTemplateLimit
+      monthlyDownloadsUsed: 0, // TODO: Rename to monthlyTemplateAccesses
       quotaResetDate: new Date((subscription as any).current_period_end * 1000),
     },
   })
@@ -224,7 +225,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
         (subscription as any).current_period_end * 1000
       ),
       monthlyDownloadsLimit:
-        plan?.monthlyDownloadLimit || userProfile.monthlyDownloadsLimit,
+        plan?.monthlyDownloadLimit || userProfile.monthlyDownloadsLimit, // TODO: Rename to monthlyTemplateLimit
     },
   })
 
@@ -257,7 +258,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       currentPlan: freePlan?.id || null,
       subscriptionStatus: "canceled",
       subscriptionEndDate: new Date(),
-      monthlyDownloadsLimit: freePlan?.monthlyDownloadLimit || 0,
+      monthlyDownloadsLimit: freePlan?.monthlyDownloadLimit || 0, // TODO: Rename to monthlyTemplateLimit
     },
   })
 
@@ -287,7 +288,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
       where: { id: userProfile.id },
       data: {
         subscriptionStatus: "active",
-        monthlyDownloadsUsed: 0,
+        monthlyDownloadsUsed: 0, // TODO: Rename to monthlyTemplateAccesses
         quotaResetDate: new Date(
           (subscription as any).current_period_end * 1000
         ),

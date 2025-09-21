@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Heart, Layers, Menu, User, X } from "lucide-react"
+import { Download, Heart, Layers, Menu, User, X } from "lucide-react"
 
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/styles"
@@ -182,12 +182,12 @@ export function AppHeader() {
                   variant="ghost"
                   className="w-full justify-start"
                   onClick={() => {
-                    router.push("/dashboard/downloads")
+                    router.push("/dashboard/remixes")
                     setIsMobileMenuOpen(false)
                   }}
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Downloads
+                  <Layers className="mr-2 h-4 w-4" />
+                  My Templates
                 </Button>
               </div>
             ) : (

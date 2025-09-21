@@ -18,20 +18,20 @@ This document defines the visual language, color system, and layout principles f
 
 ## 2. Color System
 
-| Token              | Hex       | Usage                                                |
-| ------------------ | --------- | ---------------------------------------------------- |
-| `--bg-primary`     | `#0B0F14` | Page background, hero sections.                      |
-| `--bg-elevated`    | `#111720` | Cards, modals, panels.                               |
-| `--bg-subtle`      | `#1A2230` | Secondary surfaces, list rows.                       |
-| `--border-neutral` | `#1F2A3A` | Dividers, input borders, card outlines.              |
-| `--text-primary`   | `#F4F7FB` | Body text, large headings.                           |
-| `--text-muted`     | `#A3AEC2` | Secondary text, helper copy.                         |
-| `--text-inverse`   | `#0B0F14` | Text on bright accents.                              |
-| `--accent-primary` | `#5B8CFF` | Primary CTAs, active states, download confirmations. |
-| `--accent-success` | `#4CD0A5` | Success, plan active states.                         |
-| `--accent-warning` | `#FFC56D` | Quota warnings, billing grace period.                |
-| `--accent-danger`  | `#FF6B6B` | Errors, failed payments.                             |
-| `--accent-support` | `#AA7DFF` | Premium/lifetime badges, promos.                     |
+| Token              | Hex       | Usage                                                       |
+| ------------------ | --------- | ----------------------------------------------------------- |
+| `--bg-primary`     | `#0B0F14` | Page background, hero sections.                             |
+| `--bg-elevated`    | `#111720` | Cards, modals, panels.                                      |
+| `--bg-subtle`      | `#1A2230` | Secondary surfaces, list rows.                              |
+| `--border-neutral` | `#1F2A3A` | Dividers, input borders, card outlines.                     |
+| `--text-primary`   | `#F4F7FB` | Body text, large headings.                                  |
+| `--text-muted`     | `#A3AEC2` | Secondary text, helper copy.                                |
+| `--text-inverse`   | `#0B0F14` | Text on bright accents.                                     |
+| `--accent-primary` | `#5B8CFF` | Primary CTAs, active states, template access confirmations. |
+| `--accent-success` | `#4CD0A5` | Success, plan active states.                                |
+| `--accent-warning` | `#FFC56D` | Quota warnings, billing grace period.                       |
+| `--accent-danger`  | `#FF6B6B` | Errors, failed payments.                                    |
+| `--accent-support` | `#AA7DFF` | Premium/lifetime badges, promos.                            |
 
 Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`, `#E2E8F5`) and `--text-primary` flipped to `#151A28` while accents stay identical for brand recognition.
 
@@ -71,12 +71,12 @@ Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`,
 
 - **Navigation Bar**: Transparent base blending with hero gradient; on scroll, apply blur (`backdrop-filter: blur(16px)`) and darkened background.
 - **Hero CTA Block**: Large headline, supporting copy, primary CTA (`accent-primary`), secondary CTA (ghost style with `border-neutral`). Include inline quota preview for logged-in users.
-- **Template Cards**: Layout includes thumbnail, title, maker, plan badge, download CTA. On hover, reveal quick actions (favorite, preview, download) with micro animation (scale 1.02).
+- **Template Cards**: Layout includes thumbnail, title, maker, plan badge, remix CTA. On hover, reveal quick actions (favorite, preview, remix) with micro animation (scale 1.02).
 - **Pricing Tiles**: Use `bg-elevated`, double border (outer `#1F2A3A`, inner `rgba(91, 140, 255, 0.3)` for featured plan). Show daily quota, requests, and support info with icon bullets.
-- **Download Modal**: Elevated panel, progress timeline (request → signed link). Provide copy button with tooltip and open button. Include quota meter below.
+- **Template Access Modal**: Elevated panel, progress timeline (request → signed link). Provide copy button with tooltip and open button. Include quota meter below.
 - **Quota Meter**: Horizontal pill with gradient background and segmented ticks (journey from 0% to 100% of daily limit). For warning states, shift to `accent-warning` gradient.
 - **Request Form**: Two-column on desktop; left column with instructions, right column with form fields. Use accent outlines on focus. Display quota badge top-right.
-- **Dashboard**: Two-column layout — left summary card (plan, quota, next reset, manage billing), right tabbed content (download history, template requests, favorites). Tabs use pill toggle with accent highlight.
+- **Dashboard**: Two-column layout — left summary card (plan, quota, next reset, manage billing), right tabbed content (remix history, template requests, favorites). Tabs use pill toggle with accent highlight.
 - **Alerts/Banners**: Top-of-page banner for payment issues uses `accent-warning` background with darker text; includes CTA to manage billing.
 
 ## 7. Interaction & Motion
