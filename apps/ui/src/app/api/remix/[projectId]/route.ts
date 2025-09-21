@@ -111,9 +111,8 @@ export async function GET(
     }
 
     // Log the template access
-    // TODO: Rename endpoint to /template-access-logs or /remix-logs
     await PrivateStrapiClient.fetchAPI(
-      `/download-logs`, // TODO: Backend still uses download-logs endpoint
+      `/template-access-logs`,
       undefined,
       {
         method: "POST",
@@ -121,7 +120,7 @@ export async function GET(
           data: {
             userId: session.user.userId,
             projectId: params.projectId,
-            downloadedAt: new Date(), // TODO: Backend still uses downloadedAt field
+            initiatedAt: new Date(),
             templateTitle: project.attributes.title,
             userPlan,
           },

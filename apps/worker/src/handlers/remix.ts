@@ -22,9 +22,8 @@ export async function handleTemplateRemix(
   // Verify user has access to this project
   try {
     // Call Strapi to verify access and log remix
-    // TODO: Backend still uses download-logs endpoint
     const verifyResponse = await fetch(
-      `${env.STRAPI_URL}/api/download-logs/verify`, // TODO: Rename to /remix-logs/verify
+      `${env.STRAPI_URL}/api/template-access-logs/verify`,
       {
         method: "POST",
         headers: {
@@ -57,9 +56,7 @@ export async function handleTemplateRemix(
     }
 
     // Log remix event
-    // TODO: Backend still uses download-logs endpoint
-    await fetch(`${env.STRAPI_URL}/api/download-logs`, {
-      // TODO: Rename to /remix-logs
+    await fetch(`${env.STRAPI_URL}/api/template-access-logs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

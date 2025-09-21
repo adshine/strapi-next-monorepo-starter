@@ -150,7 +150,7 @@ class ProjectsAPI {
           },
         },
         populate: "plan,tags,screenshots,category",
-        sort: ["downloadCount:desc"], // TODO: Backend still uses downloadCount field
+        sort: ["remixCount:desc"],
         pagination: {
           limit,
         },
