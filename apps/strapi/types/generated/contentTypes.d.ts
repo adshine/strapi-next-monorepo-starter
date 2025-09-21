@@ -670,7 +670,7 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     draftAndPublish: false
   }
   attributes: {
-    allowsBulkDownload: Schema.Attribute.Boolean &
+    allowsBulkRemix: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>
     allowsCollections: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>
@@ -684,7 +684,7 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
-    dailyDownloadLimit: Schema.Attribute.Integer &
+    dailyRemixLimit: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>
     description: Schema.Attribute.Text
@@ -694,10 +694,10 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<"oneToMany", "api::plan.plan"> &
       Schema.Attribute.Private
-    monthlyDownloadLimit: Schema.Attribute.Integer &
+    monthlyPrice: Schema.Attribute.Decimal & Schema.Attribute.Required
+    monthlyRemixLimit: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>
-    monthlyPrice: Schema.Attribute.Decimal & Schema.Attribute.Required
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique
@@ -732,7 +732,7 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
 export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   collectionName: "projects"
   info: {
-    description: "Template projects available for download"
+    description: "Framer template projects available for remixing"
     displayName: "Project"
     pluralName: "projects"
     singularName: "project"
@@ -746,8 +746,6 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
     description: Schema.Attribute.RichText
-    downloadCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
-    downloadUrl: Schema.Attribute.String & Schema.Attribute.Required
     favoritedBy: Schema.Attribute.Relation<
       "manyToMany",
       "api::user-profile.user-profile"
@@ -763,6 +761,8 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private
     publishedAt: Schema.Attribute.DateTime
+    remixCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    remixUrl: Schema.Attribute.String & Schema.Attribute.Required
     requiredPlan: Schema.Attribute.Enumeration<
       ["free", "starter", "professional", "enterprise"]
     > &
@@ -895,6 +895,77 @@ export interface ApiSubscriptionEventSubscriptionEvent
   }
 }
 
+export interface ApiTemplateAccessLogTemplateAccessLog
+  extends Struct.CollectionTypeSchema {
+  collectionName: "template_access_logs"
+  info: {
+    description: "Track all template remix attempts and completions"
+    displayName: "TemplateAccessLog"
+    pluralName: "template-access-logs"
+    singularName: "template-access-log"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    accessDuration: Schema.Attribute.Integer
+    accessId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    attemptNumber: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3
+          min: 1
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>
+    completedAt: Schema.Attribute.DateTime
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    errorCode: Schema.Attribute.String
+    errorReason: Schema.Attribute.Text
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    initiatedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    ipAddress: Schema.Attribute.String
+    issuedAt: Schema.Attribute.DateTime
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::template-access-log.template-access-log"
+    > &
+      Schema.Attribute.Private
+    metadata: Schema.Attribute.JSON
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">
+    publishedAt: Schema.Attribute.DateTime
+    quotaCharged: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    remixUrl: Schema.Attribute.Text
+    remixUrlHash: Schema.Attribute.String
+    retryOf: Schema.Attribute.Relation<
+      "oneToOne",
+      "api::template-access-log.template-access-log"
+    >
+    sourceIp: Schema.Attribute.String
+    status: Schema.Attribute.Enumeration<
+      ["pending", "success", "failed", "expired"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"pending">
+    supportTicketId: Schema.Attribute.String
+    templateSize: Schema.Attribute.BigInteger
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+    userAgent: Schema.Attribute.Text
+  }
+}
+
 export interface ApiTemplateRequestTemplateRequest
   extends Struct.CollectionTypeSchema {
   collectionName: "template_requests"
@@ -976,7 +1047,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
-    dailyDownloadsUsed: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    dailyRemixesUsed: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     dailyResetAt: Schema.Attribute.DateTime
     displayName: Schema.Attribute.String
     downloadLockVersion: Schema.Attribute.Integer &
@@ -997,10 +1068,9 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       "api::user-profile.user-profile"
     > &
       Schema.Attribute.Private
-    monthlyDownloadsLimit: Schema.Attribute.Integer &
+    monthlyRemixesLimit: Schema.Attribute.Integer &
       Schema.Attribute.DefaultTo<0>
-    monthlyDownloadsUsed: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>
+    monthlyRemixesUsed: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     passwordResetExpiry: Schema.Attribute.DateTime
     passwordResetToken: Schema.Attribute.String
     plan: Schema.Attribute.Relation<"manyToOne", "api::plan.plan">
@@ -1034,7 +1104,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     theme: Schema.Attribute.Enumeration<["light", "dark", "system"]> &
       Schema.Attribute.DefaultTo<"system">
     timezone: Schema.Attribute.String & Schema.Attribute.DefaultTo<"UTC">
-    totalDownloads: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    totalRemixes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     twoFactorEnabled: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>
     updatedAt: Schema.Attribute.DateTime
@@ -1566,6 +1636,7 @@ declare module "@strapi/strapi" {
       "api::redirect.redirect": ApiRedirectRedirect
       "api::subscriber.subscriber": ApiSubscriberSubscriber
       "api::subscription-event.subscription-event": ApiSubscriptionEventSubscriptionEvent
+      "api::template-access-log.template-access-log": ApiTemplateAccessLogTemplateAccessLog
       "api::template-request.template-request": ApiTemplateRequestTemplateRequest
       "api::user-profile.user-profile": ApiUserProfileUserProfile
       "plugin::content-releases.release": PluginContentReleasesRelease

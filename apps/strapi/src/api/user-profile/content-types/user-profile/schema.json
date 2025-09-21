@@ -41,7 +41,7 @@
     "planExpiresAt": {
       "type": "datetime"
     },
-    "dailyDownloadsUsed": {
+    "dailyRemixesUsed": {
       "type": "integer",
       "default": 0
     },
@@ -71,18 +71,18 @@
     "subscriptionEndDate": {
       "type": "datetime"
     },
-    "monthlyDownloadsUsed": {
+    "monthlyRemixesUsed": {
       "type": "integer",
       "default": 0
     },
-    "monthlyDownloadsLimit": {
+    "monthlyRemixesLimit": {
       "type": "integer",
       "default": 0
     },
     "quotaResetDate": {
       "type": "datetime"
     },
-    "totalDownloads": {
+    "totalRemixes": {
       "type": "integer",
       "default": 0
     },

@@ -41,7 +41,7 @@
     "videoPreviewUrl": {
       "type": "string"
     },
-    "downloadUrl": {
+    "remixUrl": {
       "type": "string",
       "required": true
     },
@@ -63,7 +63,7 @@
     "tags": {
       "type": "json"
     },
-    "downloadCount": {
+    "remixCount": {
       "type": "integer",
       "default": 0
     },

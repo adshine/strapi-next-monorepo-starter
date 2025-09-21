@@ -2,6 +2,47 @@
 
 ## ✅ Completed
 
+### Backend Terminology Migration (2025-09-21)
+
+Successfully migrated all backend schema from "download" to "remix/template-access" terminology:
+
+#### Database Schema Changes
+
+- **Projects Collection**:
+
+  - `downloadUrl` → `remixUrl` ✅
+  - `downloadCount` → `remixCount` ✅
+
+- **User Profiles Collection**:
+
+  - `dailyDownloadsUsed` → `dailyRemixesUsed` ✅
+  - `monthlyDownloadsUsed` → `monthlyRemixesUsed` ✅
+  - `monthlyDownloadsLimit` → `monthlyRemixesLimit` ✅
+  - `totalDownloads` → `totalRemixes` ✅
+
+- **Plans Collection**:
+
+  - `dailyDownloadLimit` → `dailyRemixLimit` ✅
+  - `monthlyDownloadLimit` → `monthlyRemixLimit` ✅
+  - `allowsBulkDownload` → `allowsBulkRemix` ✅
+
+- **Template Access Logs Collection**:
+  - Created new `template-access-log` collection ✅
+  - Migrated all data from `download_logs` table ✅
+  - Field renames within collection:
+    - `downloadId` → `accessId`
+    - `signedUrl` → `remixUrl`
+    - `signedUrlHash` → `remixUrlHash`
+    - `downloadDuration` → `accessDuration`
+    - `fileSize` → `templateSize`
+
+#### Migration Details
+
+- Migration script: `/apps/strapi/database/migrations/rename-download-to-remix.js`
+- Migration executed automatically on Strapi startup
+- All existing data preserved
+- Rollback functionality included
+
 ### Account Setup
 
 - [x] API Token configured: `MpTHyC9tlf3lcP7pf3UExT24Ia_8CpMsUqLcUIAd`
@@ -39,6 +80,18 @@
 
 ## ⏳ Pending
 
+### Frontend Updates
+
+- [ ] Update Next.js components to use new field names (remixUrl, remixCount, etc.)
+- [ ] Update API client calls to use `/api/template-access-logs` endpoint
+- [ ] Update hooks to reference new field names
+- [ ] Fix TypeScript errors related to renamed fields
+
+### Worker Updates
+
+- [ ] Update Cloudflare Workers to use new terminology
+- [ ] Update handler functions to reference remix URLs instead of download URLs
+
 ### Pages Setup (Task 3.3)
 
 **Ready for manual setup:** Follow the guide at `docs/cloudflare-pages-setup.md`
@@ -48,40 +101,62 @@ Quick setup link: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/p
 Build configuration:
 
 - Project name: `framer-templates-ui`
+- Framework preset: Next.js
 - Build command: `cd apps/ui && yarn build`
-- Build output: `/apps/ui/.next`
+- Build output directory: `apps/ui/.next`
 - Root directory: `/`
 
-### Cross-Service Permissions (Task 3.5)
+Environment variables to add in Pages settings:
 
-- [ ] Generate R2 API credentials at: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/r2/api-tokens
-- [ ] Add Worker secrets (JWT_SECRET, STRAPI_URL)
-- [ ] Configure Pages environment variables
-- [ ] Deploy Worker with: `cd apps/worker && wrangler deploy --env development`
-- [ ] Set up custom domains
-- [ ] Configure SSL certificates
+- `STRAPI_URL`: Your Strapi backend URL
+- `STRAPI_REST_READONLY_API_KEY`: Your API token
+- `APP_PUBLIC_URL`: https://your-domain.pages.dev
 
-## Quick Commands
+### Worker Deployment
+
+**Note:** Worker needs updating to use new remix terminology before deployment.
+
+Deploy commands:
 
 ```bash
-# Check if R2 is enabled (after enabling in dashboard)
-wrangler r2 bucket list
-
-# Deploy Worker (after R2 is enabled)
-cd apps/worker && wrangler deploy --env development
-
-# Test Worker health endpoint
-curl https://framer-templates-api.<your-subdomain>.workers.dev/health
+cd apps/worker
+# Development
+yarn deploy:dev
+# Production
+yarn deploy:prod
 ```
 
-## Environment Variables Status
+### Analytics & Monitoring
 
-| Variable              | Status | Value                              |
-| --------------------- | ------ | ---------------------------------- |
-| CLOUDFLARE_ACCOUNT_ID | ✅     | 82655735d78bf7309c659b5a576715c4   |
-| CLOUDFLARE_API_TOKEN  | ✅     | MpTHyC9t...UIAd                    |
-| R2_ACCESS_KEY_ID      | ⏳     | Need to generate after enabling R2 |
-| R2_SECRET_ACCESS_KEY  | ⏳     | Need to generate after enabling R2 |
-| JWT_SECRET            | ✅     | dev-jwt-secret configured          |
-| WORKER_URL            | ⏳     | Will be assigned after deployment  |
-| PAGES_PROJECT_NAME    | ✅     | framer-templates-ui                |
+- [ ] Configure Web Analytics for Pages
+- [ ] Set up Workers Analytics
+- [ ] Configure error tracking with Sentry
+
+## Testing Checklist
+
+### Backend (Strapi)
+
+- [x] Database migration successful
+- [x] New content types registered
+- [x] TypeScript types regenerated
+- [ ] API endpoints tested with new field names
+- [ ] Existing data accessible through new schema
+
+### Frontend (Next.js)
+
+- [ ] Template listing with remix counts
+- [ ] User dashboard showing remix history
+- [ ] Remix modal functionality
+- [ ] Quota tracking with new field names
+
+### Worker
+
+- [ ] Health check endpoint
+- [ ] Remix URL generation
+- [ ] Proxy functionality with new endpoints
+
+## Notes
+
+- The `download-log` collection still exists for backward compatibility during transition
+- Frontend lint errors need to be fixed before production deployment
+- Consider implementing API versioning for smoother future migrations

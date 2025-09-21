@@ -47,7 +47,7 @@
       "enum": ["day", "month", "year", "lifetime"],
       "default": "month"
     },
-    "dailyDownloadLimit": {
+    "dailyRemixLimit": {
       "type": "integer",
       "required": true,
       "default": 0
@@ -87,7 +87,7 @@
       "type": "boolean",
       "default": false
     },
-    "allowsBulkDownload": {
+    "allowsBulkRemix": {
       "type": "boolean",
       "default": false
     },
@@ -95,7 +95,7 @@
       "type": "boolean",
       "default": false
     },
-    "monthlyDownloadLimit": {
+    "monthlyRemixLimit": {
       "type": "integer",
       "required": true,
       "default": 0

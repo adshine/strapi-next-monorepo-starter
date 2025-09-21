@@ -9,9 +9,9 @@ module.exports = {
     const { params, data } = event
     const { where } = params
 
-    // Get the existing download log
+    // Get the existing template access log
     const existingLog = await strapi.entityService.findOne(
-      "api::download-log.download-log",
+      "api::download-log.download-log", // Still using old name during migration
       where.id,
       {
         populate: ["user", "project"],
@@ -19,12 +19,12 @@ module.exports = {
     )
 
     if (!existingLog) {
-      throw new errors.NotFoundError("Download log not found")
+      throw new errors.NotFoundError("Template access log not found")
     }
 
     // Define immutable fields that cannot be changed once set
     const immutableFields = [
-      "downloadId",
+      "downloadId", // TODO: Rename to accessId in future migration
       "user",
       "project",
       "initiatedAt",
