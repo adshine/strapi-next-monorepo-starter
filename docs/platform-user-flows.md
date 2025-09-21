@@ -70,7 +70,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Quota impact calculator for upgrades/downgrades
    - Pro-rated billing explanation if mid-cycle
 3. Checkout initiation:
-   - UI validates current quota usage (warns if downloads pending)
+   - UI validates current quota usage (warns if template access pending)
    - Calls `/api/stripe/create-checkout-session` with plan + billing period + add-ons
    - Shows loading state: "Preparing secure checkout..."
 4. Stripe checkout experience:
@@ -203,14 +203,14 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Request card with status badge (New/In Review/In Progress/Ready/Delivered)
    - Real-time updates via websocket or polling
    - Comment thread with admin
-   - One-click download when fulfilled
+   - One-click remix when fulfilled
 
 ## 7. Account Dashboard Management
 
 1. Dashboard URL structure:
    - `/account` - Overview
    - `/account/billing` - Subscription management
-   - `/account/downloads` - History and retries
+   - `/account/remixes` - History and retries
    - `/account/requests` - Template requests
    - `/account/settings` - Profile and preferences
    - `/account/favorites` - Saved templates (tier-gated)
@@ -235,7 +235,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
    - Add-ons management (add/remove Fast Turnaround)
    - Billing period toggle (monthly ↔ annual with savings preview)
    - Payment method on file with update option
-   - Invoice history with PDF downloads
+   - Invoice history with PDF access
    - "Manage in Stripe" for advanced options
 4. Remix history (`/account/remixes`):
    - Filterable list (date range, status, template name)
@@ -244,7 +244,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
      - Remix timestamp and status
      - Retry button if failed (within 24h)
      - "Remix again" if quota available
-   - Bulk retry for failed downloads
+   - Bulk retry for failed template access
    - Export history as CSV
 5. Account settings (`/account/settings`):
    - **Profile**: Name, email, avatar, company
@@ -258,7 +258,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
      - Two-factor authentication setup (optional)
      - Active sessions list with revoke
    - **Data & Privacy**:
-     - Download my data
+     - Export my data
      - Delete account (with confirmation flow)
 
 ## 8. Favorites & Saved Items (Tier-Gated Feature)
@@ -293,23 +293,23 @@ This document maps end-to-end flows for the subscription-gated Framer template p
 3. Grace period experience (3 days default):
    - **Day 1**: Soft warnings, full access maintained
      - "Payment failed. Retry now to avoid disruption"
-     - Download modal note: "Fix payment to maintain access"
+     - Remix modal note: "Fix payment to maintain access"
    - **Day 2**: Increased urgency
      - Countdown timer in header: "48 hours until suspension"
      - Email reminder with one-click payment update
    - **Day 3**: Final warnings
      - Red banner: "Last day - service suspends at midnight"
      - Hourly email reminders
-     - Download modal: "Final downloads before suspension"
+     - Remix modal: "Final template access before suspension"
 4. During grace period features:
-   - All downloads continue working with warnings
+   - All template access continues working with warnings
    - Template requests allowed but deprioritized
    - Cannot purchase add-ons or upgrade plan
    - Payment retry button prominent everywhere
 5. Suspension (grace period expired):
    - Account state: Grace → Suspended
    - Access restrictions:
-     - Downloads blocked with "Payment required" modal
+     - Template access blocked with "Payment required" modal
      - Template requests disabled
      - Favorites read-only
      - Export data still allowed
@@ -342,7 +342,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
   - Email to affected users if >30 min
   - Auto-recovery when health checks pass
 
-### Download Failures
+### Template Access Failures
 
 - **Link expired (>15 min)**:
   - Modal: "Link expired - Generate new one?"
@@ -350,7 +350,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
   - After 1 hour: requires new quota check
 - **Network interruption**:
   - Auto-resume supported via Range headers
-  - Manual retry preserves download progress
+  - Manual retry preserves template access progress
   - After 3 failures: support ticket created
 - **Quota sync issues**:
   - Optimistic UI with reconciliation
@@ -379,14 +379,14 @@ This document maps end-to-end flows for the subscription-gated Framer template p
 - **Discovery**: `search_performed`, `filter_applied`, `template_viewed`, `preview_played`
 - **Conversion**: `auth_wall_shown`, `signup_started`, `signup_completed`, `email_verified`
 - **Monetization**: `pricing_viewed`, `plan_selected`, `checkout_started`, `checkout_completed`, `addon_purchased`
-- **Engagement**: `download_initiated`, `download_completed`, `download_failed`, `quota_exceeded`, `favorite_toggled`
+- **Engagement**: `remix_initiated`, `remix_completed`, `remix_failed`, `quota_exceeded`, `favorite_toggled`
 - **Retention**: `grace_period_entered`, `payment_recovered`, `plan_upgraded`, `plan_downgraded`
 - **Support**: `request_submitted`, `request_fulfilled`, `support_contacted`
 
 ### A/B Test Opportunities
 
 - Pricing page layout and messaging
-- Download limit presentation (daily vs monthly)
+- Template access limit presentation (daily vs monthly)
 - Grace period length and messaging urgency
 - Onboarding flow steps and survey
 - Template card information density
@@ -403,7 +403,7 @@ This document maps end-to-end flows for the subscription-gated Framer template p
   - Bottom sheet modals instead of center modals
   - Thumb-reachable action buttons
   - Simplified navigation with hamburger menu
-  - App download prompt for repeat visitors
+  - App install prompt for repeat visitors
 
 ### Accessibility Standards (WCAG 2.1 AA)
 

@@ -10,7 +10,7 @@ export interface Template {
   category: string
   tags: string[]
   creator: string
-  downloadCount: number
+  remixCount: number // TODO: rename from downloadCount in backend schema
   rating: number
   fileSize?: string
   createdAt?: string
@@ -26,7 +26,7 @@ export interface Plan {
   price: number
   yearlyPrice?: number
   features: string[]
-  dailyDownloads: number
+  dailyRemixes: number // TODO: rename from dailyDownloads in backend schema
   monthlyRequests: number
   isActive?: boolean
   isPopular?: boolean

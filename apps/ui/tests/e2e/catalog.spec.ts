@@ -77,10 +77,10 @@ test.describe("Template Catalog", () => {
 
     expect(isModalVisible || isDetailPageVisible).toBeTruthy()
 
-    // Check for download button
+    // Check for remix button
     await expect(
       page.locator(
-        'button:has-text("Download"), button:has-text("Get Template")'
+        'button:has-text("Remix"), button:has-text("Get Template")'
       )
     ).toBeVisible()
   })

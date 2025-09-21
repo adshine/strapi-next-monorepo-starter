@@ -20,7 +20,7 @@ import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { DownloadModal } from "@/components/ui/download-modal"
+import { RemixModal } from "@/components/ui/remix-modal"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -39,7 +39,7 @@ export default function TemplatesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedPlan, setSelectedPlan] = useState<string>("all")
   const [sortBy, setSortBy] = useState<SortOption>("popular")
-  const [downloadModalOpen, setDownloadModalOpen] = useState(false)
+  const [remixModalOpen, setRemixModalOpen] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
   const [templates, setTemplates] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
@@ -101,7 +101,7 @@ export default function TemplatesPage() {
             new Date(a.publishedAt).getTime()
           )
         case "popular":
-          return (b.downloadCount || 0) - (a.downloadCount || 0)
+          return (b.remixCount || 0) - (a.remixCount || 0) // TODO: rename from downloadCount in schema
         case "rating":
           return (b.rating || 0) - (a.rating || 0)
         case "name":
@@ -126,11 +126,11 @@ export default function TemplatesPage() {
     const userPlan = profile?.plan
     const canAccess = userPlan ? true : false // Simplified check
 
-    const handleDownload = (e: React.MouseEvent) => {
+    const handleRemix = (e: React.MouseEvent) => {
       e.stopPropagation()
       e.preventDefault()
       setSelectedTemplate(template)
-      setDownloadModalOpen(true)
+      setRemixModalOpen(true)
     }
 
     const handleFavorite = (e: React.MouseEvent) => {
@@ -139,9 +139,9 @@ export default function TemplatesPage() {
       alert(`Added "${template.title}" to favorites`)
     }
 
-    const handleDownloadModalClose = () => {
+    const handleRemixModalClose = () => {
       // eslint-disable-line @typescript-eslint/no-unused-vars
-      setDownloadModalOpen(false)
+      setRemixModalOpen(false)
       setSelectedTemplate(null)
     }
 
@@ -210,7 +210,7 @@ export default function TemplatesPage() {
                     <span>{template.rating}</span>
                   </div>
                   <span>
-                    {template.downloadCount.toLocaleString()} downloads
+                    {template.remixCount?.toLocaleString() || 0} remixes
                   </span>
                 </div>
               </div>
@@ -264,10 +264,10 @@ export default function TemplatesPage() {
                 : ""
             )}
             disabled={!canAccess && user !== null}
-            onClick={handleDownload}
+            onClick={handleRemix}
           >
             <Download className="mr-1 h-4 w-4" />
-            Download
+            Remix
           </Button>
         </div>
       </Card>
@@ -403,7 +403,7 @@ export default function TemplatesPage() {
             <div className="hidden items-center space-x-4 text-sm md:flex">
               <div className="flex items-center space-x-1 text-[var(--text-muted)]">
                 <Download className="h-4 w-4" />
-                <span>{user?.downloadsToday ?? 0} downloads today</span>
+                <span>{user?.remixesToday ?? 0} remixes today</span> {/* TODO: rename from downloadsToday in schema */}
               </div>
               <div className="flex items-center space-x-1 text-[var(--text-muted)]">
                 <Clock className="h-4 w-4" />
@@ -442,13 +442,13 @@ export default function TemplatesPage() {
         )}
       </div>
 
-      {/* Download Modal */}
+      {/* Remix Modal */}
       {selectedTemplate && (
-        <DownloadModal
+        <RemixModal
           template={selectedTemplate}
-          isOpen={downloadModalOpen}
+          isOpen={remixModalOpen}
           onClose={() => {
-            setDownloadModalOpen(false)
+            setRemixModalOpen(false)
             setSelectedTemplate(null)
           }}
         />

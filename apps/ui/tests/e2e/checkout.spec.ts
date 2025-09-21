@@ -21,8 +21,8 @@ test.describe("Checkout Flow", () => {
     )
     await expect(features.first()).toBeVisible()
 
-    // Check for download limits
-    await expect(page.locator("text=/downloads per month/i")).toBeVisible()
+    // Check for template limits
+    await expect(page.locator("text=/templates per month/i")).toBeVisible()
   })
 
   test("should initiate checkout for paid plan", async ({ page }) => {

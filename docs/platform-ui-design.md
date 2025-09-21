@@ -107,7 +107,7 @@ Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`,
 - Cards stack vertically with horizontal scroll for quick access; CTAs become full-width.
 - Dashboard collapses to single column; tabs convert to segmented control.
 - Pricing tiles use vertical layout with plan details in accordions.
-- Ensure download modal adapts to 100% width on mobile with sticky action bar.
+- Ensure remix modal adapts to 100% width on mobile with sticky action bar.
 
 ## 11. Support Visuals & Icons
 

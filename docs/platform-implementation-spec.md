@@ -168,6 +168,7 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
    - Generates signed R2 URL (15-minute expiry, allows Range headers for resume)
    - Increments counters, commits transaction
 4. Response includes:
+
    ```json
    {
      "link": "signed_url",
@@ -176,6 +177,7 @@ Supporting tables outside Strapi: `quota_snapshot` (daily counters), `audit_trai
      "accessId": "uuid"
    }
    ```
+
 5. Frontend behavior:
    - Auto-copies link to clipboard
    - Initiates template access via hidden iframe

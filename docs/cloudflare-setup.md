@@ -226,7 +226,7 @@ NEXT_PUBLIC_API_URL=https://api-dev.yourdomain.com
 ### 5.3 R2 Signed URLs in Worker
 
 ```typescript
-// Generate signed URL for template download
+// Generate signed URL for template remix access
 async function generateSignedUrl(
   bucket: R2Bucket,
   key: string,

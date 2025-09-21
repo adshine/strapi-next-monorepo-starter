@@ -11,7 +11,7 @@ import { plansAPI } from "@/lib/api/plans"
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
 import { useUserProfile } from "@/hooks/use-user-profile"
-import { DownloadModal } from "@/components/download-modal"
+import { RemixModal } from "@/components/ui/remix-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,7 +23,7 @@ export default function FavoritesPage() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedTemplate, setSelectedTemplate] = useState<Project | null>(null)
-  const [downloadModalOpen, setDownloadModalOpen] = useState(false)
+  const [remixModalOpen, setRemixModalOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -69,9 +69,9 @@ export default function FavoritesPage() {
     )
   }
 
-  const handleDownload = (template: Project) => {
+  const handleRemix = (template: Project) => {
     setSelectedTemplate(template)
-    setDownloadModalOpen(true)
+    setRemixModalOpen(true)
   }
 
   const handleRemoveFavorite = async (templateId: string) => {
@@ -179,7 +179,7 @@ export default function FavoritesPage() {
                       </span>
                     </div>
                     <span className="text-text-muted">
-                      {(template.downloadCount || 0).toLocaleString()} downloads
+                      {(template.remixCount || 0).toLocaleString()} remixes
                     </span>
                   </div>
 
@@ -218,11 +218,11 @@ export default function FavoritesPage() {
                     <Button
                       variant="default"
                       size="sm"
-                      onClick={() => handleDownload(template)}
+                      onClick={() => handleRemix(template)}
                       className="bg-accent-primary hover:bg-accent-primary/90"
                     >
                       <Download className="mr-1 h-4 w-4" />
-                      Download
+                      Remix
                     </Button>
                   </div>
                 </div>
@@ -232,12 +232,12 @@ export default function FavoritesPage() {
         })}
       </div>
 
-      {/* Download Modal */}
+      {/* Remix Modal */}
       {selectedTemplate && (
-        <DownloadModal
+        <RemixModal
           template={selectedTemplate}
-          isOpen={downloadModalOpen}
-          onClose={() => setDownloadModalOpen(false)}
+          isOpen={remixModalOpen}
+          onClose={() => setRemixModalOpen(false)}
         />
       )}
     </div>

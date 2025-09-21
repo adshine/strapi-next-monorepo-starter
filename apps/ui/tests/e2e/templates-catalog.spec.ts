@@ -163,7 +163,7 @@ test.describe("Templates Catalog", () => {
 
     // Check if modal opened or navigated to detail page
     const modalOpened = await page
-      .locator('[role="dialog"], .modal, .download-modal')
+      .locator('[role="dialog"], .modal, .remix-modal')
       .isVisible()
       .catch(() => false)
     const navigatedToDetail = page.url().includes("/template/")

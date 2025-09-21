@@ -1,4 +1,4 @@
-import { handleTemplateDownload } from "./handlers/download"
+import { handleTemplateRemix } from "./handlers/remix"
 import { handleHealthCheck } from "./handlers/health"
 import { proxyToStrapi } from "./handlers/proxy"
 import { createErrorResponse, createSuccessResponse, verifyJWT } from "./utils"
@@ -55,8 +55,8 @@ export default {
         }
       }
 
-      // Template download endpoint (requires auth)
-      if (path.startsWith("/download/")) {
+      // Template remix endpoint (requires auth)
+      if (path.startsWith("/remix/")) {
         const authHeader = request.headers.get("Authorization")
         if (!authHeader) {
           return createErrorResponse("Unauthorized", 401, corsHeaders)
@@ -69,7 +69,7 @@ export default {
           return createErrorResponse("Invalid token", 401, corsHeaders)
         }
 
-        return handleTemplateDownload(request, env, payload)
+        return handleTemplateRemix(request, env, payload)
       }
 
       // Proxy authenticated API requests to Strapi

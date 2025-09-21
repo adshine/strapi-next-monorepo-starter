@@ -16,7 +16,7 @@ const authPages = [
   "/dashboard/.*",
   "/account",
   "/account/.*",
-  "/download/.*",
+  "/remix/.*",
 ]
 
 const authMiddleware = withAuth(

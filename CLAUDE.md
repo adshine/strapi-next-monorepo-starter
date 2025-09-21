@@ -184,15 +184,15 @@ Follow the refreshed spec in `docs/platform-implementation-spec.md`. Recommended
    - Stand up Strapi v5 on managed hosting (Fly.io/Railway/Render) with managed PostgreSQL and file upload persistence.
    - Configure Cloudflare Pages for the UI, Cloudflare Worker gateway, R2 buckets (with backups), Stripe products/prices, and observability tooling.
 2. **Strapi schema & seeds**
-   - Create collection types (`Project`, `Plan`, `UserProfile`, `DownloadLog`, `TemplateRequest`, `SubscriptionEvent`) and supporting components for version history.
+   - Create collection types (`Project`, `Plan`, `UserProfile`, `TemplateAccessLog` /* TODO: rename from DownloadLog */, `TemplateRequest`, `SubscriptionEvent`) and supporting components for version history.
    - Seed plan data to match current pricing limits; add admin roles/permissions for audit logging.
 3. **Backend services**
-   - Implement Strapi services/controllers for `/me`, `/projects`, `/downloads`, `/template-requests`, quota reset cron, Stripe webhook + outbox processor, and R2 signed URL issuance with row-level locking.
+   - Implement Strapi services/controllers for `/me`, `/projects`, `/template-access` /* TODO: rename from /downloads */, `/template-requests`, quota reset cron, Stripe webhook + outbox processor, and R2 signed URL issuance with row-level locking.
    - Expose health checks and audit log appenders.
 4. **Edge worker**
    - Build Cloudflare Worker to validate sessions, enforce CSRF/rate limits, cache public catalogue responses, and proxy API calls to Strapi.
 5. **Next.js UI**
-   - Implement catalogue, pricing, project detail modal, download confirmation flow, account dashboard, and template request form using Shadcn (dark-first).
+   - Implement catalogue, pricing, project detail modal, remix confirmation flow, account dashboard, and template request form using Shadcn (dark-first).
    - Integrate NextAuth httpOnly sessions and quota badges; add error states and retry UX.
 6. **Payments & lifecycle**
    - Wire Stripe Checkout/Customer Portal flows, post-checkout polling, grace-period handling, and add-on purchase logic.

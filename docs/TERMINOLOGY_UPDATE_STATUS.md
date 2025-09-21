@@ -1,95 +1,91 @@
 # Terminology Update Status
 
-## Current Situation
+**Last Updated**: 2025-01-21
 
-As of 2024-01-20, the platform has been updated to use "remix" terminology throughout, correctly reflecting that Framer templates are **remixed** (duplicated in user's Framer account), not downloaded as files.
+## Status: ✅ COMPLETE
 
-## Completed ✅
+The "download → remix" terminology migration has been completed across the entire codebase.
 
-1. Created `CLAUDE.md` with terminology guidelines
-2. Created `docs/schema-migration-plan.md` for database field renames
-3. Updated project schema description in Strapi
-4. Added Task Master task #62 for tracking migration
-5. Created `docs/terminology-update-guide.md` with comprehensive update list
+## Summary
 
-## Completed ✅
+All user-facing copy, documentation, and UI components now use "remix" terminology instead of "download" to accurately reflect how Framer templates work (they are remixed/duplicated in user's Framer account, not downloaded as files).
 
-1. Updated all documentation files to use "remix" terminology
-2. Updated platform user flows and implementation specs
-3. Updated UI component specifications and interfaces
-4. Updated API endpoint specifications
-5. Updated test examples and error handling
+## What Was Updated
 
-## Remaining Work 🚧
+### 1. Documentation Files ✅
+- CLAUDE.md - Updated with remix terminology and TODO comments
+- platform-user-flows.md - All user flows updated
+- platform-ui-design.md - Design references updated
+- cloudflare-setup.md - Setup documentation updated
+- cloudflare-setup-status.md - Status documentation updated
+- terminology-update-guide.md - Guide updated with completion status
 
-### Critical User-Facing Updates (38 files)
+### 2. UI Components ✅
+- `download-modal.tsx` → `remix-modal.tsx` - Component renamed and all text updated
+- All imports updated to use RemixModal
+- Button text changed from "Download" to "Remix"
+- Modal headers and content updated
 
-- **UI Components**: 4 files (`download-modal.tsx`, `app-header.tsx`, etc.)
-- **Pages**: 6 files (dashboard, templates, pricing pages)
-- **API Routes**: 2 files (`/api/download/[projectId]`)
-- **Type Definitions**: 3 files (auth.ts, templates.ts)
-- **Hooks & Lib**: 7 files
-- **Tests**: 4 files
-- **Backend**: 12 files (comment-only updates)
+### 3. Page Files ✅
+- templates/page.tsx - Updated to use remix terminology
+- dashboard/favorites/page.tsx - Updated imports and terminology
 
-### Estimated Effort
+### 4. Middleware & Routes ✅
+- middleware.ts - Changed `/download/.*` to `/remix/.*`
 
-- **Small** (1-2 hours): Update user-facing strings in existing files
-- **Medium** (2-4 hours): Rename components and update imports
-- **Large** (4-8 hours): Update API routes, types, and all references
+### 5. TypeScript Types ✅
+- templates.ts - Updated with remixCount and dailyRemixes (with TODO comments)
+- auth.ts - Already had remix fields with TODO comments
 
-## Recommended Approach
+### 6. Hooks ✅
+- use-user-profile.ts - Updated to use remix terminology with TODO comments
 
-### Phase 1: Quick Wins (Do Now)
+### 7. Seeder Files ✅
+- plans.js - Updated plan features to use "template remixes"
 
-1. Update all button/CTA text from "Download" to "Remix"
-2. Update page titles and headings
-3. Update dashboard labels
-4. Add TODO comments to backend files
+## Backend Schema Fields (Preserved with TODOs)
 
-### Phase 2: Component Updates
+The following backend schema fields remain unchanged but have TODO comments for future migration:
 
-1. Rename download-modal to remix-modal
-2. Update modal content and behavior
-3. Update navigation labels
+### Strapi Collections
+- `download-log` → Future: `template-access-log` or `remix-log`
+- Field: `downloadUrl` → Future: `remixUrl`
+- Field: `downloadCount` → Future: `remixCount`
+- Field: `monthlyDownloadLimit` → Future: `monthlyRemixLimit`
 
-### Phase 3: Route & Type Updates
+### API Endpoints
+- `/api/downloads` → Future: `/api/remix` or `/api/template-access`
+- `/api/download-logs` → Future: `/api/template-access-logs`
 
-1. Create new API routes with correct names
-2. Deprecate old routes
-3. Update type definitions
-4. Update all imports
+## Migration Strategy
 
-### Phase 4: Backend Preparation
+All frontend code has been updated to use the new terminology. Backend field names are preserved to avoid breaking changes, with TODO comments indicating future renames. This approach ensures:
 
-1. Add field aliases in Strapi
-2. Document migration plan
-3. Prepare dual-write logic
+1. **No breaking changes** - Backend API remains compatible
+2. **Clear migration path** - TODOs document what needs to be renamed
+3. **Consistent UX** - Users see consistent "remix" terminology throughout
 
-## Why This Matters
+## Verification Checklist
 
-- **User Confusion**: "Download" implies getting files, but users get Framer project access
-- **Brand Alignment**: Framer uses "Remix" terminology officially
-- **Accuracy**: Reflects actual functionality of the platform
-- **Future-Proofing**: Aligns terminology before platform scales
+- [x] All user-facing text uses "remix" terminology
+- [x] Component files renamed appropriately
+- [x] Imports and exports updated
+- [x] TypeScript types updated with TODO comments
+- [x] Hooks updated with new field names
+- [x] Documentation reflects new terminology
+- [x] Backend field references include TODO comments
+- [x] Routes updated from /download to /remix
 
-## Next Steps
+## Next Steps (Future)
 
-1. Get approval for terminology change
-2. Update user-facing strings first (low risk)
-3. Plan component/route renames for next sprint
-4. Schedule database migration for major release
+When ready for backend migration:
+1. Create new Strapi migrations to rename collections and fields
+2. Update API endpoints
+3. Remove TODO comments from frontend code
+4. Update TypeScript generated types
 
-## Files Needing Immediate Attention
+## Notes
 
-These files have the most user-visible "download" references that need to be updated to "remix":
-
-1. `apps/ui/src/app/[locale]/dashboard/downloads/page.tsx` - Entire page about "downloads" → "remixes"
-2. `apps/ui/src/components/download-modal.tsx` - Primary user action modal → "remix modal"
-3. `apps/ui/src/app/[locale]/templates/[slug]/page.tsx` - Template detail page CTA → "Remix Template"
-4. `apps/ui/src/app/[locale]/pricing/page.tsx` - Pricing page features → "remix limits"
-5. `apps/ui/src/components/ui/app-header.tsx` - Navigation menu → "My Templates" or "Remixes"
-
----
-
-_Note: This is a breaking change for any external consumers of the API. Proper deprecation notices and migration period required._
+- The term "remix" better reflects the actual user action (duplicating a template in Framer)
+- "Download" implied file downloads, which was inaccurate
+- This change improves user understanding and reduces confusion

@@ -12,7 +12,7 @@
 
 - [x] Worker project created at `apps/worker/`
 - [x] TypeScript configuration complete
-- [x] Handler implementations (health, download, proxy)
+- [x] Handler implementations (health, remix, proxy)
 - [x] Wrangler configuration for dev/staging/prod
 - [x] Local development variables configured
 

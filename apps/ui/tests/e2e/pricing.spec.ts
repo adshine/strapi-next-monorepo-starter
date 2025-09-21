@@ -85,7 +85,7 @@ test.describe("Pricing Page", () => {
 
     // Verify specific features are mentioned
     await expect(
-      page.locator("text=/Download|Templates|Support/i")
+      page.locator("text=/Templates|Support/i")
     ).toBeVisible()
   })
 
