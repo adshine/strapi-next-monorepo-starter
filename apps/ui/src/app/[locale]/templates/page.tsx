@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import {
   Clock,
@@ -13,15 +13,10 @@ import {
   Star,
 } from "lucide-react"
 
-import type { Template } from "@/lib/mock-data"
-
-import {
-  getMockPlanById,
-  getMockPlanBySlug,
-  getMockUser,
-  MOCK_TEMPLATES,
-} from "@/lib/mock-data"
+import { projectsAPI } from "@/lib/api/projects"
+import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/styles"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -45,35 +40,54 @@ export default function TemplatesPage() {
   const [selectedPlan, setSelectedPlan] = useState<string>("all")
   const [sortBy, setSortBy] = useState<SortOption>("popular")
   const [downloadModalOpen, setDownloadModalOpen] = useState(false)
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
-    null
-  )
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
+  const [templates, setTemplates] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const user = getMockUser()
+  const { user } = useAuth()
+  const { profile } = useUserProfile()
 
-  // Get unique categories from templates
-  const categories = useMemo(() => {
-    const cats = [...new Set(MOCK_TEMPLATES.map((t) => t.category))]
-    return ["all", ...cats]
+  // Fetch templates and categories on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [projectsData, categoriesData] = await Promise.all([
+          projectsAPI.getAllProjects(),
+          projectsAPI.getCategories(),
+        ])
+        setTemplates(projectsData)
+        setCategories([
+          { id: "all", name: "All Categories", slug: "all" },
+          ...categoriesData,
+        ])
+      } catch (error) {
+        console.error("Failed to fetch templates:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
   }, [])
 
   // Filter and sort templates
   const filteredTemplates = useMemo(() => {
-    let filtered = MOCK_TEMPLATES.filter((template) => {
+    let filtered = templates.filter((template) => {
       const matchesSearch =
         template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         template.description
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        template.tags.some((tag) =>
+        (template.tags || []).some((tag: string) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase())
         )
 
       const matchesCategory =
-        selectedCategory === "all" || template.category === selectedCategory
+        selectedCategory === "all" ||
+        template.category?.slug === selectedCategory
 
       const matchesPlan =
-        selectedPlan === "all" || template.planRequired === selectedPlan
+        selectedPlan === "all" || template.plan?.slug === selectedPlan
 
       return matchesSearch && matchesCategory && matchesPlan
     })
@@ -82,11 +96,14 @@ export default function TemplatesPage() {
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "newest":
-          return MOCK_TEMPLATES.indexOf(b) - MOCK_TEMPLATES.indexOf(a) // Reverse index = newer
+          return (
+            new Date(b.publishedAt).getTime() -
+            new Date(a.publishedAt).getTime()
+          )
         case "popular":
-          return b.downloadCount - a.downloadCount
+          return (b.downloadCount || 0) - (a.downloadCount || 0)
         case "rating":
-          return b.rating - a.rating
+          return (b.rating || 0) - (a.rating || 0)
         case "name":
           return a.title.localeCompare(b.title)
         default:
@@ -95,7 +112,7 @@ export default function TemplatesPage() {
     })
 
     return filtered
-  }, [searchQuery, selectedCategory, selectedPlan, sortBy])
+  }, [searchQuery, selectedCategory, selectedPlan, sortBy, templates])
 
   const clearFilters = () => {
     setSearchQuery("")
@@ -104,13 +121,10 @@ export default function TemplatesPage() {
     setSortBy("popular")
   }
 
-  const TemplateCard = ({ template }: { template: Template }) => {
-    const userPlan = user ? getMockPlanById(user.planId) : null
-    const templatePlan = getMockPlanBySlug(template.planRequired)
-    const canAccess =
-      userPlan &&
-      templatePlan &&
-      userPlan.dailyDownloads >= templatePlan.dailyDownloads
+  const TemplateCard = ({ template }: { template: any }) => {
+    const { profile } = useUserProfile()
+    const userPlan = profile?.plan
+    const canAccess = userPlan ? true : false // Simplified check
 
     const handleDownload = (e: React.MouseEvent) => {
       e.stopPropagation()

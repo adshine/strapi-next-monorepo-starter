@@ -3,13 +3,14 @@
 import { useState } from "react"
 import { CheckCircle, Clock, FileText, PlusCircle } from "lucide-react"
 
+import { templateRequestsAPI } from "@/lib/api/template-requests"
 import { useAuth } from "@/lib/auth-context"
-import { getMockPlanById, saveMockRequest } from "@/lib/mock-data"
 import {
   ComposerProvider,
   TemplateRequestDraft,
   useComposerState,
 } from "@/hooks/use-composer"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Composer } from "@/components/composer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -24,34 +25,34 @@ function TemplateRequestComposer() {
   const handleSubmit = async (request: TemplateRequestDraft) => {
     if (!user) throw new Error("User not authenticated")
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Submit to real API
+      const createdRequest = await templateRequestsAPI.create({
+        title: request.title,
+        description: request.description,
+        category: request.category,
+        priority: request.priority,
+        budget: request.budget,
+        timeline: request.timeline,
+      })
 
-    // Save to mock data
-    const templateRequest = {
-      id: `request-${Date.now()}`,
-      title: request.title,
-      description: request.description,
-      category: request.category,
-      priority: request.priority,
-      budget: request.budget || "",
-      timeline: request.timeline || "",
-      submittedAt: new Date().toISOString(),
-      status: "pending" as const,
-      urgency: request.priority,
+      // Handle attachments if needed (would require file upload implementation)
+      if (request.attachments.length > 0) {
+        console.log("Attachments to upload:", request.attachments)
+        // TODO: Implement file upload to Strapi
+      }
+
+      // Show success message
+      alert(
+        `Template request submitted successfully! We'll start working on your "${createdRequest.title}" project.`
+      )
+
+      // Optionally refresh the page or redirect
+      window.location.reload()
+    } catch (error) {
+      console.error("Failed to submit template request:", error)
+      alert("Failed to submit template request. Please try again.")
     }
-
-    saveMockRequest(templateRequest)
-
-    // In a real app, you'd upload attachments to a server here
-    if (request.attachments.length > 0) {
-      console.log("Would upload attachments:", request.attachments)
-    }
-
-    // Show success message
-    alert(
-      `Template request submitted successfully! We'll start working on your "${request.title}" project.`
-    )
   }
 
   const composer = useComposerState(handleSubmit)
@@ -160,13 +161,10 @@ function TemplateRequestComposer() {
 
 // Empty state when no composer is open
 function EmptyState({ onCreate }: { onCreate: () => void }) {
-  const { user } = useAuth()
-  const userPlan = user ? getMockPlanById(user.planId) : null
-  const monthlyRequests = userPlan?.monthlyRequests || 1
+  const { profile } = useUserProfile()
+  const monthlyRequests = profile?.plan?.templateRequestLimit || 1
   const hasUnlimited = monthlyRequests === -1
-
-  // Get current month's requests (mock)
-  const thisMonthRequests = 0 // In real app, calculate from user data
+  const thisMonthRequests = profile?.templateRequestsUsed || 0
 
   return (
     <div className="py-12 text-center">
@@ -262,9 +260,6 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
 
 // Main page component
 export default function RequestsPage() {
-  // Import getMockPlanById here since we need it in the component
-  const { getMockPlanById } = require("@/lib/mock-data")
-
   return (
     <div className="space-y-8">
       <div className="text-center">

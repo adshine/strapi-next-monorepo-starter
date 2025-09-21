@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   ArrowRight,
   Check,
@@ -12,8 +13,9 @@ import {
   Users,
 } from "lucide-react"
 
+import { plansAPI } from "@/lib/api/plans"
 import { useAuth } from "@/lib/auth-context"
-import { MOCK_PLANS, Plan } from "@/lib/mock-data"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,34 +24,69 @@ import { Switch } from "@/components/ui/switch"
 
 type BillingPeriod = "month" | "year"
 
-// Mock add-on data
-const MOCK_ADD_ONS = [
-  {
-    id: "fast-turnaround",
-    name: "Fast Turnaround",
-    description: "Priority processing for template requests",
-    price: 19,
-    period: "month" as const,
-  },
-  {
-    id: "premium-support",
-    name: "Premium Support",
-    description: "Direct access to our design team",
-    price: 49,
-    period: "month" as const,
-  },
-]
-
 export default function PricingPage() {
+  const router = useRouter()
   const { user, showAuthModal } = useAuth()
+  const { profile } = useUserProfile()
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("month")
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+  const [plans, setPlans] = useState<any[]>([])
+  const [addOns, setAddOns] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Filter out free solo plan from main pricing display
-  const pricingPlans = MOCK_PLANS.filter((plan) => plan.slug !== "solo")
-  const currentPlan = user
-    ? MOCK_PLANS.find((plan) => plan.id === user.planId)
-    : null
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allPlans = await plansAPI.getAllPlans()
+        // Filter out free solo plan from main pricing display
+        setPlans(
+          allPlans.filter((plan: any) => plan.slug !== "solo" && plan.isActive)
+        )
+
+        // Fetch add-ons from plans API
+        const plansWithAddOns = allPlans.filter(
+          (plan: any) => plan.addOns && plan.addOns.length > 0
+        )
+        if (plansWithAddOns.length > 0) {
+          // Extract unique add-ons
+          const uniqueAddOns = new Map()
+          plansWithAddOns.forEach((plan: any) => {
+            plan.addOns?.forEach((addon: any) => {
+              if (!uniqueAddOns.has(addon.id)) {
+                uniqueAddOns.set(addon.id, addon)
+              }
+            })
+          })
+          setAddOns(Array.from(uniqueAddOns.values()))
+        } else {
+          // Default add-ons if none from API
+          setAddOns([
+            {
+              id: "fast-turnaround",
+              name: "Fast Turnaround",
+              description: "Priority processing for template requests",
+              price: 19,
+              period: "month",
+            },
+            {
+              id: "premium-support",
+              name: "Premium Support",
+              description: "Direct access to our design team",
+              price: 49,
+              period: "month",
+            },
+          ])
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const currentPlan = profile?.plan
 
   const calculateSavings = (monthlyPrice: number, yearlyPrice: number) => {
     if (billingPeriod === "month") return 0
@@ -67,35 +104,45 @@ export default function PricingPage() {
   }
 
   const getSelectedAddOnsTotal = () => {
-    return MOCK_ADD_ONS.filter((addon) =>
-      selectedAddOns.includes(addon.id)
-    ).reduce((total, addon) => total + addon.price, 0)
+    return addOns
+      .filter((addon: any) => selectedAddOns.includes(addon.id))
+      .reduce((total: number, addon: any) => total + addon.price, 0)
   }
 
-  const handleSelectPlan = (plan: Plan) => {
+  const handleSelectPlan = async (plan: any) => {
     if (!user) {
       showAuthModal("signup")
       return
     }
 
-    // In a real app, this would navigate to checkout
-    console.log(
-      "Selected plan:",
-      plan,
-      "Add-ons:",
-      selectedAddOns,
-      "Period:",
-      billingPeriod
-    )
+    try {
+      const response = await fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: plan.id,
+          billingCycle: billingPeriod,
+          addOns: selectedAddOns,
+        }),
+      })
+
+      const data = await response.json()
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error("Checkout error:", error)
+    }
   }
 
   const totalPrice = useMemo(() => {
-    const basePlanPrice = pricingPlans.find((p) => p.id === "3")?.price || 0 // Default to Pro
+    const basePlanPrice =
+      plans.find((p) => p.slug === "studio")?.monthlyPrice || 0 // Default to Studio
     const addOnsTotal = getSelectedAddOnsTotal()
     return billingPeriod === "year"
       ? (basePlanPrice + addOnsTotal) * 0.8
       : basePlanPrice + addOnsTotal
-  }, [billingPeriod, selectedAddOns])
+  }, [billingPeriod, selectedAddOns, plans])
 
   return (
     <div className="bg-primary min-h-screen">
@@ -141,124 +188,142 @@ export default function PricingPage() {
           </div>
 
           {/* Plans Grid */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12">
-            {pricingPlans.map((plan, index) => {
-              const isPopular = plan.slug === "studio"
-              const isCurrentPlan = currentPlan?.id === plan.id
-              const yearlyPrice = plan.price * 0.8
+          {loading ? (
+            <div className="py-12 text-center">
+              <div className="text-text-muted">Loading plans...</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12">
+              {plans.map((plan, index) => {
+                const isPopular = plan.slug === "studio"
+                const isCurrentPlan = currentPlan?.id === plan.id
+                const monthlyPrice = plan.monthlyPrice || 0
+                const yearlyPrice = plan.yearlyPrice || monthlyPrice * 12 * 0.8
 
-              return (
-                <Card
-                  key={plan.id}
-                  className={`bg-elevated border-border-neutral relative transition-all duration-300 hover:shadow-xl ${
-                    isCurrentPlan
-                      ? "ring-accent-primary border-accent-primary ring-2"
-                      : ""
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 transform">
-                      <Badge className="bg-accent-primary text-text-inverse px-4 py-1 text-sm font-semibold">
-                        <Star className="mr-1 h-3 w-3 fill-current" />
-                        Most Popular
-                      </Badge>
-                    </div>
-                  )}
-
-                  {isCurrentPlan && (
-                    <div className="absolute -top-4 right-4">
-                      <Badge
-                        variant="outline"
-                        className="bg-accent-success/20 border-accent-success text-accent-success"
-                      >
-                        Current Plan
-                      </Badge>
-                    </div>
-                  )}
-
-                  <CardHeader className="pb-4 text-center">
-                    <CardTitle className="text-text-primary mb-2 text-2xl font-bold">
-                      {plan.name}
-                    </CardTitle>
-                    <div className="mb-4 flex items-baseline justify-center gap-1">
-                      <span className="text-accent-primary text-4xl font-bold">
-                        ${billingPeriod === "year" ? yearlyPrice : plan.price}
-                      </span>
-                      <span className="text-text-muted">/{billingPeriod}</span>
-                    </div>
-                    {billingPeriod === "year" && (
-                      <div className="text-accent-success mb-4 text-sm">
-                        Save ${(plan.price * 12 - yearlyPrice * 12).toFixed(0)}{" "}
-                        annually
+                return (
+                  <Card
+                    key={plan.id}
+                    className={`bg-elevated border-border-neutral relative transition-all duration-300 hover:shadow-xl ${
+                      isCurrentPlan
+                        ? "ring-accent-primary border-accent-primary ring-2"
+                        : ""
+                    }`}
+                  >
+                    {isPopular && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 transform">
+                        <Badge className="bg-accent-primary text-text-inverse px-4 py-1 text-sm font-semibold">
+                          <Star className="mr-1 h-3 w-3 fill-current" />
+                          Most Popular
+                        </Badge>
                       </div>
                     )}
-                  </CardHeader>
 
-                  <CardContent className="space-y-6">
-                    {/* Features List */}
-                    <div className="space-y-3">
-                      {plan.features.map((feature, featureIndex) => (
-                        <div
-                          key={featureIndex}
-                          className="flex items-start gap-3"
+                    {isCurrentPlan && (
+                      <div className="absolute -top-4 right-4">
+                        <Badge
+                          variant="outline"
+                          className="bg-accent-success/20 border-accent-success text-accent-success"
                         >
-                          <Check className="text-accent-success mt-0.5 h-5 w-5 flex-shrink-0" />
-                          <span className="text-text-primary text-sm">
-                            {feature}
-                          </span>
-                        </div>
-                      ))}
+                          Current Plan
+                        </Badge>
+                      </div>
+                    )}
 
-                      {/* Additional metrics */}
-                      <Separator className="my-4" />
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="text-center">
-                          <div className="mb-1 flex items-center justify-center gap-2">
-                            <Download className="text-accent-primary h-4 w-4" />
-                            <span className="font-semibold">
-                              {plan.dailyDownloads === -1
-                                ? "∞"
-                                : plan.dailyDownloads}
-                            </span>
-                          </div>
-                          <div className="text-text-muted">Daily Downloads</div>
+                    <CardHeader className="pb-4 text-center">
+                      <CardTitle className="text-text-primary mb-2 text-2xl font-bold">
+                        {plan.name}
+                      </CardTitle>
+                      <div className="mb-4 flex items-baseline justify-center gap-1">
+                        <span className="text-accent-primary text-4xl font-bold">
+                          $
+                          {billingPeriod === "year"
+                            ? Math.round(yearlyPrice / 12)
+                            : monthlyPrice}
+                        </span>
+                        <span className="text-text-muted">
+                          /{billingPeriod === "year" ? "month" : "month"}
+                        </span>
+                      </div>
+                      {billingPeriod === "year" && (
+                        <div className="text-accent-success mb-4 text-sm">
+                          Save ${(monthlyPrice * 12 - yearlyPrice).toFixed(0)}{" "}
+                          annually
                         </div>
-                        <div className="text-center">
-                          <div className="mb-1 flex items-center justify-center gap-2">
-                            <MessageSquare className="text-accent-primary h-4 w-4" />
-                            <span className="font-semibold">
-                              {plan.monthlyRequests === -1
-                                ? "∞"
-                                : plan.monthlyRequests}
-                            </span>
+                      )}
+                    </CardHeader>
+
+                    <CardContent className="space-y-6">
+                      {/* Features List */}
+                      <div className="space-y-3">
+                        {(plan.features || []).map(
+                          (feature: string, featureIndex: number) => (
+                            <div
+                              key={featureIndex}
+                              className="flex items-start gap-3"
+                            >
+                              <Check className="text-accent-success mt-0.5 h-5 w-5 flex-shrink-0" />
+                              <span className="text-text-primary text-sm">
+                                {feature}
+                              </span>
+                            </div>
+                          )
+                        )}
+
+                        {/* Additional metrics */}
+                        <Separator className="my-4" />
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="text-center">
+                            <div className="mb-1 flex items-center justify-center gap-2">
+                              <Download className="text-accent-primary h-4 w-4" />
+                              <span className="font-semibold">
+                                {plan.dailyDownloadLimit === -1 ||
+                                plan.dailyDownloadLimit === 0
+                                  ? "∞"
+                                  : plan.dailyDownloadLimit}
+                              </span>
+                            </div>
+                            <div className="text-text-muted">
+                              Daily Downloads
+                            </div>
                           </div>
-                          <div className="text-text-muted">
-                            Monthly Requests
+                          <div className="text-center">
+                            <div className="mb-1 flex items-center justify-center gap-2">
+                              <MessageSquare className="text-accent-primary h-4 w-4" />
+                              <span className="font-semibold">
+                                {plan.templateRequestLimit === -1 ||
+                                plan.templateRequestLimit === 0
+                                  ? "∞"
+                                  : plan.templateRequestLimit}
+                              </span>
+                            </div>
+                            <div className="text-text-muted">
+                              Monthly Requests
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* CTA Button */}
-                    <Button
-                      onClick={() => handleSelectPlan(plan)}
-                      disabled={isCurrentPlan}
-                      className={`w-full ${
-                        isCurrentPlan
-                          ? "bg-subtle text-text-muted cursor-not-allowed"
-                          : "bg-accent-primary hover:bg-accent-primary/90 text-text-inverse"
-                      }`}
-                    >
-                      {isCurrentPlan ? "Current Plan" : `Choose ${plan.name}`}
-                      {!isCurrentPlan && (
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      )}
-                    </Button>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
+                      {/* CTA Button */}
+                      <Button
+                        onClick={() => handleSelectPlan(plan)}
+                        disabled={isCurrentPlan}
+                        className={`w-full ${
+                          isCurrentPlan
+                            ? "bg-subtle text-text-muted cursor-not-allowed"
+                            : "bg-accent-primary hover:bg-accent-primary/90 text-text-inverse"
+                        }`}
+                      >
+                        {isCurrentPlan ? "Current Plan" : `Choose ${plan.name}`}
+                        {!isCurrentPlan && (
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -275,7 +340,7 @@ export default function PricingPage() {
           </div>
 
           <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {MOCK_ADD_ONS.map((addOn) => (
+            {addOns.map((addOn: any) => (
               <Card
                 key={addOn.id}
                 className={`cursor-pointer border-2 transition-all duration-200 ${
@@ -345,7 +410,7 @@ export default function PricingPage() {
                   </div>
 
                   {selectedAddOns.map((addOnId) => {
-                    const addon = MOCK_ADD_ONS.find((a) => a.id === addOnId)!
+                    const addon = addOns.find((a: any) => a.id === addOnId)!
                     return (
                       <div
                         key={addOnId}

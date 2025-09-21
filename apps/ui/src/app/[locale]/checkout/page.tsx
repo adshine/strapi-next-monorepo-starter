@@ -14,8 +14,8 @@ import {
   Shield,
 } from "lucide-react"
 
+import { plansAPI } from "@/lib/api/plans"
 import { useAuth } from "@/lib/auth-context"
-import { MOCK_ADD_ONS, MOCK_PLANS } from "@/lib/mock-data"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -58,13 +58,12 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState<CheckoutStep>("review")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [selectedPlan, setSelectedPlan] = useState<any>(null)
 
   // Extract checkout parameters from URL
   const planId = searchParams.get("plan")
   const billing = searchParams.get("billing") as "month" | "year" | null
   const addOnsParam = searchParams.get("addons")
-
-  const selectedPlan = planId ? MOCK_PLANS.find((p) => p.id === planId) : null
   const selectedAddOns = addOnsParam ? addOnsParam.split(",") : []
 
   const [cardDetails, setCardDetails] = useState({
@@ -75,12 +74,24 @@ export default function CheckoutPage() {
     zip: "",
   })
 
-  // Redirect if no plan selected or user not authenticated
+  // Fetch plan details and redirect if needed
   useEffect(() => {
-    if (!selectedPlan || !user) {
-      router.push("/pricing")
+    const fetchPlan = async () => {
+      if (!planId || !user) {
+        router.push("/pricing")
+        return
+      }
+
+      try {
+        const plan = await plansAPI.getPlanById(planId)
+        setSelectedPlan(plan)
+      } catch (error) {
+        console.error("Failed to fetch plan:", error)
+        router.push("/pricing")
+      }
     }
-  }, [selectedPlan, user, router])
+    fetchPlan()
+  }, [planId, user, router])
 
   if (!selectedPlan || !user) {
     return null
@@ -90,22 +101,15 @@ export default function CheckoutPage() {
     {
       id: selectedPlan.id,
       name: `${selectedPlan.name} Plan`,
-      price: billing === "year" ? selectedPlan.price * 0.8 : selectedPlan.price,
+      price:
+        billing === "year"
+          ? (selectedPlan.yearlyPrice || selectedPlan.monthlyPrice * 12 * 0.8) /
+            12
+          : selectedPlan.monthlyPrice,
       period: billing || "month",
       type: "plan",
     },
-    ...selectedAddOns.map((addOnId) => {
-      const addOn = MOCK_ADD_ONS.find(
-        (a: (typeof MOCK_ADD_ONS)[0]) => a.id === addOnId
-      )!
-      return {
-        id: addOn.id,
-        name: addOn.name,
-        price: billing === "year" ? addOn.price * 0.8 : addOn.price,
-        period: billing || "month",
-        type: "addon" as const,
-      }
-    }),
+    // Add-ons would be fetched from Strapi too
   ]
 
   const subtotal = checkoutItems.reduce((sum, item) => sum + item.price, 0)
@@ -130,24 +134,24 @@ export default function CheckoutPage() {
     setCurrentStep("processing")
 
     try {
-      // Simulate payment processing
-      await processPayment(total * 100, cardDetails) // Convert to cents
+      // Create Stripe checkout session instead of mock payment
+      const response = await fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          billingCycle: billing || "month",
+          addOns: selectedAddOns,
+        }),
+      })
 
-      // Mock successful payment - update user plan
-      const updatedUser = {
-        ...user,
-        planId: selectedPlan.id,
-        // Reset quotas for new plan
-        downloadsToday: 0,
-        downloadsReset: new Date(
-          Date.now() + 24 * 60 * 60 * 1000
-        ).toISOString(),
-        requestsThisMonth: 0,
-        requestsReset: new Date(
-          new Date().getFullYear(),
-          new Date().getMonth() + 1,
-          1
-        ).toISOString(),
+      const data = await response.json()
+
+      if (data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url
+      } else {
+        throw new Error(data.message || "Failed to create checkout session")
       }
 
       // In a real app, this would be saved to backend/localStorage

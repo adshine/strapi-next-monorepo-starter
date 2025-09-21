@@ -9,7 +9,15 @@ import { routing } from "./lib/navigation"
 const intlMiddleware = createMiddleware(routing)
 
 // List all pages that require authentication (non-public)
-const authPages = ["/auth/change-password", "/auth/signout"]
+const authPages = [
+  "/auth/change-password",
+  "/auth/signout",
+  "/dashboard",
+  "/dashboard/.*",
+  "/account",
+  "/account/.*",
+  "/download/.*",
+]
 
 const authMiddleware = withAuth(
   // Note that this callback is only invoked if

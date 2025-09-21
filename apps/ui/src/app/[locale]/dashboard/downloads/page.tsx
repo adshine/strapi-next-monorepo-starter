@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   CheckCircle,
   Clock,
@@ -12,19 +12,70 @@ import {
   XCircle,
 } from "lucide-react"
 
+import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
-import { getMockDownloads, MOCK_TEMPLATES } from "@/lib/mock-data"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 type DownloadStatus = "completed" | "failed" | "pending"
 
+interface DownloadRecord {
+  id: string
+  templateId: string
+  status: DownloadStatus
+  downloadedAt: string
+  fileSize: string
+  expiresAt?: string
+}
+
 export default function DownloadsPage() {
   const { user } = useAuth()
+  const { profile } = useUserProfile()
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [downloads, setDownloads] = useState<DownloadRecord[]>([])
+  const [templates, setTemplates] = useState<Map<string, any>>(new Map())
+  const [loading, setLoading] = useState(true)
 
-  const downloads = getMockDownloads()
+  useEffect(() => {
+    const fetchDownloads = async () => {
+      try {
+        // Fetch download logs from API
+        const response = await fetch("/api/downloads")
+        if (response.ok) {
+          const downloadData = await response.json()
+          setDownloads(downloadData)
+
+          // Fetch template data for each download
+          const templateIds = [
+            ...new Set(downloadData.map((d: DownloadRecord) => d.templateId)),
+          ]
+          const templatePromises = templateIds.map((id) =>
+            projectsAPI.getProjectById(id).catch(() => null)
+          )
+          const templateData = await Promise.all(templatePromises)
+          const templateMap = new Map()
+          templateData.forEach((template, index) => {
+            if (template) {
+              templateMap.set(templateIds[index], template)
+            }
+          })
+          setTemplates(templateMap)
+        }
+      } catch (error) {
+        console.error("Failed to fetch downloads:", error)
+        // Use mock data as fallback
+        setDownloads([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchDownloads()
+    }
+  }, [user])
 
   if (!user) return null
 
@@ -146,9 +197,7 @@ export default function DownloadsPage() {
       {/* Downloads List */}
       <div className="space-y-4">
         {userDownloads.map((download) => {
-          const template = MOCK_TEMPLATES.find(
-            (t) => t.id === download.templateId
-          )
+          const template = templates.get(download.templateId)
           if (!template) return null
 
           return (

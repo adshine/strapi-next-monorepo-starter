@@ -48,7 +48,10 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
               }}
             />
           ) : (
-            <AppLink href="/" className="text-xl font-bold text-[var(--text-primary)]">
+            <AppLink
+              href="/"
+              className="text-xl font-bold text-[var(--text-primary)]"
+            >
               FramerTemplates
             </AppLink>
           )}

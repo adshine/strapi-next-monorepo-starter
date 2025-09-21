@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 
 import { useAuth } from "@/lib/auth-context"
-import { getMockPlanById, MOCK_PLANS } from "@/lib/mock-data"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,29 +18,43 @@ import { Progress } from "@/components/ui/progress"
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { profile, loading } = useUserProfile()
 
-  if (!user) return null
+  if (!user || loading) return <div className="p-8 text-center">Loading...</div>
+  if (!profile)
+    return <div className="p-8 text-center">Failed to load profile</div>
 
-  const userPlan = getMockPlanById(user.planId)
-  const isProOrAbove = userPlan && ["pro", "lifetime"].includes(userPlan.slug)
+  const userPlan = profile.plan
+  const isProOrAbove =
+    userPlan && ["studio", "agency", "lifetime"].includes(userPlan.slug)
 
   // Calculate quota usage
-  const dailyQuotaUsed = user.downloadsToday
+  const dailyQuotaUsed = profile.downloadsUsed || 0
   const dailyQuotaLimit =
-    userPlan?.dailyDownloads === -1 ? 100 : userPlan?.dailyDownloads || 0
+    userPlan?.dailyDownloadLimit === -1
+      ? 100
+      : userPlan?.dailyDownloadLimit || 0
   const dailyQuotaPercent =
     dailyQuotaLimit > 0 ? (dailyQuotaUsed / dailyQuotaLimit) * 100 : 0
 
-  const monthlyRequestsUsed = user.requestsThisMonth
+  const monthlyRequestsUsed = profile.templateRequestsUsed || 0
   const monthlyRequestsLimit =
-    userPlan?.monthlyRequests === -1 ? 100 : userPlan?.monthlyRequests || 0
+    userPlan?.templateRequestLimit === -1
+      ? 100
+      : userPlan?.templateRequestLimit || 0
   const monthlyRequestsPercent =
     monthlyRequestsLimit > 0
       ? (monthlyRequestsUsed / monthlyRequestsLimit) * 100
       : 0
 
-  const downloadsResetDate = new Date(user.downloadsReset)
-  const requestsResetDate = new Date(user.requestsReset)
+  const downloadsResetDate = profile.nextQuotaReset
+    ? new Date(profile.nextQuotaReset)
+    : new Date()
+  const requestsResetDate = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    1
+  )
 
   return (
     <div className="space-y-8">
@@ -49,7 +63,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-text-primary mb-2 text-3xl font-bold">
-              Welcome back, {user.name}!
+              Welcome back, {user.name || user.email}!
             </h1>
             <p className="text-text-muted mb-4">
               Here's an overview of your account and activity.
@@ -111,7 +125,7 @@ export default function DashboardPage() {
               <div>
                 <p className="text-text-muted text-sm">Favorites</p>
                 <p className="text-text-primary text-2xl font-bold">
-                  {user.favorites.length}
+                  {profile.favorites?.length || 0}
                 </p>
               </div>
             </div>
@@ -125,9 +139,11 @@ export default function DashboardPage() {
                 <TrendingUp className="text-accent-secondary h-6 w-6" />
               </div>
               <div>
-                <p className="text-text-muted text-sm">Plan Expires</p>
+                <p className="text-text-muted text-sm">Plan Status</p>
                 <p className="text-text-primary text-2xl font-bold">
-                  {userPlan?.slug === "lifetime" ? "Never" : "Next Bill"}
+                  {profile.subscriptionState === "active"
+                    ? "Active"
+                    : profile.subscriptionState}
                 </p>
               </div>
             </div>

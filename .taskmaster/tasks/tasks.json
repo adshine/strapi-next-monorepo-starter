@@ -1,0 +1,1292 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository",
+        "description": "Initialize monorepo with Next.js 15, Strapi v5, and shared configuration.",
+        "details": "Create a monorepo structure using pnpm or yarn workspaces. Scaffold Next.js 15 app and Strapi v5 backend. Add shared config and linting.",
+        "testStrategy": "Verify repo structure, run both apps locally, and check for lint errors.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Provision PostgreSQL Database",
+        "description": "Set up PostgreSQL instance for Strapi with secure credentials.",
+        "details": "Provision managed PostgreSQL (e.g., via Cloud SQL, RDS, or local Docker). Configure user, password, and database for Strapi. Store credentials securely.",
+        "testStrategy": "Connect to DB from Strapi, run migrations, and verify connectivity.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Configure Cloudflare Infrastructure",
+        "description": "Set up Cloudflare Workers, Pages, and R2 buckets for storage and edge compute.",
+        "details": "Create Cloudflare account, configure Workers for API gateway, Pages for static hosting, and R2 for template storage. Set up access keys and permissions.",
+        "testStrategy": "Deploy test worker, upload file to R2, and verify access from Pages.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create and Configure Cloudflare Account",
+            "description": "Set up a new Cloudflare account or access an existing one, and configure the necessary global account settings for the project.",
+            "dependencies": [],
+            "details": "Sign up for Cloudflare if not already done. Log into the Cloudflare dashboard and ensure account-level settings (such as billing, team access, and security) are configured. Retrieve your Account ID and set up API tokens with appropriate permissions for Workers, Pages, and R2. Document all credentials securely for later use.\n<info added on 2025-09-21T00:23:12.850Z>\nAdded comprehensive Cloudflare setup documentation at docs/cloudflare-setup.md, providing step-by-step instructions for account creation, API token generation with required permissions, and listing all necessary environment variables. Updated .env.example to include detailed Cloudflare configuration sections with explanatory comments for each value. Developed scripts/setup-cloudflare.sh to automate R2 bucket creation and configure CORS settings.\n</info added on 2025-09-21T00:23:12.850Z>",
+            "status": "done",
+            "testStrategy": "Verify account access, API token creation, and permissions by logging in and listing resources via the Cloudflare dashboard and API."
+          },
+          {
+            "id": 2,
+            "title": "Set Up Cloudflare Workers for API Gateway",
+            "description": "Deploy and configure Cloudflare Workers to serve as the API gateway, including authentication and routing logic.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Use the Cloudflare dashboard or Wrangler CLI to create a new Worker. Implement routing logic for API endpoints and integrate authentication (e.g., JWT validation or upstream provider integration). Assign the Worker to the appropriate routes and domains. Store any required secrets or environment variables using Cloudflare's secret management.\n<info added on 2025-09-21T00:23:46.236Z>\nCreated a complete Cloudflare Worker implementation in apps/worker/ with full TypeScript support, serving as an API gateway with integrated R2 storage, health check endpoints, JWT-based authentication, rate limiting, and proxy handlers for Strapi. Configured wrangler.toml for development, staging, and production environments, including R2 bucket bindings and environment-specific rate limiting. Implemented download endpoint handlers with signed URL generation, Strapi API proxying with appropriate CORS and caching headers.\n</info added on 2025-09-21T00:23:46.236Z>",
+            "status": "done",
+            "testStrategy": "Deploy a test Worker, send requests to API endpoints, and verify correct routing and authentication enforcement."
+          },
+          {
+            "id": 3,
+            "title": "Configure Cloudflare Pages for Static Hosting",
+            "description": "Set up Cloudflare Pages to host static frontend assets, connect to the repository, and configure build settings.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "In the Cloudflare dashboard, create a new Pages project and connect it to the desired Git repository. Configure build commands and output directory. Set environment variables as needed. Link the Pages deployment to the custom domain and configure any required redirects or headers.",
+            "status": "pending",
+            "testStrategy": "Deploy a sample static site, verify successful build and deployment, and confirm accessibility via the configured domain."
+          },
+          {
+            "id": 4,
+            "title": "Provision and Secure R2 Buckets for Storage",
+            "description": "Create R2 buckets for template and asset storage, configure access policies, and generate access keys.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "In the Cloudflare dashboard, navigate to R2 and create one or more buckets for storage needs. Set bucket permissions and generate access keys with least privilege. Configure CORS and bucket policies as required for integration with Workers and Pages. Store access keys securely.",
+            "status": "in-progress",
+            "testStrategy": "Upload a test file to the R2 bucket and verify access from both Workers and Pages using the configured keys and permissions."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Access Controls and Permissions Across Services",
+            "description": "Set up and validate access controls, environment variables, and permissions to ensure secure interoperability between Workers, Pages, and R2.",
+            "dependencies": [
+              "3.2",
+              "3.3",
+              "3.4"
+            ],
+            "details": "Configure environment variables and secrets in Workers and Pages for accessing R2 buckets. Ensure Workers have the correct permissions to read/write to R2 and that Pages can access public assets as needed. Review and enforce least-privilege access for all API tokens and keys. Document the configuration for future maintenance.",
+            "status": "pending",
+            "testStrategy": "Perform end-to-end tests: API requests via Workers should access R2, static assets should be served from Pages, and permissions should prevent unauthorized access. Attempt access with invalid credentials to confirm security."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Set Up Stripe Products and Webhooks",
+        "description": "Configure Stripe products, prices, and webhook endpoints for subscriptions and add-ons.",
+        "details": "Create Stripe products and pricing for plans and add-ons. Register webhook endpoints for subscription events. Store API keys securely.",
+        "testStrategy": "Trigger test events from Stripe dashboard and verify webhook receipt.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Stripe Product and Pricing Structure",
+            "description": "Identify all subscription plans and add-ons required for the business, and specify their pricing models (e.g., recurring, one-time, usage-based).",
+            "dependencies": [],
+            "details": "List all products and add-ons to be offered. For each, determine the billing interval, price, and any relevant metadata. Document these requirements for implementation in Stripe.",
+            "status": "pending",
+            "testStrategy": "Review the product and pricing specification with stakeholders to ensure completeness and accuracy."
+          },
+          {
+            "id": 2,
+            "title": "Create Stripe Products and Prices",
+            "description": "Set up the defined products and prices in the Stripe Dashboard or via the Stripe API, ensuring each plan and add-on is represented accurately.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Log in to the Stripe Dashboard and use the Products section to add each product. For each product, create one or more Price objects as needed (e.g., monthly, yearly, per-seat). Use the API for automation if required. Record the resulting product and price IDs for later use.[1][3]",
+            "status": "pending",
+            "testStrategy": "Verify that all products and prices appear correctly in the Stripe Dashboard and match the documented requirements."
+          },
+          {
+            "id": 3,
+            "title": "Register Webhook Endpoints in Stripe",
+            "description": "Configure webhook endpoints in the Stripe Dashboard to receive events related to subscriptions and add-ons.",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Navigate to the Developers > Webhooks section in the Stripe Dashboard. Add a new endpoint for your application's webhook handler URL. Select relevant event types (e.g., invoice.paid, customer.subscription.created, payment_intent.succeeded). Store the webhook signing secret securely.",
+            "status": "pending",
+            "testStrategy": "Send test webhook events from Stripe to the endpoint and confirm receipt and correct event types."
+          },
+          {
+            "id": 4,
+            "title": "Securely Store Stripe API Keys and Webhook Secrets",
+            "description": "Store all Stripe API keys and webhook signing secrets in a secure location, such as environment variables or a secrets manager.",
+            "dependencies": [
+              "4.2",
+              "4.3"
+            ],
+            "details": "Add the Stripe secret key, publishable key, and webhook signing secret to your application's environment configuration (e.g., .env files, cloud secrets manager). Ensure these values are not committed to version control. Update documentation to reflect where these secrets are stored.",
+            "status": "pending",
+            "testStrategy": "Attempt to access Stripe APIs and verify that secrets are loaded correctly and not exposed in logs or code repositories."
+          },
+          {
+            "id": 5,
+            "title": "Document Stripe Product and Webhook Configuration",
+            "description": "Document all created product and price IDs, webhook endpoint URLs, and secret storage locations for future reference and onboarding.",
+            "dependencies": [
+              "4.4"
+            ],
+            "details": "Create or update internal documentation to include a table of product and price IDs, webhook endpoint configuration, and instructions for managing Stripe secrets. Ensure this documentation is accessible to relevant team members.",
+            "status": "pending",
+            "testStrategy": "Have a team member follow the documentation to verify that all necessary information is present and accurate."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Configure Email Service Provider",
+        "description": "Integrate transactional email provider for authentication and notifications.",
+        "details": "Choose provider (e.g., SendGrid, Postmark). Set up API keys, sender domains, and templates for verification, reset, and notifications.",
+        "testStrategy": "Send test emails for verification and password reset flows.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Initialize Monitoring and Logging",
+        "description": "Set up monitoring and logging for backend, frontend, and edge workers.",
+        "details": "Integrate tools like Sentry, Datadog, or Logflare. Configure error tracking, performance monitoring, and log aggregation for all services.",
+        "testStrategy": "Trigger errors and verify they appear in dashboards. Check log ingestion.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create Strapi Collections",
+        "description": "Define Strapi v5 collections: Project, Plan, UserProfile, DownloadLog, TemplateRequest, SubscriptionEvent.",
+        "details": "Model entities in Strapi admin. Set up relations, validations, and permissions. Generate initial migrations.",
+        "testStrategy": "Create, read, update, and delete entries via Strapi admin and API.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Strapi v5 Project Environment",
+            "description": "Install and initialize a new Strapi v5 project, ensuring the development environment is ready for collection modeling.",
+            "dependencies": [],
+            "details": "Run `npx create-strapi-app@latest` and follow prompts to set up the project. Start the Strapi server and create the initial admin user. Confirm access to the Content-Type Builder in the admin panel.",
+            "status": "done",
+            "testStrategy": "Verify Strapi admin panel is accessible and functional."
+          },
+          {
+            "id": 2,
+            "title": "Define Project Collection Type",
+            "description": "Create the Project collection type with all required fields, relations, and validation rules.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "In Content-Type Builder, add a new collection type 'Project'. Define fields (e.g., name, description, owner, status). Set up relations to UserProfile and Plan as needed. Configure field validations (required, unique, etc.).",
+            "status": "done",
+            "testStrategy": "Create, update, and delete Project entries; verify relations and validations."
+          },
+          {
+            "id": 3,
+            "title": "Define Plan Collection Type",
+            "description": "Create the Plan collection type with fields, relations, and validation rules.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Add 'Plan' collection type. Define fields (e.g., name, price, features). Set up relations to Project and SubscriptionEvent. Apply validation rules for required fields and data types.",
+            "status": "done",
+            "testStrategy": "CRUD operations for Plan; check relation integrity and validation enforcement."
+          },
+          {
+            "id": 4,
+            "title": "Define UserProfile Collection Type",
+            "description": "Create the UserProfile collection type, including all necessary fields, relations, and validations.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Add 'UserProfile' collection type. Define fields (e.g., user reference, display name, avatar, bio). Relate to Project and DownloadLog. Set up validations for required and unique fields.",
+            "status": "done",
+            "testStrategy": "CRUD UserProfile entries; verify user linkage and validation."
+          },
+          {
+            "id": 5,
+            "title": "Define DownloadLog Collection Type",
+            "description": "Create the DownloadLog collection type with fields, relations, and validation rules.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Add 'DownloadLog' collection type. Define fields (e.g., file reference, timestamp, user reference). Relate to UserProfile and Project. Set up validations for required fields and correct data types.",
+            "status": "done",
+            "testStrategy": "Create and query DownloadLog entries; validate relations and field constraints."
+          },
+          {
+            "id": 6,
+            "title": "Define TemplateRequest Collection Type",
+            "description": "Create the TemplateRequest collection type with fields, relations, and validation rules.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Add 'TemplateRequest' collection type. Define fields (e.g., template name, description, requester reference, status). Relate to UserProfile. Apply validations for required fields and status values.",
+            "status": "done",
+            "testStrategy": "Submit and update TemplateRequest entries; verify requester linkage and status validation."
+          },
+          {
+            "id": 7,
+            "title": "Define SubscriptionEvent Collection Type",
+            "description": "Create the SubscriptionEvent collection type with fields, relations, and validation rules.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Add 'SubscriptionEvent' collection type. Define fields (e.g., event type, timestamp, plan reference, user reference). Relate to Plan and UserProfile. Set up validations for event type and required fields.",
+            "status": "done",
+            "testStrategy": "Create and query SubscriptionEvent entries; check relation and event type validation."
+          },
+          {
+            "id": 8,
+            "title": "Configure Permissions and Generate Initial Migrations",
+            "description": "Set up permissions for each collection type and generate initial database migrations.",
+            "dependencies": [
+              "7.2",
+              "7.3",
+              "7.4",
+              "7.5",
+              "7.6",
+              "7.7"
+            ],
+            "details": "In Strapi admin, configure public and authenticated permissions for each collection. Ensure only appropriate roles can access or modify data. Run migration generation to update the database schema.",
+            "status": "done",
+            "testStrategy": "Test API endpoints for each collection with different roles; verify permissions and schema changes."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Implement Authentication System",
+        "description": "Build authentication with email verification, password reset, and NextAuth.js integration.",
+        "details": "Configure NextAuth.js with httpOnly cookies. Implement email verification with 6-digit codes (10 min expiry), password reset with secure tokens, and 'remember me' sessions.",
+        "testStrategy": "Test registration, login, verification, reset, and session persistence flows.",
+        "priority": "high",
+        "dependencies": [
+          5,
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up NextAuth.js Core Configuration",
+            "description": "Install and configure NextAuth.js in the Next.js project, ensuring httpOnly cookies and secure session management.",
+            "dependencies": [],
+            "details": "Install NextAuth.js and its peer dependencies. Create the API route (e.g., /api/auth/[...nextauth].ts) and configure providers, session options (including httpOnly cookies), and callbacks. Ensure session persistence and security settings are correctly applied. Integrate with a database adapter if needed for user and session storage.",
+            "status": "pending",
+            "testStrategy": "Verify session creation, persistence, and httpOnly cookie settings using browser dev tools and API requests."
+          },
+          {
+            "id": 2,
+            "title": "Implement User Registration with Email Verification Trigger",
+            "description": "Develop the registration flow to create new users and initiate email verification by sending a 6-digit code with a 10-minute expiry.",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create a registration API endpoint and form. On successful registration, generate a random 6-digit code, store it with a 10-minute expiry, and send it to the user's email. Ensure the code is securely stored and associated with the user record.",
+            "status": "pending",
+            "testStrategy": "Register a new user and confirm that the verification code is sent and stored with correct expiry."
+          },
+          {
+            "id": 3,
+            "title": "Build Email Verification Logic",
+            "description": "Enable users to verify their email by submitting the 6-digit code, updating their verification status upon success.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Create an API endpoint and form for code submission. Validate the code against the stored value and expiry. On success, mark the user's email as verified and remove or invalidate the code. Handle error cases for expired or incorrect codes.",
+            "status": "pending",
+            "testStrategy": "Attempt verification with valid, expired, and incorrect codes; check user verification status updates accordingly."
+          },
+          {
+            "id": 4,
+            "title": "Implement Secure Login with 'Remember Me' Sessions",
+            "description": "Develop the login flow using NextAuth.js credentials provider, supporting 'remember me' for extended session duration.",
+            "dependencies": [
+              "8.1",
+              "8.3"
+            ],
+            "details": "Create a login form and API logic using NextAuth.js credentials provider. Add a 'remember me' option that adjusts session expiry (e.g., longer maxAge for persistent sessions). Ensure only verified users can log in. Configure session options to reflect 'remember me' selection.",
+            "status": "pending",
+            "testStrategy": "Test login with and without 'remember me', verify session duration and access restrictions for unverified users."
+          },
+          {
+            "id": 5,
+            "title": "Develop Password Reset Flow with Secure Tokens",
+            "description": "Allow users to request password resets, generating secure tokens and enabling password updates via a reset link.",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create an API endpoint for password reset requests. Generate a secure, time-limited token and email it to the user. Build a reset form and endpoint to validate the token and update the password. Ensure tokens are single-use and expire after a set time (e.g., 1 hour).",
+            "status": "pending",
+            "testStrategy": "Request password reset, verify token delivery and expiry, and confirm password update functionality."
+          },
+          {
+            "id": 6,
+            "title": "Protect Routes and APIs Using NextAuth.js Session Validation",
+            "description": "Enforce authentication and email verification on protected pages and API routes using NextAuth.js session validation.",
+            "dependencies": [
+              "8.1",
+              "8.3",
+              "8.4"
+            ],
+            "details": "Use NextAuth.js utilities (e.g., getServerSession) to check session and user verification status in server components and API routes. Redirect unauthenticated or unverified users as appropriate. Apply middleware for route protection where needed.",
+            "status": "pending",
+            "testStrategy": "Access protected routes and APIs with various session states; verify correct access control and redirection."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Build Quota Management System",
+        "description": "Implement plan-based monthly download quotas with row-level locking and atomic operations.",
+        "details": "Add quota fields to UserProfile and Plan. Use DB transactions and row-level locks to enforce limits. Reset quotas at UTC midnight monthly.",
+        "testStrategy": "Simulate concurrent downloads, verify correct quota enforcement and reset.",
+        "priority": "high",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Quota Data Model",
+            "description": "Define and implement database schema changes to support plan-based monthly download quotas, including fields for quota limits and usage in UserProfile and Plan tables.",
+            "dependencies": [],
+            "details": "Add integer fields for monthly quota limits and current usage to UserProfile and Plan models. Ensure schema supports atomic updates and row-level locking. Document schema changes and update relevant ORM models.",
+            "status": "pending",
+            "testStrategy": "Verify schema migration applies cleanly. Check that new fields are present and correctly typed in the database."
+          },
+          {
+            "id": 2,
+            "title": "Implement Quota Enforcement Logic",
+            "description": "Develop backend logic to check and enforce quota limits during download requests using database transactions and row-level locks.",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "On each download request, start a DB transaction, acquire a row-level lock on the user's quota record, check if the quota allows the download, and atomically increment usage if permitted. Return appropriate errors if quota is exceeded.",
+            "status": "pending",
+            "testStrategy": "Simulate concurrent download requests for a user. Confirm that quota is not exceeded and race conditions are prevented."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Plan-Based Quota Assignment",
+            "description": "Ensure that quota limits are assigned and updated based on the user's subscription plan, including handling plan changes and upgrades.",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "On plan assignment or change, update the user's quota limit field to match the new plan's quota. Handle edge cases such as downgrades, upgrades, and add-ons. Sync with subscription lifecycle events.",
+            "status": "pending",
+            "testStrategy": "Change user plans and verify quota limits update correctly. Test with various plan types and add-ons."
+          },
+          {
+            "id": 4,
+            "title": "Implement Monthly Quota Reset Job",
+            "description": "Create a scheduled job to reset all users' quota usage counters at UTC midnight on the first of each month.",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "Implement a cron or scheduled task that runs at UTC midnight, acquires row-level locks on affected records, and resets usage counters to zero. Ensure atomicity and log resets for audit purposes.",
+            "status": "pending",
+            "testStrategy": "Manually trigger the reset job and verify all usage counters are reset. Check logs for completeness and accuracy."
+          },
+          {
+            "id": 5,
+            "title": "Build Quota Usage Reporting and Monitoring",
+            "description": "Develop reporting endpoints and monitoring tools to track quota usage, enforcement actions, and reset events for users and plans.",
+            "dependencies": [
+              "9.2",
+              "9.4"
+            ],
+            "details": "Expose API endpoints for querying current quota usage and limits. Implement dashboards or logs for monitoring quota enforcement and reset activities. Alert on anomalies or failures.",
+            "status": "pending",
+            "testStrategy": "Query reporting endpoints and validate returned data. Review monitoring dashboards for accuracy and completeness."
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Develop Download System with R2 Signed URLs",
+        "description": "Enable secure template downloads with R2 signed URLs, single-use tokens, and retry logic.",
+        "details": "Generate signed URLs (15 min expiry) for downloads. Issue single-use tokens with hash verification. Allow up to 3 retries without quota charge. Log all attempts.",
+        "testStrategy": "Attempt downloads, verify URL expiry, token single-use, and retry behavior.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          7,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Integrate Stripe Webhook Handling",
+        "description": "Process Stripe webhooks for subscription lifecycle and add-on purchases with idempotency.",
+        "details": "Implement webhook endpoint in Strapi. Handle events for subscription creation, update, cancellation, payment failures, and add-on purchases. Ensure idempotency with event IDs.",
+        "testStrategy": "Send test webhooks from Stripe, verify DB updates and idempotency.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          7
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Stripe Webhook Endpoint in Strapi",
+            "description": "Create a secure HTTP(S) endpoint in Strapi to receive POST requests from Stripe webhooks.",
+            "dependencies": [],
+            "details": "Define a new route/controller in Strapi to handle incoming Stripe webhook POST requests. Ensure the endpoint is accessible via HTTPS in production. Configure the endpoint to accept raw request bodies for signature verification. Register the endpoint URL in the Stripe Dashboard or via API, subscribing to relevant event types.",
+            "status": "pending",
+            "testStrategy": "Send test webhook events from Stripe to the endpoint and verify receipt and basic response (HTTP 200)."
+          },
+          {
+            "id": 2,
+            "title": "Verify Stripe Webhook Signatures",
+            "description": "Implement signature verification to ensure webhook requests are authentic and originate from Stripe.",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Extract the 'Stripe-Signature' header from incoming requests. Use Stripe's SDK or cryptographic utilities to verify the payload against the endpoint secret. Reject requests with invalid signatures by returning HTTP 400. Store the endpoint secret securely in environment variables.",
+            "status": "pending",
+            "testStrategy": "Send both valid and tampered webhook payloads; confirm only valid requests are processed."
+          },
+          {
+            "id": 3,
+            "title": "Implement Idempotency Handling for Webhook Events",
+            "description": "Ensure each Stripe event is processed only once by tracking event IDs and preventing duplicate processing.",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Store processed Stripe event IDs in a persistent data store (e.g., database table). On receiving a webhook, check if the event ID has already been processed. If so, skip processing and return HTTP 200. Otherwise, proceed and record the event ID after successful handling.",
+            "status": "pending",
+            "testStrategy": "Send the same event multiple times and verify that business logic executes only once per unique event ID."
+          },
+          {
+            "id": 4,
+            "title": "Process Subscription Lifecycle and Add-on Events",
+            "description": "Implement logic to handle Stripe events for subscription creation, update, cancellation, payment failures, and add-on purchases.",
+            "dependencies": [
+              "11.3"
+            ],
+            "details": "Map Stripe event types (e.g., 'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted', 'invoice.payment_failed', custom add-on events) to handler functions. Update Strapi's database to reflect subscription status, user entitlements, and add-on purchases based on event data. Ensure atomic updates and error handling.",
+            "status": "pending",
+            "testStrategy": "Trigger each event type from Stripe's test mode and verify correct updates in the Strapi database."
+          },
+          {
+            "id": 5,
+            "title": "Comprehensive Testing and Error Handling",
+            "description": "Test the full webhook flow, including edge cases, and implement robust error handling and logging.",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Write integration tests to simulate Stripe webhook calls for all supported event types, including malformed payloads and duplicate events. Log all received events, errors, and processing outcomes. Ensure the endpoint always returns appropriate HTTP status codes and does not expose sensitive information in responses.",
+            "status": "pending",
+            "testStrategy": "Run automated and manual tests covering all event scenarios, error cases, and idempotency. Review logs for completeness and clarity."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Implement Subscription Lifecycle Management",
+        "description": "Manage user subscriptions, grace periods, and quota updates based on Stripe events.",
+        "details": "Update UserProfile and Plan on subscription changes. Handle grace periods for failed payments. Sync add-on purchases to quota.",
+        "testStrategy": "Simulate subscription changes, verify correct state and quota updates.",
+        "priority": "high",
+        "dependencies": [
+          9,
+          11
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Develop API Endpoints (Spec Contracts)",
+        "description": "Expose REST/GraphQL endpoints for all core entities and flows per API spec.",
+        "details": "Implement endpoints for template catalogue, user profile, download, subscription, and template requests. Enforce authentication and authorization.",
+        "testStrategy": "Write integration tests for all endpoints, validate against spec.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          8,
+          9,
+          10,
+          12
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define API Endpoint Specifications for Core Entities",
+            "description": "Draft detailed OpenAPI/GraphQL spec contracts for all required endpoints: template catalogue, user profile, download, subscription, and template requests.",
+            "dependencies": [],
+            "details": "Review business requirements and data models. For each entity and flow, specify endpoint paths, HTTP methods (for REST) or queries/mutations (for GraphQL), request/response schemas, status codes, and error formats. Ensure endpoints are resource-based, use plural nouns, and follow consistent naming conventions. Document authentication and authorization requirements per endpoint.",
+            "status": "pending",
+            "testStrategy": "Validate specs with stakeholders and run contract tests against mock servers."
+          },
+          {
+            "id": 2,
+            "title": "Implement Authentication and Authorization Middleware",
+            "description": "Develop and integrate middleware to enforce authentication (e.g., JWT, OAuth2) and role-based access control for all API endpoints.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Choose and configure authentication strategy (JWT or OAuth2). Implement middleware to validate tokens and extract user context. Define authorization rules for each endpoint based on user roles and permissions. Ensure all endpoints require authentication unless explicitly public.",
+            "status": "pending",
+            "testStrategy": "Write unit and integration tests for authentication flows, invalid tokens, and permission checks."
+          },
+          {
+            "id": 3,
+            "title": "Develop Template Catalogue Endpoints",
+            "description": "Implement REST/GraphQL endpoints for listing, searching, filtering, and retrieving template catalogue items as per the API spec.",
+            "dependencies": [
+              "13.1",
+              "13.2"
+            ],
+            "details": "Create controllers/resolvers for catalogue endpoints. Support query parameters for search, filter, and sort. Ensure endpoints return paginated results and conform to the defined response schema. Apply authentication and authorization middleware.",
+            "status": "pending",
+            "testStrategy": "Test all catalogue endpoints for correct data, pagination, filtering, and access control."
+          },
+          {
+            "id": 4,
+            "title": "Develop User Profile and Subscription Endpoints",
+            "description": "Implement endpoints for user profile management (view, update) and subscription flows (view status, update plan, cancel).",
+            "dependencies": [
+              "13.1",
+              "13.2"
+            ],
+            "details": "Build controllers/resolvers for user profile and subscription endpoints. Enforce that users can only access and modify their own data. Validate input and handle errors with appropriate status codes. Integrate with authentication middleware.",
+            "status": "pending",
+            "testStrategy": "Test profile and subscription endpoints for correct data access, updates, and error handling."
+          },
+          {
+            "id": 5,
+            "title": "Develop Download and Template Request Endpoints",
+            "description": "Implement endpoints for secure template downloads (with signed URLs, tokens) and for submitting/viewing template requests.",
+            "dependencies": [
+              "13.1",
+              "13.2"
+            ],
+            "details": "For downloads, generate signed URLs and single-use tokens, enforce expiry and retry logic. For template requests, implement create and list endpoints. Ensure all endpoints validate user permissions and log relevant actions.",
+            "status": "pending",
+            "testStrategy": "Test download flows for token validity, expiry, retries, and template request submission and retrieval."
+          },
+          {
+            "id": 6,
+            "title": "Write Integration Tests and Generate API Documentation",
+            "description": "Develop comprehensive integration tests for all endpoints and generate interactive API documentation (e.g., Swagger/OpenAPI or GraphQL Playground).",
+            "dependencies": [
+              "13.3",
+              "13.4",
+              "13.5"
+            ],
+            "details": "Write integration tests covering all endpoints, including authentication, authorization, error handling, and edge cases. Use tools like Swagger/OpenAPI or GraphQL Playground to generate and publish interactive API docs. Ensure documentation is accurate and up to date with implementation.",
+            "status": "pending",
+            "testStrategy": "Run automated test suites and manually verify API documentation for completeness and usability."
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Build Cloudflare Worker API Gateway",
+        "description": "Create edge worker to proxy, validate, and optimize API requests.",
+        "details": "Write Worker script to route requests, validate sessions, and optimize responses. Integrate with backend APIs and handle errors gracefully.",
+        "testStrategy": "Send requests through worker, verify routing, validation, and error handling.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Session Validation and CSRF Protection",
+        "description": "Add session validation and CSRF protection in Cloudflare Worker and backend APIs.",
+        "details": "Check httpOnly session cookies, validate user sessions, and implement CSRF tokens for state-changing requests.",
+        "testStrategy": "Attempt CSRF attacks, verify protection and session enforcement.",
+        "priority": "high",
+        "dependencies": [
+          8,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Add Rate Limiting per Route",
+        "description": "Implement per-route rate limiting in Cloudflare Worker with configurable thresholds.",
+        "details": "Use in-memory or KV store to track requests per IP/user. Enforce limits and return 429 on excess.",
+        "testStrategy": "Simulate high-frequency requests, verify rate limiting triggers correctly.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Create Caching Layer for Public Endpoints",
+        "description": "Cache public API responses at edge for performance.",
+        "details": "Configure Worker to cache GET responses for catalogue and pricing endpoints. Set cache headers and invalidation logic.",
+        "testStrategy": "Check cache hits/misses and response times for cached endpoints.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Configure Request Proxying and Response Optimization",
+        "description": "Optimize request/response handling in Worker for latency and payload size.",
+        "details": "Implement compression, header stripping, and selective proxying. Tune for <500ms p95 latency.",
+        "testStrategy": "Benchmark API response times and payload sizes via Worker.",
+        "priority": "medium",
+        "dependencies": [
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Build Template Catalogue UI",
+        "description": "Develop frontend catalogue with search, filters, and sorting.",
+        "details": "Use Next.js 15 and React to build catalogue page. Integrate with API for dynamic data. Implement search, filter, and sort UI components.",
+        "testStrategy": "Test UI interactions, verify correct API calls and results display.",
+        "priority": "high",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Create Pricing Page and Checkout Flow",
+        "description": "Implement pricing comparison and Stripe Checkout integration.",
+        "details": "Build pricing page with plan comparison. Integrate Stripe Checkout for new subscriptions. Handle success/cancel redirects.",
+        "testStrategy": "Test checkout flow end-to-end, verify Stripe session creation and redirects.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 21,
+        "title": "Develop Account Dashboard",
+        "description": "Build dashboard for users to view subscription, quota, and download history.",
+        "details": "Create dashboard page with subscription status, quota usage, and download logs. Fetch data from API.",
+        "testStrategy": "Login as user, verify dashboard displays accurate data.",
+        "priority": "high",
+        "dependencies": [
+          13,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 22,
+        "title": "Implement Authentication Pages",
+        "description": "Create login, register, email verify, and password reset pages with NextAuth.js.",
+        "details": "Build forms and flows for authentication. Integrate with backend for verification and reset. Support 'remember me' option.",
+        "testStrategy": "Test all auth flows, including edge cases and error handling.",
+        "priority": "high",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 23,
+        "title": "Build Download Modal with Quota Checking",
+        "description": "Implement download modal with quota validation and progress tracking.",
+        "details": "Show quota status, initiate download via API, display progress and errors. Handle retries and support ticket creation on failure.",
+        "testStrategy": "Attempt downloads with/without quota, verify UI and backend behavior.",
+        "priority": "high",
+        "dependencies": [
+          10,
+          21
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 24,
+        "title": "Create Template Request Submission and Tracking",
+        "description": "Allow users to submit and track template requests from frontend.",
+        "details": "Build submission form, integrate with API, and display request status/history in dashboard.",
+        "testStrategy": "Submit requests, verify backend entry and status updates.",
+        "priority": "medium",
+        "dependencies": [
+          13,
+          21
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 25,
+        "title": "Write Unit Tests for Strapi Services",
+        "description": "Achieve 80%+ coverage for Strapi business logic and services.",
+        "details": "Write Jest or similar unit tests for all custom services, controllers, and utilities in Strapi.",
+        "testStrategy": "Run coverage report, ensure >80% lines covered and all tests pass.",
+        "priority": "high",
+        "dependencies": [
+          7,
+          9,
+          10,
+          11,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 26,
+        "title": "Create Integration Tests for API Endpoints",
+        "description": "Test API endpoints for correctness and error handling.",
+        "details": "Write integration tests (e.g., with Supertest) for all REST/GraphQL endpoints, covering success and failure cases.",
+        "testStrategy": "Run tests, verify endpoints behave as expected under various scenarios.",
+        "priority": "high",
+        "dependencies": [
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 27,
+        "title": "Build E2E Tests for Critical User Paths",
+        "description": "Automate end-to-end tests for registration, subscription, download, and dashboard flows using Playwright.",
+        "details": "Write Playwright scripts for user journeys: sign up, subscribe, download, and manage account.",
+        "testStrategy": "Run E2E suite, verify all critical paths pass without regressions.",
+        "priority": "high",
+        "dependencies": [
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 28,
+        "title": "Perform Load Testing with Concurrent Users",
+        "description": "Test system under load to ensure performance requirements are met.",
+        "details": "Use tools like k6 or Artillery to simulate concurrent users on API and downloads. Monitor response times and error rates.",
+        "testStrategy": "Analyze metrics, ensure <500ms p95 latency and <1% error rate.",
+        "priority": "medium",
+        "dependencies": [
+          13,
+          14,
+          19
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 29,
+        "title": "Conduct Security Testing",
+        "description": "Test for vulnerabilities including auth, CSRF, rate limiting, and data leaks.",
+        "details": "Perform static analysis, penetration testing, and manual review. Validate CSRF, session, and quota enforcement.",
+        "testStrategy": "Document and remediate any vulnerabilities found. Retest after fixes.",
+        "priority": "high",
+        "dependencies": [
+          15,
+          16,
+          17,
+          18,
+          22
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 30,
+        "title": "Prepare Production Deployment and Compliance",
+        "description": "Configure environment, migrations, runbooks, monitoring alerts, backups, and legal compliance.",
+        "details": "Set production env vars, finalize DB migrations and seed data, write deployment docs, set up monitoring alerts and backup jobs, and publish Terms/Privacy/GDPR docs.",
+        "testStrategy": "Deploy to production, verify all systems operational, compliance docs accessible, and monitoring/alerts functional.",
+        "priority": "high",
+        "dependencies": [
+          6,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Initialize MCP Task Manager Project",
+        "description": "Set up the MCP Task Manager for project tracking and parse the PRD checklist into atomic tasks.",
+        "details": "Run `mcp__taskmaster-ai__initialize_project` in the project root. Parse the provided checklist using `mcp__taskmaster-ai__parse_prd` with the specified input and number of tasks. Confirm tasks are loaded and trackable.",
+        "testStrategy": "Verify MCP Task Manager initializes correctly and all parsed tasks are present and trackable via CLI.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 32,
+        "title": "Provision Required Accounts and Access",
+        "description": "Create and configure all necessary third-party accounts and access for Stripe, Cloudflare, PostgreSQL, email service, domain, GitHub, and monitoring.",
+        "details": "Register for Stripe, Cloudflare, Supabase/Neon/PlanetScale, SendGrid/Postmark, and Sentry/LogTail. Configure webhook access, R2 buckets, domain in Cloudflare, and set up GitHub repository.",
+        "testStrategy": "Attempt to access each service, verify credentials, and confirm webhook and API connectivity.",
+        "priority": "high",
+        "dependencies": [
+          31
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Local Development Environment Setup",
+        "description": "Prepare local development environment with required tools and configurations.",
+        "details": "Install Node.js 22.x, PostgreSQL, Stripe CLI, Cloudflare Wrangler CLI. Configure all environment variables as per documentation.",
+        "testStrategy": "Run local server, confirm all CLIs are operational, and environment variables are loaded without errors.",
+        "priority": "high",
+        "dependencies": [
+          32
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Provision PostgreSQL Database",
+        "description": "Set up PostgreSQL database for development and production environments.",
+        "details": "Create database instances for dev, staging, and prod. Configure access credentials and network rules.",
+        "testStrategy": "Connect to each database instance, run basic CRUD operations, and validate connectivity from backend.",
+        "priority": "high",
+        "dependencies": [
+          33
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Initialize Strapi v5 Project",
+        "description": "Create a new Strapi v5 project and configure database connection.",
+        "details": "Run Strapi initialization, connect to PostgreSQL, set up admin user, enable API tokens, configure CORS, and file upload provider.",
+        "testStrategy": "Access Strapi admin panel, verify API token generation, test file uploads, and check CORS headers.",
+        "priority": "high",
+        "dependencies": [
+          34
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 36,
+        "title": "Cloudflare R2 Buckets and Worker Setup",
+        "description": "Create R2 buckets for dev, staging, prod, and configure Cloudflare Worker project and routes.",
+        "details": "Create buckets, set CORS policies, initialize Worker project, set up /api/* routes, configure Pages for Next.js, custom domain, and SSL/TLS.",
+        "testStrategy": "Upload and retrieve files from each bucket, test Worker routes, verify SSL and custom domain setup.",
+        "priority": "high",
+        "dependencies": [
+          35
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Stripe Product and Webhook Configuration",
+        "description": "Set up Stripe products, prices, webhook endpoints, Customer Portal, tax settings, and test data.",
+        "details": "Create products/prices per stripe-setup.md, configure webhook endpoints, enable Customer Portal, set tax settings, document price IDs in .env.",
+        "testStrategy": "Trigger test webhook events, verify product and price creation, access Customer Portal, and confirm tax calculations.",
+        "priority": "high",
+        "dependencies": [
+          36
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Email Service Integration and Template Setup",
+        "description": "Configure email provider API, create and test all required email templates, and set up SPF/DKIM.",
+        "details": "Integrate SendGrid/Postmark, create templates for welcome, verification, password reset, payment events, receipt, and template request confirmation. Configure SPF/DKIM records.",
+        "testStrategy": "Send test emails for each template, verify delivery, and check SPF/DKIM status.",
+        "priority": "high",
+        "dependencies": [
+          37
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 39,
+        "title": "Create Strapi Collections",
+        "description": "Implement all required Strapi collections with specified fields, relations, and hooks.",
+        "details": "Use Strapi MCP to create Project, Plan, UserProfile, DownloadLog, TemplateRequest, SubscriptionEvent, and supporting collections. Configure media fields, slug generation, idempotency, and lifecycle hooks.",
+        "testStrategy": "Create, update, and query each collection via API and admin panel. Validate relations and hooks.",
+        "priority": "high",
+        "dependencies": [
+          35
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 40,
+        "title": "Implement Authentication System",
+        "description": "Develop registration, login, email verification, password reset endpoints, and NextAuth integration.",
+        "details": "Implement endpoints for registration (email validation, password strength, verification email), login (credential validation, session, remember me), email verification (6-digit code, expiry, retry), password reset (token, secure flow, auto-login), and NextAuth configuration.",
+        "testStrategy": "Test all auth flows via API and UI, including edge cases for expiry, retries, and session handling.",
+        "priority": "high",
+        "dependencies": [
+          39
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 41,
+        "title": "Quota Management Service",
+        "description": "Build quota checking, reset job, and retry mechanism for user actions.",
+        "details": "Implement service for quota checks with row-level locking, atomic increments, transactions. Create scheduled quota reset job with timezone grouping, batch processing, and audit logging. Build retry mechanism for failed actions.",
+        "testStrategy": "Simulate quota usage, resets, and retries. Validate atomicity and audit logs.",
+        "priority": "high",
+        "dependencies": [
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 42,
+        "title": "Download System Implementation",
+        "description": "Develop download initiation, R2 signed URLs, completion tracking, and failure handling.",
+        "details": "Implement download initiation with quota validation, state machine, lock acquisition. Generate R2 signed URLs (15-min expiry, single-use tokens, hash storage). Track completion in DownloadLog, send analytics, and handle failures with retries and support ticket creation.",
+        "testStrategy": "Test download flow, URL expiry, single-use enforcement, completion tracking, and failure scenarios.",
+        "priority": "high",
+        "dependencies": [
+          41,
+          36
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 43,
+        "title": "Stripe Integration and Event Handling",
+        "description": "Implement Stripe checkout session, webhook handler, subscription event processing, Customer Portal, and grace period logic.",
+        "details": "Create checkout session endpoint (price validation, metadata, URLs), webhook handler (signature, idempotency, queue), process subscription events, implement Customer Portal session, and build grace period logic with state transitions and notifications.",
+        "testStrategy": "Simulate payment flows, webhook events, subscription changes, and verify state transitions and notifications.",
+        "priority": "high",
+        "dependencies": [
+          37,
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 44,
+        "title": "Edge Worker Routing and Middleware",
+        "description": "Configure Cloudflare Worker routing, environment variables, request proxying, and security middleware.",
+        "details": "Set up routing rules, environment variables, request proxying, CORS headers. Implement session validation, CSRF protection, rate limiting per route, IP blocking, and request sanitization.",
+        "testStrategy": "Test all routes for correct proxying, security enforcement, rate limits, and CORS headers.",
+        "priority": "high",
+        "dependencies": [
+          36,
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 45,
+        "title": "Caching Layer and Performance Optimization",
+        "description": "Implement caching for public endpoints, user sessions, cache invalidation, stale-while-revalidate, and performance features.",
+        "details": "Cache /api/projects (5 min), /api/plans (1 hr), /api/projects/:slug (5 min), user session (20s). Implement cache invalidation, stale-while-revalidate, response compression, edge-side includes, request coalescing, error response caching.",
+        "testStrategy": "Test cache hits/misses, TTLs, invalidation, compression, and performance under load.",
+        "priority": "medium",
+        "dependencies": [
+          44
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 46,
+        "title": "Frontend Core Pages Development",
+        "description": "Build landing page, template catalogue, template detail, pricing page, and account dashboard with all specified features.",
+        "details": "Use Next.js and Framer for UI. Implement hero, feature grid, pricing preview, catalogue grid/list, search, filters, sort, detail gallery/video, plan requirements, download button, pricing cards, feature comparison, FAQ, dashboard widgets.",
+        "testStrategy": "Manual and automated UI tests for layout, navigation, feature completeness, and responsiveness.",
+        "priority": "high",
+        "dependencies": [
+          45
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 47,
+        "title": "Authentication Pages Implementation",
+        "description": "Develop login, registration, email verification, and password reset pages with all required UI and validation.",
+        "details": "Implement forms for login (email/password, remember me, forgot password), registration (validation, password strength, terms), email verification (code input, resend, redirect), password reset (token validation, new password, auto-login).",
+        "testStrategy": "Test all authentication flows via UI and API, including edge cases and error handling.",
+        "priority": "high",
+        "dependencies": [
+          46,
+          40
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 48,
+        "title": "Account Management Features",
+        "description": "Build billing section, downloads history, template requests, and settings page with all specified features.",
+        "details": "Implement billing (plan display, upgrade/downgrade, payment history, portal), downloads history (list, status, retry, filters, CSV export), template requests (form, status, comments), settings (profile, timezone, theme, notifications).",
+        "testStrategy": "Test all account management features for correctness, UI/UX, and integration with backend.",
+        "priority": "medium",
+        "dependencies": [
+          47,
+          43
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 49,
+        "title": "Reusable UI Components Development",
+        "description": "Create template card, download modal, subscription banner, search component, and quota indicator with all interactive states.",
+        "details": "Develop components with hover previews, quota badges, favorite toggles, loading/error states, confirmation/progress indicators, state colors, action buttons, countdowns, debounced input, suggestions, recent searches, visual progress, reset timer, upgrade prompt.",
+        "testStrategy": "Unit and integration tests for component behavior, state transitions, and accessibility.",
+        "priority": "medium",
+        "dependencies": [
+          46
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 50,
+        "title": "Accessibility and Mobile Optimization",
+        "description": "Ensure keyboard navigation, ARIA labels, focus management, skip links, color contrast, reduced motion, responsive layouts, touch targets, bottom sheets, gestures, PWA manifest, and service worker.",
+        "details": "Audit UI for accessibility (WCAG 2.1 AA), implement ARIA, focus, skip links, color contrast (4.5:1), reduced motion. Optimize for mobile: responsive layouts, 44px touch targets, bottom sheets, gestures, PWA manifest, service worker.",
+        "testStrategy": "Accessibility testing with screen readers, keyboard, Lighthouse; mobile testing on multiple devices and browsers.",
+        "priority": "high",
+        "dependencies": [
+          46,
+          49
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 51,
+        "title": "Unit Testing Implementation",
+        "description": "Develop unit tests for Strapi services, React components, and Worker functions to achieve 80% coverage.",
+        "details": "Write tests for quota calculations, state transitions, download logic, user interactions, error/loading states, caching, rate limiting, security checks using Jest and React Testing Library.",
+        "testStrategy": "Run coverage reports, ensure 80%+ coverage, and validate test pass/fail for all units.",
+        "priority": "high",
+        "dependencies": [
+          39,
+          46,
+          44
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 52,
+        "title": "Integration Testing Implementation",
+        "description": "Build integration tests for API endpoints, database operations, and Stripe webhooks.",
+        "details": "Test auth, download, payment flows; database transactions, lock handling, race conditions; Stripe event processing, idempotency, retries using Supertest and Stripe CLI.",
+        "testStrategy": "Automated integration test suite with pass/fail criteria for all flows and edge cases.",
+        "priority": "high",
+        "dependencies": [
+          51
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 53,
+        "title": "End-to-End Testing (Playwright)",
+        "description": "Implement E2E tests for critical user paths, error scenarios, and cross-browser compatibility.",
+        "details": "Use Playwright to automate visitor signup, purchase, login, browse, download, payment failure/recovery, template request flow, network failures, quota exceeded, session expiry, payment declined across Chrome, Safari, Firefox, Edge.",
+        "testStrategy": "Run E2E suite, validate all critical paths and error scenarios across supported browsers.",
+        "priority": "high",
+        "dependencies": [
+          52
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 54,
+        "title": "Performance Testing and Optimization",
+        "description": "Conduct load testing, Lighthouse audits, bundle analysis, and API response time measurements.",
+        "details": "Use k6 for load tests (100 concurrent users, download stress, DB locks), Lighthouse for performance (>90), accessibility (>95), SEO (>90), analyze bundle size, and measure API response times.",
+        "testStrategy": "Review test reports, optimize as needed, and confirm benchmarks are met.",
+        "priority": "medium",
+        "dependencies": [
+          53
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 55,
+        "title": "Security Testing and Hardening",
+        "description": "Perform security tests for authentication bypass, SQL injection, XSS, CSRF, rate limits, and session hijacking.",
+        "details": "Automate tests for vulnerabilities using OWASP ZAP, manual checks for bypasses, validate CSRF tokens, rate limit enforcement, and session security.",
+        "testStrategy": "Review security test results, remediate findings, and confirm no critical vulnerabilities.",
+        "priority": "high",
+        "dependencies": [
+          54
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 56,
+        "title": "Production Environment Setup",
+        "description": "Prepare production environment with environment variables, database migrations, seed data, SSL, CDN, and monitoring alerts.",
+        "details": "Configure production .env, run DB migrations, seed data, set up SSL certificates, CDN cache rules, and monitoring alerts.",
+        "testStrategy": "Deploy to production, verify all configurations, run smoke tests, and check monitoring alerts.",
+        "priority": "high",
+        "dependencies": [
+          55
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 57,
+        "title": "Documentation and Guides",
+        "description": "Write API documentation, admin guide, support playbook, deployment runbook, and incident response plan.",
+        "details": "Document all APIs (OpenAPI/Swagger), write admin and support guides, deployment steps, and incident response procedures.",
+        "testStrategy": "Review documentation for completeness, clarity, and accuracy. Validate guides with new team members.",
+        "priority": "medium",
+        "dependencies": [
+          56
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 58,
+        "title": "Legal and Compliance Preparation",
+        "description": "Draft and publish Terms of Service, Privacy Policy, Cookie Policy, GDPR compliance, and Refund Policy.",
+        "details": "Work with legal counsel to prepare documents, ensure GDPR compliance, and publish policies on site.",
+        "testStrategy": "Legal review and compliance audit. Confirm documents are accessible and up to date.",
+        "priority": "medium",
+        "dependencies": [
+          57
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 59,
+        "title": "Launch Preparation and Execution",
+        "description": "Finalize DNS switchover, rollback procedure, launch communication, support team briefing, analytics, and backup verification.",
+        "details": "Plan DNS cutover, document rollback steps, prepare launch comms, brief support, configure analytics, verify backups.",
+        "testStrategy": "Run launch checklist, simulate rollback, confirm analytics and backup status.",
+        "priority": "high",
+        "dependencies": [
+          58
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 60,
+        "title": "Post-Launch Monitoring and Optimization",
+        "description": "Monitor error rates, response times, uptime, conversion tracking, and optimize queries, cache, bundles, and images.",
+        "details": "Set up dashboards for error rates (<1%), response times (<500ms p95), uptime (>99.9%), conversion tracking. Optimize queries, cache, bundle splitting, and images.",
+        "testStrategy": "Continuous monitoring, periodic optimization, and review of metrics against success criteria.",
+        "priority": "medium",
+        "dependencies": [
+          59
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 61,
+        "title": "Feature Enhancements and User Feedback",
+        "description": "Implement A/B testing, feature flags, user feedback collection, and roadmap prioritization.",
+        "details": "Set up A/B testing framework, feature flag system, feedback forms, and process for roadmap updates.",
+        "testStrategy": "Test A/B and feature flag toggles, collect and review user feedback, update roadmap accordingly.",
+        "priority": "medium",
+        "dependencies": [
+          60
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-20T01:11:59.758Z",
+      "updated": "2025-09-21T00:39:18.280Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

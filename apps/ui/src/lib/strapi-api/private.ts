@@ -10,6 +10,56 @@ import {
 } from "@/lib/strapi-api/request-auth"
 
 export class PrivateClient extends BaseStrapiClient {
+  /**
+   * GET request wrapper
+   */
+  public async get(path: string, params?: any, options?: CustomFetchOptions) {
+    return this.fetchAPI(path, params, { method: "GET" }, options)
+  }
+
+  /**
+   * POST request wrapper
+   */
+  public async post(
+    path: string,
+    body?: any,
+    params?: any,
+    options?: CustomFetchOptions
+  ) {
+    const requestInit: RequestInit = {
+      method: "POST",
+      body: body ? JSON.stringify(body) : undefined,
+    }
+    return this.fetchAPI(path, params || {}, requestInit, options)
+  }
+
+  /**
+   * PUT request wrapper
+   */
+  public async put(
+    path: string,
+    body?: any,
+    params?: any,
+    options?: CustomFetchOptions
+  ) {
+    const requestInit: RequestInit = {
+      method: "PUT",
+      body: body ? JSON.stringify(body) : undefined,
+    }
+    return this.fetchAPI(path, params || {}, requestInit, options)
+  }
+
+  /**
+   * DELETE request wrapper
+   */
+  public async delete(
+    path: string,
+    params?: any,
+    options?: CustomFetchOptions
+  ) {
+    return this.fetchAPI(path, params, { method: "DELETE" }, options)
+  }
+
   protected async prepareRequest(
     path: string,
     params: object,

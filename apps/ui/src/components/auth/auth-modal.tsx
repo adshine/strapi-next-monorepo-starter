@@ -16,13 +16,8 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Mail, Lock, User, CheckCircle } from "lucide-react"
 
-import {
-  saveMockUser,
-  getMockUser,
-  updateMockUser,
-  MOCK_USERS,
-  type User,
-} from "@/lib/mock-data"
+import { useAuth } from "@/lib/auth-context"
+import type { User } from "@/types/auth"
 
 type AuthMode = "login" | "signup" | "forgot-password"
 
@@ -92,15 +87,19 @@ export function AuthModal({
     setError("")
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Use real authentication API
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: formData.email,
+          password: formData.password,
+        }),
+      })
 
-      const existingUser = getMockUser()
-      const baseUser: User = existingUser ?? {
-        ...MOCK_USERS[0],
-        id: Date.now().toString(),
+      if (!response.ok) {
+        throw new Error("Authentication failed")
       }
-      const nextUser: User = { ...baseUser, email: formData.email }
-      updateMockUser(nextUser)
 
       onAuthSuccess?.()
       onClose()
@@ -147,14 +146,28 @@ export function AuthModal({
     setError("")
 
     try {
-      // Simulate signup API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Use real signup API
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          username: formData.email,
+          password: formData.password,
+          name: formData.name,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.message || "Registration failed")
+      }
 
       // Send verification email
       setVerificationSent(true)
       setLoading(false)
-    } catch (err) {
-      setError("Something went wrong. Please try again.")
+    } catch (err: any) {
+      setError(err.message || "Something went wrong. Please try again.")
       setLoading(false)
     }
   }
@@ -169,29 +182,19 @@ export function AuthModal({
     setError("")
 
     try {
-      // Simulate verification API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Use real verification API
+      const response = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          code: verificationCode,
+        }),
+      })
 
-      // Create new user account
-      const newUser = {
-        id: Date.now().toString(),
-        email: formData.email,
-        name: formData.name!,
-        planId: "1", // Solo plan by default
-        downloadsToday: 0,
-        downloadsReset: new Date(
-          Date.now() + 24 * 60 * 60 * 1000
-        ).toISOString(),
-        requestsThisMonth: 0,
-        requestsReset: new Date(
-          new Date().getFullYear(),
-          new Date().getMonth() + 1,
-          1
-        ).toISOString(),
-        favorites: [],
+      if (!response.ok) {
+        throw new Error("Invalid verification code")
       }
-
-      saveMockUser(newUser)
 
       onAuthSuccess?.()
       onClose()

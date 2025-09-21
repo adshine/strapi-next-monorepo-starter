@@ -1,0 +1,99 @@
+{
+  "kind": "collectionType",
+  "collectionName": "download_logs",
+  "info": {
+    "singularName": "download-log",
+    "pluralName": "download-logs",
+    "displayName": "DownloadLog",
+    "description": "Track all template download attempts and completions"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project"
+    },
+    "downloadId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "success", "failed", "expired"],
+      "default": "pending",
+      "required": true
+    },
+    "initiatedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "completedAt": {
+      "type": "datetime"
+    },
+    "expiresAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "signedUrl": {
+      "type": "text"
+    },
+    "signedUrlHash": {
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "datetime"
+    },
+    "ipAddress": {
+      "type": "string"
+    },
+    "userAgent": {
+      "type": "text"
+    },
+    "sourceIp": {
+      "type": "string"
+    },
+    "attemptNumber": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "max": 3
+    },
+    "retryOf": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::download-log.download-log"
+    },
+    "quotaCharged": {
+      "type": "boolean",
+      "default": false
+    },
+    "errorReason": {
+      "type": "text"
+    },
+    "errorCode": {
+      "type": "string"
+    },
+    "supportTicketId": {
+      "type": "string"
+    },
+    "downloadDuration": {
+      "type": "integer"
+    },
+    "fileSize": {
+      "type": "biginteger"
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

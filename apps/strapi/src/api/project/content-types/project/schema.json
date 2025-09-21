@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Project",
+    "description": "Template projects available for download"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "summary": {
+      "type": "text"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "featuredImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images", "videos"]
+    },
+    "videoPreviewUrl": {
+      "type": "string"
+    },
+    "downloadUrl": {
+      "type": "string",
+      "required": true
+    },
+    "fileSize": {
+      "type": "biginteger"
+    },
+    "version": {
+      "type": "string"
+    },
+    "compatibility": {
+      "type": "json"
+    },
+    "requiredPlan": {
+      "type": "enumeration",
+      "enum": ["free", "starter", "professional", "enterprise"],
+      "default": "free",
+      "required": true
+    },
+    "tags": {
+      "type": "json"
+    },
+    "downloadCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "sortOrder": {
+      "type": "integer"
+    },
+    "favoritedBy": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::user-profile.user-profile",
+      "inversedBy": "favorites"
+    }
+  }
+}

@@ -18,6 +18,12 @@ export const API_ENDPOINTS: { [key in UID.ContentType]?: string } = {
   "api::footer.footer": "/footer",
   "api::navbar.navbar": "/navbar",
   "api::subscriber.subscriber": "/subscribers",
+  "api::plan.plan": "/plans",
+  "api::user-profile.user-profile": "/user-profiles",
+  "api::project.project": "/projects",
+  "api::download-log.download-log": "/download-logs",
+  "api::template-request.template-request": "/template-requests",
+  "api::subscription-event.subscription-event": "/subscription-events",
 } as const
 
 export default abstract class BaseStrapiClient {
@@ -44,7 +50,7 @@ export default abstract class BaseStrapiClient {
       next: {
         ...requestInit?.next,
         // if revalidate is set to a number since 0 implies cache: 'no-store' and a positive value implies cache: 'force-cache'.
-        revalidate: isDevelopment() ? 0 : requestInit?.next?.revalidate ?? 60,
+        revalidate: isDevelopment() ? 0 : (requestInit?.next?.revalidate ?? 60),
       },
       headers: {
         ...requestInit?.headers,

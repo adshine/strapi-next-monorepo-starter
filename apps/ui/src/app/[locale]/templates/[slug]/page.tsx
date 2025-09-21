@@ -5,12 +5,13 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, Download, Heart, Share2, Star, Users } from "lucide-react"
 
+import { plansAPI } from "@/lib/api/plans"
+import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
-import { getMockPlanBySlug, MOCK_TEMPLATES, Template } from "@/lib/mock-data"
+import { DownloadModal } from "@/components/download-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { DownloadModal } from "@/components/ui/download-modal"
 
 interface TemplatePageProps {
   params: {
@@ -19,30 +20,78 @@ interface TemplatePageProps {
   }
 }
 
-function getTemplateBySlug(slug: string): Template | undefined {
-  return MOCK_TEMPLATES.find((template) => template.slug === slug)
-}
-
 export default function TemplatePage({ params }: TemplatePageProps) {
   const resolvedParams = use(params)
-  const template = getTemplateBySlug(resolvedParams.slug)
-
-  if (!template) {
-    notFound()
-  }
-
   const { user, showAuthModal } = useAuth()
-  const requiredPlan = getMockPlanBySlug(template.planRequired)
+  const [template, setTemplate] = useState<any>(null)
+  const [requiredPlan, setRequiredPlan] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
+  const [relatedTemplates, setRelatedTemplates] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchTemplateData = async () => {
+      try {
+        // Fetch template by slug
+        const templates = await projectsAPI.searchProjects(resolvedParams.slug)
+        const foundTemplate = templates.find(
+          (t: any) => t.slug === resolvedParams.slug
+        )
+
+        if (!foundTemplate) {
+          // Try fetching by ID if slug doesn't work
+          const allTemplates = await projectsAPI.getAllProjects()
+          const templateBySlug = allTemplates.find(
+            (t: any) => t.slug === resolvedParams.slug
+          )
+
+          if (!templateBySlug) {
+            notFound()
+            return
+          }
+
+          setTemplate(templateBySlug)
+        } else {
+          setTemplate(foundTemplate)
+        }
+
+        // Fetch plan data
+        if (foundTemplate?.planId) {
+          const plans = await plansAPI.getAllPlans()
+          const plan = plans.find((p: any) => p.id === foundTemplate.planId)
+          setRequiredPlan(plan)
+        }
+
+        // Fetch related templates
+        if (foundTemplate?.category) {
+          const related = await projectsAPI.getAllProjects({
+            filters: {
+              category: foundTemplate.category,
+              id: { $ne: foundTemplate.id },
+            },
+            pagination: { pageSize: 4 },
+          })
+          setRelatedTemplates(related)
+        }
+      } catch (error) {
+        console.error("Failed to fetch template:", error)
+        notFound()
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTemplateData()
+  }, [resolvedParams.slug])
 
   const galleryImages = useMemo(() => {
+    if (!template) return []
     if (template.previewImages && template.previewImages.length > 0) {
       return template.previewImages
     }
-
     return [template.thumbnailUrl]
-  }, [template.previewImages, template.thumbnailUrl])
+  }, [template])
 
   const shouldAutoShowRecommendations = galleryImages.length <= 1
   const [showRecommendations, setShowRecommendations] = useState(
@@ -50,25 +99,15 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   )
   const lastImageRef = useRef<HTMLImageElement | null>(null)
 
-  const relatedTemplates = useMemo(() => {
-    // First try to get templates from the same category
-    let related = MOCK_TEMPLATES.filter(
-      (item) => item.id !== template.id && item.category === template.category
-    ).slice(0, 4)
-
-    // If no templates in same category, get any other templates
-    if (related.length === 0) {
-      related = MOCK_TEMPLATES.filter(
-        (item) => item.id !== template.id
-      ).slice(0, 4)
-    }
-
-    console.log("Related templates found:", related.length, "for category:", template.category)
-    return related
-  }, [template.id, template.category])
+  // Related templates are now fetched in useEffect
 
   useEffect(() => {
-    console.log("Gallery images:", galleryImages.length, "Auto show:", shouldAutoShowRecommendations)
+    console.log(
+      "Gallery images:",
+      galleryImages.length,
+      "Auto show:",
+      shouldAutoShowRecommendations
+    )
 
     if (shouldAutoShowRecommendations) {
       setShowRecommendations(true)
@@ -84,7 +123,12 @@ export default function TemplatePage({ params }: TemplatePageProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          console.log("Intersection:", entry.isIntersecting, "Target:", entry.target)
+          console.log(
+            "Intersection:",
+            entry.isIntersecting,
+            "Target:",
+            entry.target
+          )
           if (entry.isIntersecting) {
             setShowRecommendations(true)
             console.log("Showing recommendations via intersection")
@@ -151,7 +195,11 @@ export default function TemplatePage({ params }: TemplatePageProps) {
               {galleryImages.map((src, index) => (
                 <img
                   key={src + index}
-                  ref={index === galleryImages.length - 1 ? lastImageRef : undefined}
+                  ref={
+                    index === galleryImages.length - 1
+                      ? lastImageRef
+                      : undefined
+                  }
                   src={src}
                   alt={`${template.title} preview ${index + 1}`}
                   className="w-full rounded-2xl border border-[var(--border-neutral)] object-cover"
@@ -330,8 +378,8 @@ export default function TemplatePage({ params }: TemplatePageProps) {
           <section
             className={`py-16 transition-all duration-500 ${
               showRecommendations
-                ? "opacity-100 translate-y-0"
-                : "pointer-events-none opacity-0 translate-y-6"
+                ? "translate-y-0 opacity-100"
+                : "pointer-events-none translate-y-6 opacity-0"
             }`}
             aria-live="polite"
             data-show={showRecommendations}

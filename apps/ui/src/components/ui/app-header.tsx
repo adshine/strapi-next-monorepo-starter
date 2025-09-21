@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation"
 import { Download, Heart, Menu, User, X } from "lucide-react"
 
 import { useAuth } from "@/lib/auth-context"
-import { getMockPlanById } from "@/lib/mock-data"
 import { cn } from "@/lib/styles"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Button } from "@/components/ui/button"
 
 export function AppHeader() {
@@ -19,7 +19,8 @@ export function AppHeader() {
     showAuthModal("signup")
   }
 
-  const userPlan = user ? getMockPlanById(user.planId) : null
+  const { profile } = useUserProfile()
+  const userPlan = profile?.plan
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-[var(--bg-primary)]/90 backdrop-blur-md">

@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscription_events",
+  "info": {
+    "singularName": "subscription-event",
+    "pluralName": "subscription-events",
+    "displayName": "SubscriptionEvent",
+    "description": "Track all subscription lifecycle events from Stripe"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "stripeEventId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "stripeCustomerId": {
+      "type": "string",
+      "required": true
+    },
+    "stripeSubscriptionId": {
+      "type": "string"
+    },
+    "eventType": {
+      "type": "string",
+      "required": true
+    },
+    "payload": {
+      "type": "json",
+      "required": true
+    },
+    "receivedAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "processedAt": {
+      "type": "datetime"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "processed", "failed", "ignored"],
+      "default": "pending",
+      "required": true
+    },
+    "errorMessage": {
+      "type": "text"
+    },
+    "retryCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "unique": true
+    },
+    "signature": {
+      "type": "string"
+    },
+    "webhookId": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

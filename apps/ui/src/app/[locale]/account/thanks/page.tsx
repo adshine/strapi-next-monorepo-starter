@@ -14,8 +14,9 @@ import {
   Users,
 } from "lucide-react"
 
+import { plansAPI } from "@/lib/api/plans"
 import { useAuth } from "@/lib/auth-context"
-import { MOCK_ADD_ONS, MOCK_PLANS } from "@/lib/mock-data"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -67,19 +68,25 @@ export default function ThanksPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
+  const { profile, loading } = useUserProfile()
 
   const [showConfetti, setShowConfetti] = useState(true)
+  const [purchasedPlan, setPurchasedPlan] = useState<any>(null)
 
   // Extract success parameters
-  const planSlug = searchParams.get("plan")
+  const sessionId = searchParams.get("session_id")
+  const planId = searchParams.get("plan")
   const billing = searchParams.get("billing") as "month" | "year" | null
-  const addOnsParam = searchParams.get("addons")
   const amount = searchParams.get("amount")
 
-  const purchasedPlan = planSlug
-    ? MOCK_PLANS.find((plan) => plan.slug === planSlug)
-    : null
-  const purchasedAddOns = addOnsParam ? addOnsParam.split(",") : []
+  // Fetch plan details
+  useEffect(() => {
+    if (profile?.plan) {
+      setPurchasedPlan(profile.plan)
+    } else if (planId) {
+      plansAPI.getPlanById(planId).then(setPurchasedPlan)
+    }
+  }, [profile, planId])
 
   // Auto-hide confetti after animation
   useEffect(() => {
@@ -87,7 +94,15 @@ export default function ThanksPage() {
     return () => clearTimeout(timer)
   }, [])
 
-  if (!user || !purchasedPlan) {
+  if (!user || loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-text-muted">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!purchasedPlan && !loading) {
     router.push("/pricing")
     return null
   }
@@ -175,9 +190,10 @@ export default function ThanksPage() {
                   <Download className="text-accent-primary h-6 w-6" />
                 </div>
                 <div className="text-text-primary mb-2 text-3xl font-bold">
-                  {purchasedPlan.dailyDownloads === -1
+                  {purchasedPlan?.dailyDownloadLimit === -1 ||
+                  purchasedPlan?.dailyDownloadLimit === 0
                     ? "∞"
-                    : purchasedPlan.dailyDownloads}
+                    : purchasedPlan?.dailyDownloadLimit || 0}
                 </div>
                 <div className="text-text-muted mb-4">Daily Downloads</div>
                 <Badge
@@ -196,9 +212,10 @@ export default function ThanksPage() {
                   <Star className="text-accent-primary h-6 w-6" />
                 </div>
                 <div className="text-text-primary mb-2 text-3xl font-bold">
-                  {purchasedPlan.monthlyRequests === -1
+                  {purchasedPlan?.templateRequestLimit === -1 ||
+                  purchasedPlan?.templateRequestLimit === 0
                     ? "∞"
-                    : purchasedPlan.monthlyRequests}
+                    : purchasedPlan?.templateRequestLimit || 0}
                 </div>
                 <div className="text-text-muted mb-4">Monthly Requests</div>
                 <Badge
@@ -217,11 +234,11 @@ export default function ThanksPage() {
                   <Users className="text-accent-primary h-6 w-6" />
                 </div>
                 <div className="text-text-primary mb-2 text-xl font-bold">
-                  {purchasedPlan.prioritySupport ? "Priority" : "Community"}{" "}
+                  {purchasedPlan?.hasPrioritySupport ? "Priority" : "Community"}{" "}
                   Support
                 </div>
                 <div className="text-text-muted mb-4">
-                  {purchasedPlan.prioritySupport
+                  {purchasedPlan?.hasPrioritySupport
                     ? "Direct access to our team"
                     : "Community forum access"}
                 </div>
@@ -237,15 +254,19 @@ export default function ThanksPage() {
 
           {/* Features List */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {purchasedPlan.features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-primary border-border-neutral flex items-center gap-3 rounded-lg border p-4"
-              >
-                <CheckCircle className="text-accent-success h-5 w-5 flex-shrink-0" />
-                <span className="text-text-primary font-medium">{feature}</span>
-              </div>
-            ))}
+            {(purchasedPlan?.features || []).map(
+              (feature: string, index: number) => (
+                <div
+                  key={index}
+                  className="bg-primary border-border-neutral flex items-center gap-3 rounded-lg border p-4"
+                >
+                  <CheckCircle className="text-accent-success h-5 w-5 flex-shrink-0" />
+                  <span className="text-text-primary font-medium">
+                    {feature}
+                  </span>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -320,27 +341,7 @@ export default function ThanksPage() {
                 </div>
               </div>
 
-              {purchasedAddOns.length > 0 && (
-                <div className="border-border-neutral border-t pt-4">
-                  <div className="text-text-muted mb-2 text-sm">
-                    Add-ons included:
-                  </div>
-                  {purchasedAddOns.map((addOnId) => {
-                    const addOn = MOCK_ADD_ONS.find((a) => a.id === addOnId)
-                    return addOn ? (
-                      <div
-                        key={addOnId}
-                        className="flex items-center justify-between py-2"
-                      >
-                        <span className="text-text-primary">{addOn.name}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          Included
-                        </Badge>
-                      </div>
-                    ) : null
-                  })}
-                </div>
-              )}
+              {/* Add-ons would be displayed here if implemented */}
 
               <div className="border-border-neutral border-t pt-4">
                 <div className="text-text-muted flex items-center gap-2 text-sm">

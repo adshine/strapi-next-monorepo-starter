@@ -1,0 +1,89 @@
+{
+  "kind": "collectionType",
+  "collectionName": "template_requests",
+  "info": {
+    "singularName": "template-request",
+    "pluralName": "template-requests",
+    "displayName": "TemplateRequest",
+    "description": "User requests for new templates"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "requester": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "assignee": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "string"
+    },
+    "referenceLinks": {
+      "type": "json"
+    },
+    "attachments": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos"]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["new", "reviewing", "in_progress", "ready", "delivered"],
+      "default": "new",
+      "required": true
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": ["standard", "priority", "rush"],
+      "default": "standard"
+    },
+    "submittedAt": {
+      "type": "datetime"
+    },
+    "estimatedDelivery": {
+      "type": "datetime"
+    },
+    "actualDelivery": {
+      "type": "datetime"
+    },
+    "responseNotes": {
+      "type": "text"
+    },
+    "lastUpdatedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "slaHours": {
+      "type": "integer"
+    },
+    "isLate": {
+      "type": "boolean",
+      "default": false
+    },
+    "metadata": {
+      "type": "json"
+    }
+  }
+}

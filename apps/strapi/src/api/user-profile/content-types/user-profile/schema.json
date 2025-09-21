@@ -1,0 +1,160 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_profiles",
+  "info": {
+    "singularName": "user-profile",
+    "pluralName": "user-profiles",
+    "displayName": "UserProfile",
+    "description": "Extended user profile with subscription and quota information"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "text"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "stripeCustomerId": {
+      "type": "string",
+      "unique": true
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::plan.plan"
+    },
+    "planExpiresAt": {
+      "type": "datetime"
+    },
+    "dailyDownloadsUsed": {
+      "type": "integer",
+      "default": 0
+    },
+    "dailyResetAt": {
+      "type": "datetime"
+    },
+    "templateRequestsUsed": {
+      "type": "integer",
+      "default": 0
+    },
+    "subscriptionState": {
+      "type": "enumeration",
+      "enum": ["active", "trial", "past_due", "grace", "suspended", "canceled"],
+      "default": "active"
+    },
+    "gracePeriodUntil": {
+      "type": "datetime"
+    },
+    "subscriptionStatus": {
+      "type": "enumeration",
+      "enum": ["active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid", "paused"],
+      "default": "active"
+    },
+    "subscriptionStartDate": {
+      "type": "datetime"
+    },
+    "subscriptionEndDate": {
+      "type": "datetime"
+    },
+    "monthlyDownloadsUsed": {
+      "type": "integer",
+      "default": 0
+    },
+    "monthlyDownloadsLimit": {
+      "type": "integer",
+      "default": 0
+    },
+    "quotaResetDate": {
+      "type": "datetime"
+    },
+    "totalDownloads": {
+      "type": "integer",
+      "default": 0
+    },
+    "timezone": {
+      "type": "string",
+      "default": "UTC"
+    },
+    "emailVerified": {
+      "type": "boolean",
+      "default": false
+    },
+    "emailVerificationToken": {
+      "type": "string"
+    },
+    "emailVerificationExpiry": {
+      "type": "datetime"
+    },
+    "passwordResetToken": {
+      "type": "string"
+    },
+    "passwordResetExpiry": {
+      "type": "datetime"
+    },
+    "preferences": {
+      "type": "json"
+    },
+    "theme": {
+      "type": "enumeration",
+      "enum": ["light", "dark", "system"],
+      "default": "system"
+    },
+    "language": {
+      "type": "string",
+      "default": "en"
+    },
+    "emailNotifications": {
+      "type": "json"
+    },
+    "twoFactorEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "lastPasswordChange": {
+      "type": "datetime"
+    },
+    "activeSessions": {
+      "type": "json"
+    },
+    "favorites": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::project.project",
+      "mappedBy": "favoritedBy"
+    },
+    "collections": {
+      "type": "json"
+    },
+    "downloadLockVersion": {
+      "type": "integer",
+      "default": 0
+    },
+    "lastLoginAt": {
+      "type": "datetime"
+    },
+    "accountCreatedAt": {
+      "type": "datetime"
+    },
+    "referralSource": {
+      "type": "string"
+    },
+    "lastActiveAt": {
+      "type": "datetime"
+    }
+  }
+}

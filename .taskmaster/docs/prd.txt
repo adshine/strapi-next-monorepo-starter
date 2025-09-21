@@ -1,0 +1,100 @@
+# Framer Template Platform Implementation
+
+## Project Overview
+Building a complete template marketplace platform with Strapi v5 backend, Next.js 15 frontend, Stripe payments, and Cloudflare infrastructure. The platform enables users to browse, purchase subscriptions, and download premium templates with quota management.
+
+## Core Requirements
+
+### Infrastructure Setup
+- Provision PostgreSQL database for Strapi
+- Configure Cloudflare Workers, Pages, and R2 buckets
+- Set up Stripe products, prices, and webhooks
+- Configure email service provider
+- Initialize monitoring and logging services
+
+### Backend Development
+- Create Strapi collections: Project, Plan, UserProfile, DownloadLog, TemplateRequest, SubscriptionEvent
+- Implement authentication system with email verification and password reset
+- Build quota management with row-level locking and atomic operations
+- Create download system with R2 signed URLs and retry logic
+- Integrate Stripe webhook handling and subscription lifecycle management
+- Develop API endpoints following spec contracts
+
+### Edge Worker Implementation
+- Build Cloudflare Worker for API gateway
+- Implement session validation and CSRF protection
+- Add rate limiting per route with specific thresholds
+- Create caching layer for public endpoints
+- Configure request proxying and response optimization
+
+### Frontend Development
+- Build template catalogue with search, filters, and sorting
+- Create pricing page with plan comparison and checkout flow
+- Implement account dashboard with subscription and quota displays
+- Develop authentication pages (login, register, verify, reset)
+- Build download modal with quota checking and progress tracking
+- Create template request submission and tracking system
+
+### Testing & Quality
+- Write unit tests for Strapi services (80% coverage)
+- Create integration tests for API endpoints
+- Build E2E tests for critical user paths with Playwright
+- Perform load testing with concurrent users
+- Conduct security testing for vulnerabilities
+
+### Production Readiness
+- Configure production environment variables
+- Prepare database migrations and seed data
+- Create deployment runbooks and documentation
+- Set up monitoring alerts and backup procedures
+- Implement legal compliance (Terms, Privacy, GDPR)
+
+## Technical Specifications
+
+### Authentication Flow
+- NextAuth.js with httpOnly session cookies
+- Email verification with 6-digit codes (10 min expiry)
+- Password reset with secure token flow
+- Remember me functionality with extended sessions
+
+### Quota System
+- Plan-based monthly download limits
+- UTC timezone-grouped reset at midnight
+- Row-level locking for concurrent access
+- Free retry attempts without quota charging
+
+### Payment Integration
+- Stripe Checkout for new subscriptions
+- Customer Portal for subscription management
+- Webhook processing with idempotency
+- Grace period handling for failed payments
+- Add-on purchases for extra downloads
+
+### Download Process
+- Quota validation before download initiation
+- R2 signed URLs with 15-minute expiry
+- Single-use tokens with hash verification
+- Retry mechanism with 3 attempts
+- Failure recovery with support ticket creation
+
+### Performance Requirements
+- API response times < 500ms p95
+- Error rates < 1%
+- Uptime > 99.9%
+- Lighthouse scores: Performance > 90, Accessibility > 95
+
+## Implementation Phases
+
+Phase 1: Infrastructure and database setup
+Phase 2: Backend core services and APIs
+Phase 3: Edge worker configuration
+Phase 4: Frontend UI development
+Phase 5: Testing and quality assurance
+Phase 6: Launch preparation and deployment
+
+## Success Metrics
+- All tests passing with 80% coverage
+- No critical security vulnerabilities
+- Stripe processing payments successfully
+- Downloads tracked accurately with quota enforcement
+- Mobile responsive and accessibility compliant

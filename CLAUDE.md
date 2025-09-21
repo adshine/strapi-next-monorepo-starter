@@ -200,3 +200,8 @@ Follow the refreshed spec in `docs/platform-implementation-spec.md`. Recommended
    - Build unit/integration/e2e tests, load-test quota locking, document deployment runbooks, and set up CI gates before production rollout.
 
 Record architectural deviations or new patterns back into the spec to keep guidance current.
+
+## Task Master AI Instructions
+
+**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
+@./.taskmaster/CLAUDE.md

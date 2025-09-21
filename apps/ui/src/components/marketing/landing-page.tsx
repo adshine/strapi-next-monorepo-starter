@@ -1,13 +1,59 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ArrowRight, Check, Download, Star, Users, Zap } from "lucide-react"
 
-import { getMockPlanBySlug, MOCK_PLANS, MOCK_TEMPLATES } from "@/lib/mock-data"
+import { plansAPI } from "@/lib/api/plans"
+import { projectsAPI } from "@/lib/api/projects"
 import { cn } from "@/lib/styles"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
 function FeaturedTemplates() {
-  const featuredTemplates = MOCK_TEMPLATES.slice(0, 6)
+  const [featuredTemplates, setFeaturedTemplates] = useState<any[]>([])
+  const [plans, setPlans] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [templatesData, plansData] = await Promise.all([
+          projectsAPI.getAllProjects({ pagination: { pageSize: 6 } }),
+          plansAPI.getAllPlans(),
+        ])
+        setFeaturedTemplates(templatesData.slice(0, 6))
+        setPlans(plansData)
+      } catch (error) {
+        console.error("Failed to fetch featured templates:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const getPlanBadge = (planId: string) => {
+    const plan = plans.find((p) => p.id === planId)
+    return plan?.displayName || "PRO"
+  }
+
+  if (loading) {
+    return (
+      <section className="px-4 py-24">
+        <div className="container mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-[var(--text-primary)] md:text-4xl">
+              Featured Templates
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-[var(--text-muted)]">
+              Loading templates...
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="px-4 py-24">
@@ -35,7 +81,7 @@ function FeaturedTemplates() {
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-4 right-4 rounded-full bg-[var(--bg-primary)]/90 px-3 py-1 text-xs font-medium backdrop-blur-sm">
-                  {getMockPlanBySlug(template.planRequired)?.badge || "PRO"}
+                  {getPlanBadge(template.planId)}
                 </div>
               </div>
 
@@ -177,7 +223,39 @@ function Benefits() {
 }
 
 function PricingHighlights() {
-  const paidPlans = MOCK_PLANS.filter((plan) => plan.slug !== "solo")
+  const [paidPlans, setPaidPlans] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const allPlans = await plansAPI.getAllPlans()
+        setPaidPlans(
+          allPlans.filter((plan: any) => plan.slug !== "solo" && plan.isActive)
+        )
+      } catch (error) {
+        console.error("Failed to fetch plans:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPlans()
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="px-4 py-24">
+        <div className="container mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-[var(--text-primary)] md:text-4xl">
+              Plans for Every Team
+            </h2>
+            <p className="text-lg text-[var(--text-muted)]">Loading plans...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="px-4 py-24">

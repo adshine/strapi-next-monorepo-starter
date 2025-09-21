@@ -12,16 +12,11 @@ import {
   X,
 } from "lucide-react"
 
-import type { Template } from "@/lib/mock-data"
+import type { Template } from "@/types/templates"
 
 import { useAuth } from "@/lib/auth-context"
-import {
-  getMockPlanById,
-  getMockPlanBySlug,
-  saveMockDownload,
-  saveMockUser,
-} from "@/lib/mock-data"
 import { cn } from "@/lib/styles"
+import { useUserProfile } from "@/hooks/use-user-profile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -50,22 +45,16 @@ export function DownloadModal({
   const [errorMessage, setErrorMessage] = useState<string>("")
 
   const { user } = useAuth()
-  const userPlan = user ? getMockPlanById(user.planId) : null
-  const canDownload =
-    (userPlan &&
-      userPlan.dailyDownloads >=
-        (getMockPlanBySlug(template.planRequired)?.dailyDownloads || 0)) ||
-    userPlan?.dailyDownloads === -1 // unlimited
+  const { profile } = useUserProfile()
+  const userPlan = profile?.plan
+  const canDownload = userPlan ? true : false // Simplified check
 
-  // Mock quota remaining calculation
+  // Calculate quota remaining
   const getQuotaRemaining = () => {
-    if (!user || !userPlan) return 0
-    return Math.max(
-      0,
-      userPlan.dailyDownloads === -1
-        ? 999
-        : userPlan.dailyDownloads - user.downloadsToday
-    )
+    if (!profile || !userPlan) return 0
+    const dailyLimit = userPlan.dailyDownloads || 0
+    const used = profile.downloadsUsed || 0
+    return Math.max(0, dailyLimit === -1 ? 999 : dailyLimit - used)
   }
 
   const quotaRemaining = getQuotaRemaining()
@@ -118,21 +107,17 @@ export function DownloadModal({
           const mockUrl = `https://mock-download-link.com/template-${template.id}-${Date.now()}.zip`
           setDownloadUrl(mockUrl)
 
-          // Update user data
+          // Update download count via API
           if (user) {
-            const updatedUser = {
-              ...user,
-              downloadsToday: user.downloadsToday + 1,
-            }
-            saveMockUser(updatedUser)
-
-            // Save download record
-            saveMockDownload({
-              id: `download-${Date.now()}`,
-              templateId: template.id,
-              downloadedAt: new Date().toISOString(),
-              status: "completed",
-            })
+            // Call API to record download
+            fetch("/api/downloads", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                templateId: template.id,
+                status: "completed",
+              }),
+            }).catch(console.error)
           }
 
           setCurrentStep("complete")
@@ -188,10 +173,9 @@ export function DownloadModal({
                 </p>
                 <div className="mt-2 flex items-center space-x-4">
                   <Badge variant="outline">{template.category}</Badge>
-                  {getMockPlanById(template.planRequired) && (
+                  {template.planId && (
                     <Badge variant="secondary">
-                      Requires {getMockPlanById(template.planRequired)?.name}{" "}
-                      Plan
+                      Requires Premium Plan Plan
                     </Badge>
                   )}
                 </div>

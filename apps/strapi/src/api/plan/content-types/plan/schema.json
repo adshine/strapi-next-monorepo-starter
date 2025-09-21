@@ -1,0 +1,121 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plans",
+  "info": {
+    "singularName": "plan",
+    "pluralName": "plans",
+    "displayName": "Plan",
+    "description": "Subscription plans with features and pricing"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "description": {
+      "type": "text"
+    },
+    "monthlyPrice": {
+      "type": "decimal",
+      "required": true
+    },
+    "annualPrice": {
+      "type": "decimal",
+      "required": true
+    },
+    "stripePriceId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "stripePriceIdAnnual": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "billingCycle": {
+      "type": "enumeration",
+      "enum": ["day", "month", "year", "lifetime"],
+      "default": "month"
+    },
+    "dailyDownloadLimit": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "templateRequestLimit": {
+      "type": "integer",
+      "default": 0
+    },
+    "isLifetime": {
+      "type": "boolean",
+      "default": false
+    },
+    "perksRichText": {
+      "type": "richtext"
+    },
+    "priority": {
+      "type": "integer",
+      "default": 0
+    },
+    "promoBadge": {
+      "type": "string"
+    },
+    "features": {
+      "type": "json"
+    },
+    "savings": {
+      "type": "decimal"
+    },
+    "popularBadge": {
+      "type": "boolean",
+      "default": false
+    },
+    "supportSLA": {
+      "type": "integer"
+    },
+    "allowsFavorites": {
+      "type": "boolean",
+      "default": false
+    },
+    "allowsBulkDownload": {
+      "type": "boolean",
+      "default": false
+    },
+    "allowsCollections": {
+      "type": "boolean",
+      "default": false
+    },
+    "monthlyDownloadLimit": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "sortOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "recommended": {
+      "type": "boolean",
+      "default": false
+    },
+    "tier": {
+      "type": "enumeration",
+      "enum": ["free", "starter", "professional", "enterprise"],
+      "required": true
+    }
+  }
+}

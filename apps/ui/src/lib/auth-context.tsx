@@ -2,9 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react"
 
-import type { User } from "@/lib/mock-data"
+import type { User } from "@/types/auth"
 
-import { clearMockUser, getMockUser } from "@/lib/mock-data"
 import { AuthModal } from "@/components/auth/auth-modal"
 
 type AuthContextType = {
@@ -38,8 +37,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Load user on mount
   useEffect(() => {
-    const loadedUser = getMockUser()
-    setUser(loadedUser)
+    // Check for authenticated user from session/localStorage
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (error) {
+        console.error("Failed to parse stored user:", error)
+      }
+    }
   }, [])
 
   const showAuthModal = (
@@ -50,13 +56,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const logout = () => {
-    clearMockUser()
+    localStorage.removeItem("user")
     setUser(null)
   }
 
   const refreshUser = () => {
-    const updatedUser = getMockUser()
-    setUser(updatedUser)
+    // Refresh user from API or session
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (error) {
+        console.error("Failed to refresh user:", error)
+      }
+    }
   }
 
   const handleAuthSuccess = () => {

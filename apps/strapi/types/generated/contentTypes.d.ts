@@ -373,6 +373,59 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   }
 }
 
+export interface ApiDownloadLogDownloadLog extends Struct.CollectionTypeSchema {
+  collectionName: "download_logs"
+  info: {
+    description: "Track all template download attempts and completions"
+    displayName: "DownloadLog"
+    pluralName: "download-logs"
+    singularName: "download-log"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    attemptNumber: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>
+    completedAt: Schema.Attribute.DateTime
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    downloadId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    errorMessage: Schema.Attribute.Text
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    initiatedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    ipAddress: Schema.Attribute.String
+    isRetry: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::download-log.download-log"
+    > &
+      Schema.Attribute.Private
+    metadata: Schema.Attribute.JSON
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">
+    publishedAt: Schema.Attribute.DateTime
+    quotaCharged: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    signedUrl: Schema.Attribute.Text
+    status: Schema.Attribute.Enumeration<
+      ["initiated", "in_progress", "completed", "failed", "expired"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"initiated">
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    urlHash: Schema.Attribute.String
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+    userAgent: Schema.Attribute.Text
+  }
+}
+
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: "footers"
   info: {
@@ -588,6 +641,103 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
   }
 }
 
+export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
+  collectionName: "plans"
+  info: {
+    description: "Subscription plans with features and pricing"
+    displayName: "Plan"
+    pluralName: "plans"
+    singularName: "plan"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    annualPrice: Schema.Attribute.Decimal & Schema.Attribute.Required
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    description: Schema.Attribute.Text
+    features: Schema.Attribute.JSON
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::plan.plan"> &
+      Schema.Attribute.Private
+    monthlyDownloadLimit: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<0>
+    monthlyPrice: Schema.Attribute.Decimal & Schema.Attribute.Required
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    publishedAt: Schema.Attribute.DateTime
+    recommended: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    slug: Schema.Attribute.UID<"name">
+    sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    stripePriceIdAnnual: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    stripePriceIdMonthly: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    tier: Schema.Attribute.Enumeration<
+      ["free", "starter", "professional", "enterprise"]
+    > &
+      Schema.Attribute.Required
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+  }
+}
+
+export interface ApiProjectProject extends Struct.CollectionTypeSchema {
+  collectionName: "projects"
+  info: {
+    description: "Template projects available for download"
+    displayName: "Project"
+    pluralName: "projects"
+    singularName: "project"
+  }
+  options: {
+    draftAndPublish: true
+  }
+  attributes: {
+    compatibility: Schema.Attribute.JSON
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    description: Schema.Attribute.RichText
+    downloadCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    downloadUrl: Schema.Attribute.String & Schema.Attribute.Required
+    featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    featuredImage: Schema.Attribute.Media<"images">
+    fileSize: Schema.Attribute.BigInteger
+    gallery: Schema.Attribute.Media<"images" | "videos", true>
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::project.project"
+    > &
+      Schema.Attribute.Private
+    publishedAt: Schema.Attribute.DateTime
+    requiredPlan: Schema.Attribute.Enumeration<
+      ["free", "starter", "professional", "enterprise"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"free">
+    slug: Schema.Attribute.UID<"title">
+    sortOrder: Schema.Attribute.Integer
+    summary: Schema.Attribute.Text
+    tags: Schema.Attribute.JSON
+    title: Schema.Attribute.String & Schema.Attribute.Required
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    version: Schema.Attribute.String
+    videoPreviewUrl: Schema.Attribute.String
+  }
+}
+
 export interface ApiRedirectRedirect extends Struct.CollectionTypeSchema {
   collectionName: "redirects"
   info: {
@@ -646,6 +796,180 @@ export interface ApiSubscriberSubscriber extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
+  }
+}
+
+export interface ApiSubscriptionEventSubscriptionEvent
+  extends Struct.CollectionTypeSchema {
+  collectionName: "subscription_events"
+  info: {
+    description: "Track all subscription lifecycle events from Stripe"
+    displayName: "SubscriptionEvent"
+    pluralName: "subscription-events"
+    singularName: "subscription-event"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    errorMessage: Schema.Attribute.Text
+    eventData: Schema.Attribute.JSON & Schema.Attribute.Required
+    eventType: Schema.Attribute.String & Schema.Attribute.Required
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::subscription-event.subscription-event"
+    > &
+      Schema.Attribute.Private
+    metadata: Schema.Attribute.JSON
+    processedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    publishedAt: Schema.Attribute.DateTime
+    retryCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    status: Schema.Attribute.Enumeration<
+      ["pending", "processed", "failed", "ignored"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"pending">
+    stripeCustomerId: Schema.Attribute.String & Schema.Attribute.Required
+    stripeEventId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
+    stripeSubscriptionId: Schema.Attribute.String
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+  }
+}
+
+export interface ApiTemplateRequestTemplateRequest
+  extends Struct.CollectionTypeSchema {
+  collectionName: "template_requests"
+  info: {
+    description: "User requests for new templates"
+    displayName: "TemplateRequest"
+    pluralName: "template-requests"
+    singularName: "template-request"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    adminNotes: Schema.Attribute.Text
+    category: Schema.Attribute.String
+    completedAt: Schema.Attribute.DateTime
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    description: Schema.Attribute.Text & Schema.Attribute.Required
+    estimatedDeliveryDate: Schema.Attribute.Date
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::template-request.template-request"
+    > &
+      Schema.Attribute.Private
+    metadata: Schema.Attribute.JSON
+    priority: Schema.Attribute.Enumeration<
+      ["low", "medium", "high", "urgent"]
+    > &
+      Schema.Attribute.DefaultTo<"medium">
+    publishedAt: Schema.Attribute.DateTime
+    referenceUrl: Schema.Attribute.String
+    responseMessage: Schema.Attribute.Text
+    status: Schema.Attribute.Enumeration<
+      [
+        "pending",
+        "under_review",
+        "approved",
+        "in_development",
+        "completed",
+        "rejected",
+      ]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"pending">
+    title: Schema.Attribute.String & Schema.Attribute.Required
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+    votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+  }
+}
+
+export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
+  collectionName: "user_profiles"
+  info: {
+    description: "Extended user profile with subscription and quota information"
+    displayName: "UserProfile"
+    pluralName: "user-profiles"
+    singularName: "user-profile"
+  }
+  options: {
+    draftAndPublish: false
+  }
+  attributes: {
+    avatar: Schema.Attribute.Media<"images">
+    bio: Schema.Attribute.Text
+    createdAt: Schema.Attribute.DateTime
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    currentPlan: Schema.Attribute.Relation<"manyToOne", "api::plan.plan">
+    displayName: Schema.Attribute.String
+    emailVerificationExpiry: Schema.Attribute.DateTime
+    emailVerificationToken: Schema.Attribute.String
+    emailVerified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    lastActiveAt: Schema.Attribute.DateTime
+    locale: Schema.Attribute.String & Schema.Attribute.Private
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::user-profile.user-profile"
+    > &
+      Schema.Attribute.Private
+    monthlyDownloadsLimit: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<0>
+    monthlyDownloadsUsed: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<0>
+    passwordResetExpiry: Schema.Attribute.DateTime
+    passwordResetToken: Schema.Attribute.String
+    preferences: Schema.Attribute.JSON
+    publishedAt: Schema.Attribute.DateTime
+    quotaResetDate: Schema.Attribute.DateTime
+    stripeCustomerId: Schema.Attribute.String & Schema.Attribute.Unique
+    subscriptionEndDate: Schema.Attribute.DateTime
+    subscriptionStartDate: Schema.Attribute.DateTime
+    subscriptionStatus: Schema.Attribute.Enumeration<
+      [
+        "active",
+        "canceled",
+        "incomplete",
+        "incomplete_expired",
+        "past_due",
+        "trialing",
+        "unpaid",
+        "paused",
+      ]
+    > &
+      Schema.Attribute.DefaultTo<"active">
+    timezone: Schema.Attribute.String & Schema.Attribute.DefaultTo<"UTC">
+    totalDownloads: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    updatedAt: Schema.Attribute.DateTime
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private
+    user: Schema.Attribute.Relation<
+      "oneToOne",
+      "plugin::users-permissions.user"
+    >
   }
 }
 
@@ -1158,12 +1482,18 @@ declare module "@strapi/strapi" {
       "admin::transfer-token": AdminTransferToken
       "admin::transfer-token-permission": AdminTransferTokenPermission
       "admin::user": AdminUser
+      "api::download-log.download-log": ApiDownloadLogDownloadLog
       "api::footer.footer": ApiFooterFooter
       "api::internal-job.internal-job": ApiInternalJobInternalJob
       "api::navbar.navbar": ApiNavbarNavbar
       "api::page.page": ApiPagePage
+      "api::plan.plan": ApiPlanPlan
+      "api::project.project": ApiProjectProject
       "api::redirect.redirect": ApiRedirectRedirect
       "api::subscriber.subscriber": ApiSubscriberSubscriber
+      "api::subscription-event.subscription-event": ApiSubscriptionEventSubscriptionEvent
+      "api::template-request.template-request": ApiTemplateRequestTemplateRequest
+      "api::user-profile.user-profile": ApiUserProfileUserProfile
       "plugin::content-releases.release": PluginContentReleasesRelease
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction
       "plugin::i18n.locale": PluginI18NLocale

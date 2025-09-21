@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "15.3.5",
+    "@playwright/test": "^1.55.0",
     "@repo/eslint-config": "*",
     "@repo/prettier-config": "*",
     "@repo/strapi": "*",
