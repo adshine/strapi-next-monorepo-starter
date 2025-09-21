@@ -240,6 +240,10 @@ async function generateSignedUrl(
   // Implementation depends on your auth strategy
   return await bucket.createSignedUrl(key, { expiresIn })
 }
+
+// TODO: Future schema rename - downloadUrl → remixUrl
+// TODO: Future schema rename - downloadCount → remixCount
+// TODO: Future schema rename - monthlyDownloadLimit → monthlyRemixLimit
 ```
 
 ## 6. Environment Variables Summary

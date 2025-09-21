@@ -133,7 +133,7 @@ Light mode maps the same palette with neutral backgrounds (`#F7FAFF`, `#FFFFFF`,
 
 - Explore generative accent backgrounds that respond to selected plan tier.
 - Investigate 3D preview frames for hero templates using WebGL or Lottie.
-- Consider contextual help popovers with animated walkthroughs for first-time downloaders.
+- Consider contextual help popovers with animated walkthroughs for first-time remixers.
 
 Align engineering implementation with these guidelines and revisit quarterly to reflect product updates and user feedback.
 
@@ -141,8 +141,8 @@ Align engineering implementation with these guidelines and revisit quarterly to 
 
 - Adopt the free [HugeIcons Outline](https://hugeicons.com/) set (personal license) for a modern, geometric outline style that complements FramerDojo’s minimal aesthetic. Review their terms periodically in case licensing changes; avoid premium icons unless a commercial upgrade is purchased.
 - Integration options:
-  - **SVG Sprite / Download**: Download the free outline pack and store frequently used glyphs in `apps/ui/public/icons/hugeicons/`. Inline `<svg>` snippets offer full control over stroke color and size.
-  - **Iconify (Open Source)**: Use `@iconify/react` with names like `hugeicons:download-01-outline` to load icons from the free set without bundling the entire library. Ideal for Next.js + Tree shaking.
+  - **SVG Sprite**: Download the free outline pack and store frequently used glyphs in `apps/ui/public/icons/hugeicons/`. Inline `<svg>` snippets offer full control over stroke color and size.
+  - **Iconify (Open Source)**: Use `@iconify/react` with names like `hugeicons:download-01-outline` to load icons from the free set without bundling the entire library. Ideal for Next.js + Tree shaking. <!-- TODO: Future icon rename - download-01-outline → remix-01-outline -->
   - **Manual Curate**: For critical actions, hand-pick icons and import only the SVGs you need to minimize payload.
 - Tailwind utilities: Extend theme with classes for icon sizing (e.g., `.icon-sm` 16px, `.icon-md` 20px, `.icon-lg` 24px, `.icon-xl` 32px). Set a default stroke width of `1.5px` in CSS.
 - Color states: default `--text-muted` (`#A3AEC2`), hover `--text-primary`, active `--accent-primary`, error `--accent-danger`. Adjust opacity/alpha for disabled states.
