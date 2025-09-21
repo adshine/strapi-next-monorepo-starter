@@ -5,7 +5,7 @@
     "singularName": "project",
     "pluralName": "projects",
     "displayName": "Project",
-    "description": "Template projects available for download"
+    "description": "Framer template projects available for remixing"
   },
   "options": {
     "draftAndPublish": true

@@ -103,7 +103,7 @@ test.describe("Template Request Flow", () => {
     await expect(quotaDisplay.first()).toBeVisible()
 
     // Check for quota numbers
-    const quotaNumbers = page.locator("text=/[0-9]+ \/ [0-9]+|∞/")
+    const quotaNumbers = page.locator("text=/[0-9]+ / [0-9]+|∞/")
     await expect(quotaNumbers.first()).toBeVisible()
   })
 

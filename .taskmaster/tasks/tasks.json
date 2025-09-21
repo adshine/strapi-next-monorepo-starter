@@ -1281,11 +1281,22 @@
         ],
         "status": "pending",
         "subtasks": []
+      },
+      {
+        "id": 62,
+        "title": "Migrate schema from download to remix terminology",
+        "description": "Complete migration of all database fields, API endpoints, and code references from 'download' terminology to 'remix' terminology for Framer templates",
+        "details": "Follow the migration plan in docs/schema-migration-plan.md:\n\nPhase 1: Documentation & UI Copy\n- Update all user-facing strings and documentation\n- Add migration notes to code comments\n\nPhase 2: Database Schema Migration\n- Rename downloadUrl to remixUrl\n- Rename downloadCount to remixCount  \n- Rename download-log collection to template-access-log\n- Update all related fields in user-profile and plan collections\n\nPhase 3: Code Updates\n- Update all API endpoints\n- Update service methods and controllers\n- Update frontend API clients\n- Add backwards compatibility layer\n\nThis is a breaking change that needs careful planning and execution with proper deprecation warnings.",
+        "testStrategy": "1. Unit tests for field aliasing logic\n2. Integration tests for dual-write functionality\n3. E2E tests for complete user flows\n4. Migration script testing with production data copy\n5. Rollback procedure testing",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
       "created": "2025-09-20T01:11:59.758Z",
-      "updated": "2025-09-21T02:52:07.116Z",
+      "updated": "2025-09-21T04:03:48.411Z",
       "description": "Tasks for master context"
     }
   }
