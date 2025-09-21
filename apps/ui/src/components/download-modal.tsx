@@ -115,7 +115,7 @@ export function DownloadModal({
         <DialogHeader>
           <DialogTitle>Download Template</DialogTitle>
           <DialogDescription>
-            Confirm download for "{template.title}"
+            Confirm download for &quot;{template.title}&quot;
           </DialogDescription>
         </DialogHeader>
 
@@ -134,7 +134,7 @@ export function DownloadModal({
                 <Alert className="py-2">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-xs">
-                    You're approaching your monthly download limit.
+                    You&apos;re approaching your monthly download limit.
                     {quotaPercentage >= 100 &&
                       " This will be your last download until quota resets."}
                   </AlertDescription>

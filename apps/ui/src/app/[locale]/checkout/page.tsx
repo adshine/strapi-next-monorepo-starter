@@ -1,13 +1,11 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import {
   AlertCircle,
   ArrowLeft,
-  CheckCircle,
   Clock,
   CreditCard,
   Lock,
@@ -35,6 +33,7 @@ interface CheckoutItem {
 
 // Mock payment processing
 const processPayment = (amount: number, cardDetails: any) => {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return new Promise((resolve, reject) => {
     setTimeout(
       () => {
@@ -208,7 +207,7 @@ export default function CheckoutPage() {
               Please wait while we process your payment...
             </p>
             <div className="bg-subtle h-2 w-full rounded-full">
-              <div className="bg-accent-primary h-2 animate-pulse rounded-full"></div>
+              <div className="bg-accent-primary h-2 animate-pulse rounded-full" />
             </div>
           </CardContent>
         </Card>

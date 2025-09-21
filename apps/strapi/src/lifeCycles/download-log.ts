@@ -186,7 +186,7 @@ export const registerDownloadLogSubscriber = async ({
         updateReason: data.metadata?.updateReason || "Status change",
         updateUser: "system",
         updateHistory: [
-          ...(existingLog.metadata?.updateHistory || []),
+          ...((existingLog.metadata as any)?.updateHistory || []),
           {
             timestamp: new Date().toISOString(),
             previousStatus: existingLog.status,
@@ -255,7 +255,7 @@ export const registerDownloadLogSubscriber = async ({
                       status: "expired",
                       completedAt: new Date(),
                       metadata: {
-                        ...currentLog.metadata,
+                        ...((currentLog.metadata as any) || {}),
                         updateReason: "Automatic expiration after timeout",
                         expiredAt: new Date().toISOString(),
                       },

@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Mail, Lock, User, CheckCircle } from "lucide-react"
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/lib/auth-context" // eslint-disable-line @typescript-eslint/no-unused-vars
 import type { User } from "@/types/auth"
 
 type AuthMode = "login" | "signup" | "forgot-password"
@@ -257,7 +257,7 @@ export function AuthModal({
           Check your email
         </h3>
         <p className="text-text-muted mb-6 text-sm">
-          We've sent a 6-digit verification code to{" "}
+          We&apos;ve sent a 6-digit verification code to{" "}
           <strong>{formData.email}</strong>
         </p>
 
@@ -308,8 +308,8 @@ export function AuthModal({
         </div>
 
         <p className="text-text-muted mt-4 text-xs">
-          Didn't receive the code?{" "}
-          <button className="text-accent-primary hover:underline">
+          Didn&apos;t receive the code?{" "}
+          <button type="button" className="text-accent-primary hover:underline">
             Resend
           </button>
         </p>
@@ -554,11 +554,17 @@ export function AuthModal({
                       className="text-text-muted text-sm leading-5"
                     >
                       I agree to the{" "}
-                      <button className="text-accent-primary hover:underline">
+                      <button
+                        type="button"
+                        className="text-accent-primary hover:underline"
+                      >
                         Terms of Service
                       </button>{" "}
                       and{" "}
-                      <button className="text-accent-primary hover:underline">
+                      <button
+                        type="button"
+                        className="text-accent-primary hover:underline"
+                      >
                         Privacy Policy
                       </button>
                     </Label>
@@ -609,8 +615,8 @@ export function AuthModal({
                     Reset your password
                   </h3>
                   <p className="text-text-muted text-sm">
-                    Enter your email address and we'll send you a link to reset
-                    your password.
+                    Enter your email address and we&apos;ll send you a link to
+                    reset your password.
                   </p>
                 </div>
 

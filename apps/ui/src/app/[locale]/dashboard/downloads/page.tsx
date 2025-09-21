@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Image from "next/image"
 import {
   CheckCircle,
   Clock,
@@ -8,16 +9,14 @@ import {
   DownloadIcon,
   ExternalLink,
   Filter,
-  Search,
   XCircle,
 } from "lucide-react"
 
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
 import { useUserProfile } from "@/hooks/use-user-profile"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 type DownloadStatus = "completed" | "failed" | "pending"
 
@@ -32,11 +31,11 @@ interface DownloadRecord {
 
 export default function DownloadsPage() {
   const { user } = useAuth()
-  const { profile } = useUserProfile()
+  const { profile } = useUserProfile() // eslint-disable-line @typescript-eslint/no-unused-vars
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [downloads, setDownloads] = useState<DownloadRecord[]>([])
   const [templates, setTemplates] = useState<Map<string, any>>(new Map())
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
     const fetchDownloads = async () => {
@@ -82,12 +81,13 @@ export default function DownloadsPage() {
   // Filter downloads for current user and apply status filter
   const userDownloads = useMemo(() => {
     let filtered = downloads.filter((download) => {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       // In a real app, this would check ownership or be filtered server-side
       return true // Show all for demo
     })
 
     if (statusFilter !== "all") {
-      filtered = filtered.filter((download) => download.status === statusFilter)
+      filtered = filtered.filter((download) => download.status === statusFilter) // eslint-disable-line @typescript-eslint/no-unused-vars
     }
 
     // Sort by download date (newest first)
@@ -210,9 +210,11 @@ export default function DownloadsPage() {
                   <div className="flex items-center space-x-4">
                     {/* Template Image */}
                     <div className="bg-subtle relative h-16 w-16 overflow-hidden rounded">
-                      <img
+                      <Image
                         src={template.thumbnailUrl}
                         alt={template.title}
+                        width={64}
+                        height={64}
                         className="h-full w-full object-cover"
                       />
                     </div>

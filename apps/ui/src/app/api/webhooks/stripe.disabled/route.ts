@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error("Webhook signature verification failed:", err)
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
@@ -88,6 +89,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true })
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Webhook processing error:", error)
     // Return 200 to prevent Stripe from retrying
     // Log error for investigation
@@ -99,6 +101,7 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
+  // eslint-disable-next-line no-console
   console.log("Checkout completed:", session.id)
 
   // Send confirmation email
@@ -107,6 +110,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+  // eslint-disable-next-line no-console
   console.log("Subscription deleted:", subscription.id)
 
   // Clear user cache
@@ -115,6 +119,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
+  // eslint-disable-next-line no-console
   console.log("Payment failed for invoice:", invoice.id)
 
   // Send payment failure email

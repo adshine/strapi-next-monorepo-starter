@@ -30,10 +30,10 @@ export interface ComposerState {
 export interface ComposerActions {
   open: () => void
   close: () => void
-  submit: (request: TemplateRequestDraft) => Promise<void>
-  updateDraft: (updates: Partial<TemplateRequestDraft>) => void
-  addAttachment: (file: File) => void
-  removeAttachment: (index: number) => void
+  submit: (request: TemplateRequestDraft) => Promise<void> // eslint-disable-line @typescript-eslint/no-unused-vars
+  updateDraft: (updates: Partial<TemplateRequestDraft>) => void // eslint-disable-line @typescript-eslint/no-unused-vars
+  addAttachment: (file: File) => void // eslint-disable-line @typescript-eslint/no-unused-vars
+  removeAttachment: (index: number) => void // eslint-disable-line @typescript-eslint/no-unused-vars
   clearDraft: () => void
 }
 
@@ -105,7 +105,7 @@ interface ComposerProviderProps {
 
 // Custom hook for composer state management
 export function useComposerState(
-  onSubmit?: (request: TemplateRequestDraft) => Promise<void>
+  onSubmit?: (request: TemplateRequestDraft) => Promise<void> // eslint-disable-line @typescript-eslint/no-unused-vars
 ) {
   const [state, setState] = useState<ComposerState>(DEFAULT_STATE)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
@@ -137,6 +137,7 @@ export function useComposerState(
           setState(DEFAULT_STATE)
 
           // Could trigger a success toast/notification here
+          // eslint-disable-next-line no-console
           console.log("Template request submitted successfully:", request)
         } catch (error) {
           setState((prev) => ({

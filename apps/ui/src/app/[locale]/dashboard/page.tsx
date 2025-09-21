@@ -66,7 +66,7 @@ export default function DashboardPage() {
               Welcome back, {user.name || user.email}!
             </h1>
             <p className="text-text-muted mb-4">
-              Here's an overview of your account and activity.
+              Here&apos;s an overview of your account and activity.
             </p>
           </div>
           <div className="flex items-center space-x-4">

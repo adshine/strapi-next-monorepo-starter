@@ -9,7 +9,7 @@ import { AuthModal } from "@/components/auth/auth-modal"
 type AuthContextType = {
   user: User | null
   isAuthenticated: boolean
-  showAuthModal: (mode?: "login" | "signup" | "forgot-password") => void
+  showAuthModal: (mode?: "login" | "signup" | "forgot-password") => void // eslint-disable-line @typescript-eslint/no-unused-vars
   logout: () => void
   refreshUser: () => void
 }

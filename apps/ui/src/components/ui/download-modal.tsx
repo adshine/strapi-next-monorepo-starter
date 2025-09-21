@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import Image from "next/image"
 import {
   AlertCircle,
   CheckCircle,
@@ -159,9 +160,11 @@ export function DownloadModal({
           <div className="space-y-6">
             {/* Template Info */}
             <div className="flex items-start space-x-4">
-              <img
+              <Image
                 src={template.thumbnailUrl}
                 alt={template.title}
+                width={80}
+                height={48}
                 className="h-12 w-20 rounded border object-cover"
               />
               <div className="flex-1">

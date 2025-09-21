@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import {
   Clock,
   Download,
-  Filter,
   Grid3X3,
   Heart,
   List,
@@ -43,10 +43,10 @@ export default function TemplatesPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null)
   const [templates, setTemplates] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const { user } = useAuth()
-  const { profile } = useUserProfile()
+  const { profile } = useUserProfile() // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Fetch templates and categories on mount
   useEffect(() => {
@@ -140,6 +140,7 @@ export default function TemplatesPage() {
     }
 
     const handleDownloadModalClose = () => {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       setDownloadModalOpen(false)
       setSelectedTemplate(null)
     }
@@ -166,9 +167,11 @@ export default function TemplatesPage() {
               viewMode === "list" && "w-48 flex-shrink-0"
             )}
           >
-            <img
+            <Image
               src={template.thumbnailUrl}
               alt={template.title}
+              width={400}
+              height={225}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
 

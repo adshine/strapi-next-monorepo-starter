@@ -6,7 +6,6 @@ import {
   FileText,
   Image as ImageIcon,
   Loader2,
-  Paperclip,
   Send,
   Upload,
   X,
@@ -14,7 +13,6 @@ import {
 
 import { cn } from "@/lib/styles"
 import { useComposerContext } from "@/hooks/use-composer"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -150,7 +148,12 @@ function ComposerCategorySelector() {
 
   return (
     <div className="space-y-2">
-      <label className="text-text-primary text-sm font-medium">Category</label>
+      <label
+        htmlFor="category"
+        className="text-text-primary text-sm font-medium"
+      >
+        Category
+      </label>
       <Select
         value={state.draft.category}
         onValueChange={(value) => actions.updateDraft({ category: value })}
@@ -180,7 +183,10 @@ function ComposerPrioritySelector() {
 
   return (
     <div className="space-y-2">
-      <label className="text-text-primary text-sm font-medium">
+      <label
+        htmlFor="priority"
+        className="text-text-primary text-sm font-medium"
+      >
         Priority Level
       </label>
       <Select
@@ -258,7 +264,10 @@ function ComposerAttachments() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-text-primary text-sm font-medium">
+        <label
+          htmlFor="attachments"
+          className="text-text-primary text-sm font-medium"
+        >
           Attachments
         </label>
         <span className="text-text-muted text-xs">

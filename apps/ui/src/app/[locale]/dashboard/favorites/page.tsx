@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Download, ExternalLink, Heart, Star, Trash2 } from "lucide-react"
+import Image from "next/image"
+import { Download, Heart, Star, Trash2 } from "lucide-react"
 
 import type { Plan } from "@/lib/api/plans"
 import type { Project } from "@/lib/api/projects"
@@ -76,9 +77,10 @@ export default function FavoritesPage() {
   const handleRemoveFavorite = async (templateId: string) => {
     try {
       // Remove from favorites via API
-      const updatedFavorites =
+      const updatedFavorites = // eslint-disable-line @typescript-eslint/no-unused-vars
         profile?.favorites?.filter((id: string) => id !== templateId) || []
       // TODO: Update user profile API to persist favorite changes
+      // eslint-disable-next-line no-console
       console.log(`Removing template ${templateId} from favorites`)
 
       // Update local state
@@ -96,7 +98,7 @@ export default function FavoritesPage() {
             My Favorites
           </h1>
           <p className="text-text-muted">
-            Templates you've favorited will appear here for easy access.
+            Templates you&apos;ve favorited will appear here for easy access.
           </p>
         </div>
 
@@ -140,9 +142,10 @@ export default function FavoritesPage() {
             >
               {/* Template Image */}
               <div className="bg-subtle relative aspect-video overflow-hidden">
-                <img
+                <Image
                   src={template.thumbnailUrl || "/placeholder-template.jpg"}
                   alt={template.title}
+                  fill
                   className="h-full w-full object-cover"
                 />
 

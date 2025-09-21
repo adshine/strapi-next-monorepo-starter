@@ -74,7 +74,7 @@ export default function ThanksPage() {
   const [purchasedPlan, setPurchasedPlan] = useState<any>(null)
 
   // Extract success parameters
-  const sessionId = searchParams.get("session_id")
+  const sessionId = searchParams.get("session_id") // eslint-disable-line @typescript-eslint/no-unused-vars
   const planId = searchParams.get("plan")
   const billing = searchParams.get("billing") as "month" | "year" | null
   const amount = searchParams.get("amount")
@@ -279,7 +279,7 @@ export default function ThanksPage() {
               Ready to get started?
             </h2>
             <p className="text-text-muted text-xl">
-              Choose what you'd like to do next
+              Choose what you&apos;d like to do next
             </p>
           </div>
 

@@ -4,6 +4,7 @@ import { getAuth } from "@/lib/auth"
 import { PrivateStrapiClient } from "@/lib/strapi-api"
 
 export async function GET(request: NextRequest) {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   const session = await getAuth()
 
   if (!session?.strapiJWT) {

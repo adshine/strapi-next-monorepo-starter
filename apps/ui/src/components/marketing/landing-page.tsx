@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, Check, Download, Star, Users, Zap } from "lucide-react"
 
@@ -75,9 +76,11 @@ function FeaturedTemplates() {
               className="group overflow-hidden border-[var(--border-neutral)] bg-[var(--bg-elevated)] transition-all duration-300 hover:shadow-lg"
             >
               <div className="relative aspect-video overflow-hidden">
-                <img
+                <Image
                   src={template.thumbnailUrl}
                   alt={template.title}
+                  width={400}
+                  height={225}
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-4 right-4 rounded-full bg-[var(--bg-primary)]/90 px-3 py-1 text-xs font-medium backdrop-blur-sm">

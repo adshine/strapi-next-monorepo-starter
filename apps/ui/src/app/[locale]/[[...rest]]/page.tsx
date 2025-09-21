@@ -99,7 +99,7 @@ export default async function StrapiPage(props: Props) {
     notFound()
   }
 
-  const { content: _unused, ...restPageData } = data!
+  const { content: _unused, ...restPageData } = data
 
   return (
     <>
@@ -124,7 +124,7 @@ export default async function StrapiPage(props: Props) {
 
             return (
               <div key={key} className="font-medium text-red-500">
-                Component "{key}" is not implemented on the frontend.
+                Component &quot;{key}&quot; is not implemented on the frontend.
               </div>
             )
           }

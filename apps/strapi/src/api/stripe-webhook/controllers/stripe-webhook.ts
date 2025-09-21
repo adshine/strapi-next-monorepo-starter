@@ -2,7 +2,7 @@ import { Core } from "@strapi/strapi"
 import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-08-27.basil",
 })
 
 export default {
@@ -168,11 +168,15 @@ async function handleCheckoutSessionCompleted(
     data: {
       currentPlan: plan.id,
       subscriptionStatus: subscription.status,
-      subscriptionStartDate: new Date(subscription.current_period_start * 1000),
-      subscriptionEndDate: new Date(subscription.current_period_end * 1000),
+      subscriptionStartDate: new Date(
+        (subscription as any).current_period_start * 1000
+      ),
+      subscriptionEndDate: new Date(
+        (subscription as any).current_period_end * 1000
+      ),
       monthlyDownloadsLimit: plan.monthlyDownloadLimit,
       monthlyDownloadsUsed: 0,
-      quotaResetDate: new Date(subscription.current_period_end * 1000),
+      quotaResetDate: new Date((subscription as any).current_period_end * 1000),
     },
   })
 
@@ -210,7 +214,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     data: {
       currentPlan: plan?.id || userProfile.currentPlan,
       subscriptionStatus: subscription.status,
-      subscriptionEndDate: new Date(subscription.current_period_end * 1000),
+      subscriptionEndDate: new Date(
+        (subscription as any).current_period_end * 1000
+      ),
       monthlyDownloadsLimit:
         plan?.monthlyDownloadLimit || userProfile.monthlyDownloadsLimit,
     },
@@ -254,7 +260,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string
-  const subscriptionId = invoice.subscription as string
+  const subscriptionId = (invoice as any).subscription as string
 
   const userProfile = await strapi.db
     .query("api::user-profile.user-profile")
@@ -276,7 +282,9 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
       data: {
         subscriptionStatus: "active",
         monthlyDownloadsUsed: 0,
-        quotaResetDate: new Date(subscription.current_period_end * 1000),
+        quotaResetDate: new Date(
+          (subscription as any).current_period_end * 1000
+        ),
       },
     })
 

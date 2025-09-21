@@ -29,6 +29,7 @@ export default function DashboardLayout({
             Please sign in to access your dashboard
           </h2>
           <button
+            type="button"
             onClick={() => router.push("/")}
             className="bg-accent-primary text-text-inverse hover:bg-accent-primary/90 rounded-lg px-6 py-2"
           >

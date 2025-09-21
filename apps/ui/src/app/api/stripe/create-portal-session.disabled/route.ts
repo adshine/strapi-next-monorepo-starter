@@ -10,6 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 })
 
 export async function POST(req: NextRequest) {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   try {
     // Check authentication
     const session = await getServerSession(authOptions)

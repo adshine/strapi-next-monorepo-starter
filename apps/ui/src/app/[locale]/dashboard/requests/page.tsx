@@ -12,7 +12,6 @@ import {
 } from "@/hooks/use-composer"
 import { useUserProfile } from "@/hooks/use-user-profile"
 import { Composer } from "@/components/composer"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -38,6 +37,7 @@ function TemplateRequestComposer() {
 
       // Handle attachments if needed (would require file upload implementation)
       if (request.attachments.length > 0) {
+        // eslint-disable-next-line no-console
         console.log("Attachments to upload:", request.attachments)
         // TODO: Implement file upload to Strapi
       }
@@ -79,10 +79,14 @@ function TemplateRequestComposer() {
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-text-primary text-sm font-medium">
+                    <label
+                      htmlFor="budget"
+                      className="text-text-primary text-sm font-medium"
+                    >
                       Budget Range (Optional)
                     </label>
                     <select
+                      id="budget"
                       className="bg-elevated border-border-neutral text-text-primary focus:ring-accent-primary w-full rounded-md border px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
                       value={composer.state.draft.budget || ""}
                       onChange={(e) =>
@@ -98,10 +102,14 @@ function TemplateRequestComposer() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-text-primary text-sm font-medium">
+                    <label
+                      htmlFor="timeline"
+                      className="text-text-primary text-sm font-medium"
+                    >
                       Desired Timeline (Optional)
                     </label>
                     <select
+                      id="timeline"
                       className="bg-elevated border-border-neutral text-text-primary focus:ring-accent-primary w-full rounded-md border px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
                       value={composer.state.draft.timeline || ""}
                       onChange={(e) =>
@@ -178,10 +186,10 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         </h2>
 
         <p className="text-text-muted mb-8 text-lg">
-          Don't see the template you need? Describe your project and we'll
-          design and build it for you. Our team of experts will create a fully
-          functional, pixel-perfect Framer template tailored to your
-          requirements.
+          Don&apos;t see the template you need? Describe your project and
+          we&apos;ll design and build it for you. Our team of experts will
+          create a fully functional, pixel-perfect Framer template tailored to
+          your requirements.
         </p>
 
         {/* Plan status */}
@@ -268,8 +276,8 @@ export default function RequestsPage() {
         </h1>
         <p className="text-text-muted mx-auto max-w-2xl">
           Describe your vision and our design team will create a custom Framer
-          template just for you. Perfect for unique projects that don't fit our
-          standard catalog.
+          template just for you. Perfect for unique projects that don&apos;t fit
+          our standard catalog.
         </p>
       </div>
 

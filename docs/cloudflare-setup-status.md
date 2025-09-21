@@ -39,28 +39,25 @@
 
 ## ⏳ Pending
 
-### Worker Deployment
+### Pages Setup (Task 3.3)
 
-```bash
-cd apps/worker
-yarn install
-wrangler deploy --env development
-```
+**Ready for manual setup:** Follow the guide at `docs/cloudflare-pages-setup.md`
 
-### Pages Setup
+Quick setup link: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/pages/new/provider/github
 
-1. Visit: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/pages
-2. Create new project
-3. Connect to your GitHub repository
-4. Configure build settings:
-   - Framework preset: Next.js
-   - Build command: `cd apps/ui && yarn build`
-   - Build output directory: `apps/ui/.next`
+Build configuration:
 
-### Cross-Service Permissions
+- Project name: `framer-templates-ui`
+- Build command: `cd apps/ui && yarn build`
+- Build output: `/apps/ui/.next`
+- Root directory: `/`
 
+### Cross-Service Permissions (Task 3.5)
+
+- [ ] Generate R2 API credentials at: https://dash.cloudflare.com/82655735d78bf7309c659b5a576715c4/r2/api-tokens
 - [ ] Add Worker secrets (JWT_SECRET, STRAPI_URL)
 - [ ] Configure Pages environment variables
+- [ ] Deploy Worker with: `cd apps/worker && wrangler deploy --env development`
 - [ ] Set up custom domains
 - [ ] Configure SSL certificates
 

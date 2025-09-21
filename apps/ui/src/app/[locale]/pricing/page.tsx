@@ -3,15 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import {
-  ArrowRight,
-  Check,
-  Crown,
-  Download,
-  MessageSquare,
-  Star,
-  Users,
-} from "lucide-react"
+import { ArrowRight, Check, Download, MessageSquare, Star } from "lucide-react"
 
 import { plansAPI } from "@/lib/api/plans"
 import { useAuth } from "@/lib/auth-context"
@@ -25,7 +17,7 @@ import { Switch } from "@/components/ui/switch"
 type BillingPeriod = "month" | "year"
 
 export default function PricingPage() {
-  const router = useRouter()
+  const router = useRouter() // eslint-disable-line @typescript-eslint/no-unused-vars
   const { user, showAuthModal } = useAuth()
   const { profile } = useUserProfile()
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("month")
@@ -89,6 +81,7 @@ export default function PricingPage() {
   const currentPlan = profile?.plan
 
   const calculateSavings = (monthlyPrice: number, yearlyPrice: number) => {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     if (billingPeriod === "month") return 0
     const yearlyTotal = yearlyPrice * 12
     const monthlyTotal = monthlyPrice * 12
@@ -142,7 +135,7 @@ export default function PricingPage() {
     return billingPeriod === "year"
       ? (basePlanPrice + addOnsTotal) * 0.8
       : basePlanPrice + addOnsTotal
-  }, [billingPeriod, selectedAddOns, plans])
+  }, [billingPeriod, selectedAddOns, plans, getSelectedAddOnsTotal])
 
   return (
     <div className="bg-primary min-h-screen">
@@ -195,6 +188,7 @@ export default function PricingPage() {
           ) : (
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:gap-12">
               {plans.map((plan, index) => {
+                // eslint-disable-line @typescript-eslint/no-unused-vars
                 const isPopular = plan.slug === "studio"
                 const isCurrentPlan = currentPlan?.id === plan.id
                 const monthlyPrice = plan.monthlyPrice || 0

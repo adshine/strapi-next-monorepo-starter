@@ -385,19 +385,30 @@ export interface ApiDownloadLogDownloadLog extends Struct.CollectionTypeSchema {
     draftAndPublish: false
   }
   attributes: {
-    attemptNumber: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>
+    attemptNumber: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 3
+          min: 1
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>
     completedAt: Schema.Attribute.DateTime
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
+    downloadDuration: Schema.Attribute.Integer
     downloadId: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique
-    errorMessage: Schema.Attribute.Text
+    errorCode: Schema.Attribute.String
+    errorReason: Schema.Attribute.Text
     expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    fileSize: Schema.Attribute.BigInteger
     initiatedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
     ipAddress: Schema.Attribute.String
-    isRetry: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    issuedAt: Schema.Attribute.DateTime
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -408,16 +419,22 @@ export interface ApiDownloadLogDownloadLog extends Struct.CollectionTypeSchema {
     project: Schema.Attribute.Relation<"manyToOne", "api::project.project">
     publishedAt: Schema.Attribute.DateTime
     quotaCharged: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    retryOf: Schema.Attribute.Relation<
+      "oneToOne",
+      "api::download-log.download-log"
+    >
     signedUrl: Schema.Attribute.Text
+    signedUrlHash: Schema.Attribute.String
+    sourceIp: Schema.Attribute.String
     status: Schema.Attribute.Enumeration<
-      ["initiated", "in_progress", "completed", "failed", "expired"]
+      ["pending", "success", "failed", "expired"]
     > &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<"initiated">
+      Schema.Attribute.DefaultTo<"pending">
+    supportTicketId: Schema.Attribute.String
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
-    urlHash: Schema.Attribute.String
     user: Schema.Attribute.Relation<
       "manyToOne",
       "plugin::users-permissions.user"
@@ -653,13 +670,27 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     draftAndPublish: false
   }
   attributes: {
+    allowsBulkDownload: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>
+    allowsCollections: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>
+    allowsFavorites: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>
     annualPrice: Schema.Attribute.Decimal & Schema.Attribute.Required
+    billingCycle: Schema.Attribute.Enumeration<
+      ["day", "month", "year", "lifetime"]
+    > &
+      Schema.Attribute.DefaultTo<"month">
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
+    dailyDownloadLimit: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<0>
     description: Schema.Attribute.Text
     features: Schema.Attribute.JSON
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>
+    isLifetime: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<"oneToMany", "api::plan.plan"> &
       Schema.Attribute.Private
@@ -670,16 +701,24 @@ export interface ApiPlanPlan extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique
+    perksRichText: Schema.Attribute.RichText
+    popularBadge: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    priority: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    promoBadge: Schema.Attribute.String
     publishedAt: Schema.Attribute.DateTime
     recommended: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    savings: Schema.Attribute.Decimal
     slug: Schema.Attribute.UID<"name">
     sortOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    stripePriceId: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique
     stripePriceIdAnnual: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique
-    stripePriceIdMonthly: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique
+    supportSLA: Schema.Attribute.Integer
+    templateRequestLimit: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<0>
     tier: Schema.Attribute.Enumeration<
       ["free", "starter", "professional", "enterprise"]
     > &
@@ -709,6 +748,10 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     description: Schema.Attribute.RichText
     downloadCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     downloadUrl: Schema.Attribute.String & Schema.Attribute.Required
+    favoritedBy: Schema.Attribute.Relation<
+      "manyToMany",
+      "api::user-profile.user-profile"
+    >
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
     featuredImage: Schema.Attribute.Media<"images">
     fileSize: Schema.Attribute.BigInteger
@@ -816,8 +859,8 @@ export interface ApiSubscriptionEventSubscriptionEvent
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
     errorMessage: Schema.Attribute.Text
-    eventData: Schema.Attribute.JSON & Schema.Attribute.Required
     eventType: Schema.Attribute.String & Schema.Attribute.Required
+    idempotencyKey: Schema.Attribute.String & Schema.Attribute.Unique
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -825,9 +868,12 @@ export interface ApiSubscriptionEventSubscriptionEvent
     > &
       Schema.Attribute.Private
     metadata: Schema.Attribute.JSON
-    processedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
+    payload: Schema.Attribute.JSON & Schema.Attribute.Required
+    processedAt: Schema.Attribute.DateTime
     publishedAt: Schema.Attribute.DateTime
+    receivedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
     retryCount: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    signature: Schema.Attribute.String
     status: Schema.Attribute.Enumeration<
       ["pending", "processed", "failed", "ignored"]
     > &
@@ -845,6 +891,7 @@ export interface ApiSubscriptionEventSubscriptionEvent
       "manyToOne",
       "plugin::users-permissions.user"
     >
+    webhookId: Schema.Attribute.String
   }
 }
 
@@ -861,14 +908,23 @@ export interface ApiTemplateRequestTemplateRequest
     draftAndPublish: false
   }
   attributes: {
-    adminNotes: Schema.Attribute.Text
+    actualDelivery: Schema.Attribute.DateTime
+    assignee: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+    attachments: Schema.Attribute.Media<"images" | "files" | "videos", true>
     category: Schema.Attribute.String
-    completedAt: Schema.Attribute.DateTime
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
     description: Schema.Attribute.Text & Schema.Attribute.Required
-    estimatedDeliveryDate: Schema.Attribute.Date
+    estimatedDelivery: Schema.Attribute.DateTime
+    isLate: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    lastUpdatedBy: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -876,34 +932,27 @@ export interface ApiTemplateRequestTemplateRequest
     > &
       Schema.Attribute.Private
     metadata: Schema.Attribute.JSON
-    priority: Schema.Attribute.Enumeration<
-      ["low", "medium", "high", "urgent"]
-    > &
-      Schema.Attribute.DefaultTo<"medium">
+    priority: Schema.Attribute.Enumeration<["standard", "priority", "rush"]> &
+      Schema.Attribute.DefaultTo<"standard">
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">
     publishedAt: Schema.Attribute.DateTime
-    referenceUrl: Schema.Attribute.String
-    responseMessage: Schema.Attribute.Text
+    referenceLinks: Schema.Attribute.JSON
+    requester: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >
+    responseNotes: Schema.Attribute.Text
+    slaHours: Schema.Attribute.Integer
     status: Schema.Attribute.Enumeration<
-      [
-        "pending",
-        "under_review",
-        "approved",
-        "in_development",
-        "completed",
-        "rejected",
-      ]
+      ["new", "reviewing", "in_progress", "ready", "delivered"]
     > &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<"pending">
+      Schema.Attribute.DefaultTo<"new">
+    submittedAt: Schema.Attribute.DateTime
     title: Schema.Attribute.String & Schema.Attribute.Required
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
-    user: Schema.Attribute.Relation<
-      "manyToOne",
-      "plugin::users-permissions.user"
-    >
-    votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
   }
 }
 
@@ -919,17 +968,29 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     draftAndPublish: false
   }
   attributes: {
+    accountCreatedAt: Schema.Attribute.DateTime
+    activeSessions: Schema.Attribute.JSON
     avatar: Schema.Attribute.Media<"images">
     bio: Schema.Attribute.Text
+    collections: Schema.Attribute.JSON
     createdAt: Schema.Attribute.DateTime
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private
-    currentPlan: Schema.Attribute.Relation<"manyToOne", "api::plan.plan">
+    dailyDownloadsUsed: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    dailyResetAt: Schema.Attribute.DateTime
     displayName: Schema.Attribute.String
+    downloadLockVersion: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<0>
+    emailNotifications: Schema.Attribute.JSON
     emailVerificationExpiry: Schema.Attribute.DateTime
     emailVerificationToken: Schema.Attribute.String
     emailVerified: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
+    favorites: Schema.Attribute.Relation<"manyToMany", "api::project.project">
+    gracePeriodUntil: Schema.Attribute.DateTime
+    language: Schema.Attribute.String & Schema.Attribute.DefaultTo<"en">
     lastActiveAt: Schema.Attribute.DateTime
+    lastLoginAt: Schema.Attribute.DateTime
+    lastPasswordChange: Schema.Attribute.DateTime
     locale: Schema.Attribute.String & Schema.Attribute.Private
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -942,12 +1003,19 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<0>
     passwordResetExpiry: Schema.Attribute.DateTime
     passwordResetToken: Schema.Attribute.String
+    plan: Schema.Attribute.Relation<"manyToOne", "api::plan.plan">
+    planExpiresAt: Schema.Attribute.DateTime
     preferences: Schema.Attribute.JSON
     publishedAt: Schema.Attribute.DateTime
     quotaResetDate: Schema.Attribute.DateTime
+    referralSource: Schema.Attribute.String
     stripeCustomerId: Schema.Attribute.String & Schema.Attribute.Unique
     subscriptionEndDate: Schema.Attribute.DateTime
     subscriptionStartDate: Schema.Attribute.DateTime
+    subscriptionState: Schema.Attribute.Enumeration<
+      ["active", "trial", "past_due", "grace", "suspended", "canceled"]
+    > &
+      Schema.Attribute.DefaultTo<"active">
     subscriptionStatus: Schema.Attribute.Enumeration<
       [
         "active",
@@ -961,8 +1029,14 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
       ]
     > &
       Schema.Attribute.DefaultTo<"active">
+    templateRequestsUsed: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<0>
+    theme: Schema.Attribute.Enumeration<["light", "dark", "system"]> &
+      Schema.Attribute.DefaultTo<"system">
     timezone: Schema.Attribute.String & Schema.Attribute.DefaultTo<"UTC">
     totalDownloads: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
+    twoFactorEnabled: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>
     updatedAt: Schema.Attribute.DateTime
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private

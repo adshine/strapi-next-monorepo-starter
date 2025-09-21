@@ -1,6 +1,7 @@
 "use client"
 
 import { use, useEffect, useMemo, useRef, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, Download, Heart, Share2, Star, Users } from "lucide-react"
@@ -25,7 +26,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   const { user, showAuthModal } = useAuth()
   const [template, setTemplate] = useState<any>(null)
   const [requiredPlan, setRequiredPlan] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
   const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [relatedTemplates, setRelatedTemplates] = useState<any[]>([])
@@ -75,6 +76,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
           setRelatedTemplates(related)
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to fetch template:", error)
         notFound()
       } finally {
@@ -102,6 +104,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   // Related templates are now fetched in useEffect
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
     console.log(
       "Gallery images:",
       galleryImages.length,
@@ -111,11 +114,13 @@ export default function TemplatePage({ params }: TemplatePageProps) {
 
     if (shouldAutoShowRecommendations) {
       setShowRecommendations(true)
+      // eslint-disable-next-line no-console
       console.log("Auto showing recommendations (only 1 image)")
       return
     }
 
     if (!lastImageRef.current) {
+      // eslint-disable-next-line no-console
       console.log("No last image ref")
       return
     }
@@ -123,6 +128,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          // eslint-disable-next-line no-console
           console.log(
             "Intersection:",
             entry.isIntersecting,
@@ -131,6 +137,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
           )
           if (entry.isIntersecting) {
             setShowRecommendations(true)
+            // eslint-disable-next-line no-console
             console.log("Showing recommendations via intersection")
           }
         })
@@ -139,6 +146,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
     )
 
     observer.observe(lastImageRef.current)
+    // eslint-disable-next-line no-console
     console.log("Observer attached to last image")
 
     return () => {
@@ -193,7 +201,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
 
             <div className="space-y-8">
               {galleryImages.map((src, index) => (
-                <img
+                <Image
                   key={src + index}
                   ref={
                     index === galleryImages.length - 1
@@ -202,6 +210,8 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                   }
                   src={src}
                   alt={`${template.title} preview ${index + 1}`}
+                  width={800}
+                  height={600}
                   className="w-full rounded-2xl border border-[var(--border-neutral)] object-cover"
                 />
               ))}
@@ -401,9 +411,11 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                     className="group block"
                   >
                     <div className="aspect-video overflow-hidden rounded-t-xl">
-                      <img
+                      <Image
                         src={item.thumbnailUrl}
                         alt={item.title}
+                        width={400}
+                        height={225}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>

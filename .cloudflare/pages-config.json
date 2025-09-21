@@ -1,0 +1,81 @@
+{
+  "projectName": "framer-templates-ui",
+  "productionBranch": "main",
+  "buildConfig": {
+    "rootDirectory": "/",
+    "buildCommand": "cd apps/ui && yarn build",
+    "buildOutputDirectory": "apps/ui/.next"
+  },
+  "deploymentTrigger": {
+    "type": "github",
+    "repo": {
+      "owner": "your-github-username",
+      "name": "strapi-next-monorepo-starter"
+    },
+    "productionBranch": "main",
+    "previewBranches": {
+      "include": ["dev", "staging", "feature/*"],
+      "exclude": ["temp/*"]
+    }
+  },
+  "environmentVariables": {
+    "production": [
+      {
+        "key": "NODE_ENV",
+        "value": "production"
+      },
+      {
+        "key": "NEXT_PUBLIC_APP_URL",
+        "value": "https://framer-templates.pages.dev",
+        "preview": "https://preview.framer-templates.pages.dev"
+      },
+      {
+        "key": "STRAPI_URL",
+        "value": "https://framer-templates-api.workers.dev"
+      },
+      {
+        "key": "STRAPI_REST_READONLY_API_KEY",
+        "value": "@STRAPI_REST_READONLY_API_KEY",
+        "secret": true
+      },
+      {
+        "key": "NEXTAUTH_URL",
+        "value": "https://framer-templates.pages.dev"
+      },
+      {
+        "key": "NEXTAUTH_SECRET",
+        "value": "@NEXTAUTH_SECRET",
+        "secret": true
+      },
+      {
+        "key": "STRIPE_PUBLISHABLE_KEY",
+        "value": "@STRIPE_PUBLISHABLE_KEY",
+        "secret": false
+      },
+      {
+        "key": "WORKER_URL",
+        "value": "https://framer-templates-api.workers.dev"
+      }
+    ],
+    "preview": [
+      {
+        "key": "NODE_ENV",
+        "value": "development"
+      },
+      {
+        "key": "STRAPI_URL",
+        "value": "https://framer-templates-api.workers.dev"
+      }
+    ]
+  },
+  "compatibility": {
+    "nodeVersion": "20",
+    "compatibilityDate": "2024-01-01",
+    "compatibilityFlags": []
+  },
+  "functions": {
+    "directory": "apps/ui/api",
+    "include": ["api/*"],
+    "exclude": []
+  }
+}
