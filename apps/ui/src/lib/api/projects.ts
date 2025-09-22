@@ -176,7 +176,7 @@ class ProjectsAPI {
    */
   async trackRemix(projectId: string | number) {
     // This should be called after successful template access
-    return this.privateClient.post(`projects/${projectId}/download`, {}) // TODO: Backend still uses download endpoint
+    return this.privateClient.post(`projects/${projectId}/remix`, {})
   }
 
   /**

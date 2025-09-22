@@ -2,7 +2,7 @@ import type { Core } from "@strapi/strapi"
 
 import { registerPopulatePageMiddleware } from "./documentMiddlewares/page"
 import { registerAdminUserSubscriber } from "./lifeCycles/adminUser"
-import { registerDownloadLogSubscriber } from "./lifeCycles/download-log"
+import { registerTemplateAccessLogSubscriber } from "./lifeCycles/template-access-log"
 import { registerUserSubscriber } from "./lifeCycles/user"
 
 export default {
@@ -24,7 +24,7 @@ export default {
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     registerAdminUserSubscriber({ strapi })
     registerUserSubscriber({ strapi })
-    registerDownloadLogSubscriber({ strapi })
+    registerTemplateAccessLogSubscriber({ strapi })
 
     registerPopulatePageMiddleware({ strapi })
 

@@ -1,7 +1,7 @@
 import { removeThisWhenYouNeedMe } from "./general-helpers"
 
-export const downloadBlob = (blob: Blob, fileName: string) => {
-  removeThisWhenYouNeedMe("downloadBlob") // TODO: May need to rename to accessBlob for template access
+export const accessBlob = (blob: Blob, fileName: string) => {
+  removeThisWhenYouNeedMe("accessBlob") // Renamed from downloadBlob for template access
 
   const fileUrl = window.URL.createObjectURL(blob)
   const link = document.createElement("a")

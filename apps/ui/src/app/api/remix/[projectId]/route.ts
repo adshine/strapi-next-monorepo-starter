@@ -70,9 +70,8 @@ export async function GET(
     }
 
     // Check quota
-    // TODO: Backend still uses monthlyDownloadsLimit and monthlyDownloadsUsed
-    const quotaLimit = userProfile.attributes.monthlyDownloadsLimit
-    const quotaUsed = userProfile.attributes.monthlyDownloadsUsed
+    const quotaLimit = userProfile.attributes.monthlyRemixesLimit
+    const quotaUsed = userProfile.attributes.monthlyRemixesUsed
 
     if (quotaLimit !== -1 && quotaUsed >= quotaLimit) {
       // Check if quota reset date has passed
@@ -100,7 +99,7 @@ export async function GET(
             method: "PUT",
             body: JSON.stringify({
               data: {
-                monthlyDownloadsUsed: 0, // TODO: Rename to monthlyTemplateAccesses
+                monthlyRemixesUsed: 0,
                 quotaResetDate: new Date(now.setMonth(now.getMonth() + 1)),
               },
             }),
@@ -137,8 +136,8 @@ export async function GET(
         method: "PUT",
         body: JSON.stringify({
           data: {
-            monthlyDownloadsUsed: quotaUsed + 1, // TODO: Backend still uses monthlyDownloadsUsed
-            totalDownloads: (userProfile.attributes.totalDownloads || 0) + 1, // TODO: Backend still uses totalDownloads
+            monthlyRemixesUsed: quotaUsed + 1,
+            totalRemixes: (userProfile.attributes.totalRemixes || 0) + 1,
           },
         }),
       },
@@ -146,8 +145,7 @@ export async function GET(
     )
 
     // Get remix URL (Framer template link)
-    // TODO: Rename field to remixUrl in backend
-    const remixUrl = project.attributes.downloadUrl || "#"
+    const remixUrl = project.attributes.remixUrl || "#"
 
     // The remix URL is a Framer link that opens the template
     // for duplication in the user's Framer account

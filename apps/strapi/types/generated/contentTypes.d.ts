@@ -373,76 +373,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   }
 }
 
-export interface ApiDownloadLogDownloadLog extends Struct.CollectionTypeSchema {
-  collectionName: "download_logs"
-  info: {
-    description: "Track all template download attempts and completions"
-    displayName: "DownloadLog"
-    pluralName: "download-logs"
-    singularName: "download-log"
-  }
-  options: {
-    draftAndPublish: false
-  }
-  attributes: {
-    attemptNumber: Schema.Attribute.Integer &
-      Schema.Attribute.SetMinMax<
-        {
-          max: 3
-          min: 1
-        },
-        number
-      > &
-      Schema.Attribute.DefaultTo<1>
-    completedAt: Schema.Attribute.DateTime
-    createdAt: Schema.Attribute.DateTime
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private
-    downloadDuration: Schema.Attribute.Integer
-    downloadId: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique
-    errorCode: Schema.Attribute.String
-    errorReason: Schema.Attribute.Text
-    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required
-    fileSize: Schema.Attribute.BigInteger
-    initiatedAt: Schema.Attribute.DateTime & Schema.Attribute.Required
-    ipAddress: Schema.Attribute.String
-    issuedAt: Schema.Attribute.DateTime
-    locale: Schema.Attribute.String & Schema.Attribute.Private
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::download-log.download-log"
-    > &
-      Schema.Attribute.Private
-    metadata: Schema.Attribute.JSON
-    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">
-    publishedAt: Schema.Attribute.DateTime
-    quotaCharged: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>
-    retryOf: Schema.Attribute.Relation<
-      "oneToOne",
-      "api::download-log.download-log"
-    >
-    signedUrl: Schema.Attribute.Text
-    signedUrlHash: Schema.Attribute.String
-    sourceIp: Schema.Attribute.String
-    status: Schema.Attribute.Enumeration<
-      ["pending", "success", "failed", "expired"]
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<"pending">
-    supportTicketId: Schema.Attribute.String
-    updatedAt: Schema.Attribute.DateTime
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private
-    user: Schema.Attribute.Relation<
-      "manyToOne",
-      "plugin::users-permissions.user"
-    >
-    userAgent: Schema.Attribute.Text
-  }
-}
-
 export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   collectionName: "footers"
   info: {
@@ -1626,7 +1556,6 @@ declare module "@strapi/strapi" {
       "admin::transfer-token": AdminTransferToken
       "admin::transfer-token-permission": AdminTransferTokenPermission
       "admin::user": AdminUser
-      "api::download-log.download-log": ApiDownloadLogDownloadLog
       "api::footer.footer": ApiFooterFooter
       "api::internal-job.internal-job": ApiInternalJobInternalJob
       "api::navbar.navbar": ApiNavbarNavbar

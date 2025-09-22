@@ -103,7 +103,6 @@ export function RemixModal({ template, isOpen, onClose }: RemixModalProps) {
           if (user) {
             // Call API to record remix
             fetch("/api/remix", {
-              // TODO: rename from /api/downloads when backend updated
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
