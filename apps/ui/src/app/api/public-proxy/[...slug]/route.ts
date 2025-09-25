@@ -63,13 +63,29 @@ async function handler(
     isPrivate: false,
   })
 
+  // Debug logging
+  console.log('[Public Proxy] Request:', {
+    path,
+    url,
+    isReadOnly,
+    authHeaderPresent: !!authHeader.Authorization,
+    authHeaderLength: authHeader.Authorization ? authHeader.Authorization.length : 0
+  })
+
+  const requestHeaders = {
+    // Convert headers to object
+    ...Object.fromEntries(clonedRequest.headers),
+    // Override the Authorization header with the injected token
+    ...authHeader,
+  }
+
+  console.log('[Public Proxy] Headers being sent:', {
+    hasAuth: !!requestHeaders.Authorization,
+    authLength: requestHeaders.Authorization ? requestHeaders.Authorization.length : 0
+  })
+
   const response = await fetch(url, {
-    headers: {
-      // Convert headers to object
-      ...Object.fromEntries(clonedRequest.headers),
-      // Override the Authorization header with the injected token
-      ...authHeader,
-    },
+    headers: requestHeaders,
     body,
     // this needs to be explicitly stated, because it is defaulted to GET
     method: request.method,
@@ -78,13 +94,13 @@ async function handler(
   // Remove encoding headers, because the body is no longer compressed and the browser/client will choke on it.
   // (Built-in fetch in Node.js decompresses the body if the response has Content-Encoding: gzip
   // and gives the decompressed stream.)
-  const headers = new Headers(response.headers)
-  headers.delete("content-encoding")
-  headers.delete("content-length")
+  const responseHeaders = new Headers(response.headers)
+  responseHeaders.delete("content-encoding")
+  responseHeaders.delete("content-length")
 
   return new NextResponse(response.body, {
     status: response.status,
-    headers,
+    headers: responseHeaders,
   })
 }
 

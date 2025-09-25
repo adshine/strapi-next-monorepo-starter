@@ -13,13 +13,8 @@ export class PublicClient extends BaseStrapiClient {
     requestInit?: RequestInit,
     options?: CustomFetchOptions
   ): Promise<{ url: string; headers: Record<string, string> }> {
-    let url = `/api${path.startsWith("/") ? path : `/${path}`}`
-
     const queryString =
       typeof params === "object" ? qs.stringify(params) : params
-    if (queryString != null && queryString?.length > 0) {
-      url += `?${queryString}`
-    }
 
     let completeUrl = ""
     let headers: Record<string, string> = {}
@@ -28,8 +23,14 @@ export class PublicClient extends BaseStrapiClient {
     const shouldUseProxy = options?.useProxy ?? typeof window !== "undefined"
 
     if (shouldUseProxy) {
+      // For proxy, we need to construct the path with /api prefix
+      let proxyPath = `/api${path.startsWith("/") ? path : `/${path}`}`
+      if (queryString != null && queryString?.length > 0) {
+        proxyPath += `?${queryString}`
+      }
+
       // Use the public-proxy endpoint for client-side requests
-      completeUrl = `/api/public-proxy${url}`
+      completeUrl = `/api/public-proxy${proxyPath}`
 
       if (typeof window === "undefined") {
         // SSR components do not support relative URLs, so we have to prefix it with local app URL
@@ -45,7 +46,13 @@ export class PublicClient extends BaseStrapiClient {
         )
       }
 
-      completeUrl = `${env.STRAPI_URL}${url}`
+      // For direct connection, construct the URL with /api prefix
+      let directPath = `/api${path.startsWith("/") ? path : `/${path}`}`
+      if (queryString != null && queryString?.length > 0) {
+        directPath += `?${queryString}`
+      }
+
+      completeUrl = `${env.STRAPI_URL}${directPath}`
 
       // If there is no method specified in requestInit, default is GET
       const isReadOnly = ["GET", "HEAD"].includes(requestInit?.method ?? "GET")
