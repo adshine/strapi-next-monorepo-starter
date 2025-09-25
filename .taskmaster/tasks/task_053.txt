@@ -1,0 +1,11 @@
+# Task ID: 53
+# Title: End-to-End Testing (Playwright)
+# Status: pending
+# Dependencies: 52
+# Priority: high
+# Description: Implement E2E tests for critical user paths, error scenarios, and cross-browser compatibility.
+# Details:
+Use Playwright to automate visitor signup, purchase, login, browse, remix, payment failure/recovery, template request flow, network failures, quota exceeded, session expiry, payment declined across Chrome, Safari, Firefox, Edge.
+
+# Test Strategy:
+Run E2E suite, validate all critical paths and error scenarios across supported browsers.

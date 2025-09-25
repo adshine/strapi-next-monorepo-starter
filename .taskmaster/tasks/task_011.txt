@@ -1,0 +1,43 @@
+# Task ID: 11
+# Title: Integrate Stripe Webhook Handling
+# Status: pending
+# Dependencies: 4, 7
+# Priority: high
+# Description: Process Stripe webhooks for subscription lifecycle and add-on purchases with idempotency.
+# Details:
+Implement webhook endpoint in Strapi. Handle events for subscription creation, update, cancellation, payment failures, and add-on purchases. Ensure idempotency with event IDs.
+
+# Test Strategy:
+Send test webhooks from Stripe, verify DB updates and idempotency.
+
+# Subtasks:
+## 1. Implement Stripe Webhook Endpoint in Strapi [pending]
+### Dependencies: None
+### Description: Create a secure HTTP(S) endpoint in Strapi to receive POST requests from Stripe webhooks.
+### Details:
+Define a new route/controller in Strapi to handle incoming Stripe webhook POST requests. Ensure the endpoint is accessible via HTTPS in production. Configure the endpoint to accept raw request bodies for signature verification. Register the endpoint URL in the Stripe Dashboard or via API, subscribing to relevant event types.
+
+## 2. Verify Stripe Webhook Signatures [pending]
+### Dependencies: 11.1
+### Description: Implement signature verification to ensure webhook requests are authentic and originate from Stripe.
+### Details:
+Extract the 'Stripe-Signature' header from incoming requests. Use Stripe's SDK or cryptographic utilities to verify the payload against the endpoint secret. Reject requests with invalid signatures by returning HTTP 400. Store the endpoint secret securely in environment variables.
+
+## 3. Implement Idempotency Handling for Webhook Events [pending]
+### Dependencies: 11.2
+### Description: Ensure each Stripe event is processed only once by tracking event IDs and preventing duplicate processing.
+### Details:
+Store processed Stripe event IDs in a persistent data store (e.g., database table). On receiving a webhook, check if the event ID has already been processed. If so, skip processing and return HTTP 200. Otherwise, proceed and record the event ID after successful handling.
+
+## 4. Process Subscription Lifecycle and Add-on Events [pending]
+### Dependencies: 11.3
+### Description: Implement logic to handle Stripe events for subscription creation, update, cancellation, payment failures, and add-on purchases.
+### Details:
+Map Stripe event types (e.g., 'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted', 'invoice.payment_failed', custom add-on events) to handler functions. Update Strapi's database to reflect subscription status, user entitlements, and add-on purchases based on event data. Ensure atomic updates and error handling.
+
+## 5. Comprehensive Testing and Error Handling [pending]
+### Dependencies: 11.4
+### Description: Test the full webhook flow, including edge cases, and implement robust error handling and logging.
+### Details:
+Write integration tests to simulate Stripe webhook calls for all supported event types, including malformed payloads and duplicate events. Log all received events, errors, and processing outcomes. Ensure the endpoint always returns appropriate HTTP status codes and does not expose sensitive information in responses.
+

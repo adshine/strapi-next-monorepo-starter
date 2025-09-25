@@ -1,0 +1,11 @@
+# Task ID: 15
+# Title: Implement Session Validation and CSRF Protection
+# Status: pending
+# Dependencies: 8, 14
+# Priority: high
+# Description: Add session validation and CSRF protection in Cloudflare Worker and backend APIs.
+# Details:
+Check httpOnly session cookies, validate user sessions, and implement CSRF tokens for state-changing requests.
+
+# Test Strategy:
+Attempt CSRF attacks, verify protection and session enforcement.

@@ -27,18 +27,5 @@ export default {
     registerTemplateAccessLogSubscriber({ strapi })
 
     registerPopulatePageMiddleware({ strapi })
-
-    // Run seeders in development
-    if (
-      process.env.NODE_ENV === "development" &&
-      process.env.SEED_SAMPLE_DATA !== "false"
-    ) {
-      try {
-        const seedDatabase = require("./seeders")
-        await seedDatabase(strapi)
-      } catch (error) {
-        console.error("Seeding failed:", error)
-      }
-    }
   },
 }

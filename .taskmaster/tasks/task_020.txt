@@ -1,0 +1,11 @@
+# Task ID: 20
+# Title: Create Pricing Page and Checkout Flow
+# Status: pending
+# Dependencies: 4, 19
+# Priority: high
+# Description: Implement pricing comparison and Stripe Checkout integration.
+# Details:
+Build pricing page with plan comparison. Integrate Stripe Checkout for new subscriptions. Handle success/cancel redirects.
+
+# Test Strategy:
+Test checkout flow end-to-end, verify Stripe session creation and redirects.

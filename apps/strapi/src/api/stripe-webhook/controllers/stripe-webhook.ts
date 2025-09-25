@@ -8,12 +8,24 @@ import Stripe from "stripe"
 // - totalDownloads → totalRemixes
 // These fields appear when updating user profiles in subscription events
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-08-27.basil",
-})
+// Initialize Stripe only if credentials are provided
+const stripeKey = process.env.STRIPE_SECRET_KEY
+const stripe = stripeKey
+  ? new Stripe(stripeKey, {
+      apiVersion: "2025-08-27.basil",
+    })
+  : null
 
 export default {
   async handleWebhook(ctx: any) {
+    // Check if Stripe is configured
+    if (!stripe) {
+      strapi.log.warn(
+        "Stripe webhook called but Stripe is not configured. Set STRIPE_SECRET_KEY in .env"
+      )
+      return ctx.badRequest("Stripe is not configured")
+    }
+
     const sig = ctx.request.headers["stripe-signature"]
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 

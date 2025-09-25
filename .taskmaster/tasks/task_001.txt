@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Setup Project Repository
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Initialize monorepo with Next.js 15, Strapi v5, and shared configuration.
+# Details:
+Create a monorepo structure using pnpm or yarn workspaces. Scaffold Next.js 15 app and Strapi v5 backend. Add shared config and linting.
+
+# Test Strategy:
+Verify repo structure, run both apps locally, and check for lint errors.

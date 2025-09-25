@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Develop Remix System with R2 Signed URLs
+# Status: pending
+# Dependencies: 3, 7, 9
+# Priority: high
+# Description: Enable secure template remixes with R2 signed URLs, single-use tokens, and retry logic.
+# Details:
+Generate signed URLs (15 min expiry) for remixes. Issue single-use tokens with hash verification. Allow up to 3 retries without quota charge. Log all attempts.
+
+# Test Strategy:
+Attempt remixes, verify URL expiry, token single-use, and retry behavior.

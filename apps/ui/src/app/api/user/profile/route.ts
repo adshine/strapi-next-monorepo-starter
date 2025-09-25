@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getAuth } from "@/lib/auth"
 import { PrivateStrapiClient } from "@/lib/strapi-api"
 
-export async function GET(request: NextRequest) {
-  // eslint-disable-line @typescript-eslint/no-unused-vars
+export async function GET() {
   const session = await getAuth()
 
   if (!session?.strapiJWT) {
@@ -37,12 +36,12 @@ export async function GET(request: NextRequest) {
               userId: session.user.userId,
               email: session.user.email,
               currentPlan: "free",
-              monthlyDownloadsLimit: 5,
-              monthlyDownloadsUsed: 0,
+              monthlyRemixesLimit: 5,
+              monthlyRemixesUsed: 0,
               quotaResetDate: new Date(
                 new Date().setMonth(new Date().getMonth() + 1)
               ),
-              totalDownloads: 0,
+              totalRemixes: 0,
               subscriptionStatus: "active",
             },
           }),

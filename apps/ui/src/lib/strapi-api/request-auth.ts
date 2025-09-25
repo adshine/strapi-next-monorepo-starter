@@ -4,7 +4,14 @@ import { getSession } from "next-auth/react"
 import { getAuth } from "@/lib/auth"
 
 // List of allowed endpoints for GET requests to Strapi
-const ALLOWED_GET_STRAPI_ENDPOINTS = ["api/pages", "api/footer", "api/navbar"]
+const ALLOWED_GET_STRAPI_ENDPOINTS = [
+  "api/pages",
+  "api/footer",
+  "api/navbar",
+  "api/projects",
+  "api/categories",
+  "api/plans",
+]
 
 /**
  * Check if the given path is allowed to be read from Strapi.

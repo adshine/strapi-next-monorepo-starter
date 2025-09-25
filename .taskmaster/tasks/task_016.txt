@@ -1,0 +1,11 @@
+# Task ID: 16
+# Title: Add Rate Limiting per Route
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Implement per-route rate limiting in Cloudflare Worker with configurable thresholds.
+# Details:
+Use in-memory or KV store to track requests per IP/user. Enforce limits and return 429 on excess.
+
+# Test Strategy:
+Simulate high-frequency requests, verify rate limiting triggers correctly.

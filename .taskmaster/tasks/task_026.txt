@@ -1,0 +1,11 @@
+# Task ID: 26
+# Title: Create Integration Tests for API Endpoints
+# Status: pending
+# Dependencies: 13
+# Priority: high
+# Description: Test API endpoints for correctness and error handling.
+# Details:
+Write integration tests (e.g., with Supertest) for all REST/GraphQL endpoints, covering success and failure cases.
+
+# Test Strategy:
+Run tests, verify endpoints behave as expected under various scenarios.

@@ -1,0 +1,11 @@
+# Task ID: 41
+# Title: Quota Management Service
+# Status: pending
+# Dependencies: 40
+# Priority: high
+# Description: Build quota checking, reset job, and retry mechanism for user actions.
+# Details:
+Implement service for quota checks with row-level locking, atomic increments, transactions. Create scheduled quota reset job with timezone grouping, batch processing, and audit logging. Build retry mechanism for failed actions.
+
+# Test Strategy:
+Simulate quota usage, resets, and retries. Validate atomicity and audit logs.

@@ -1,0 +1,11 @@
+# Task ID: 36
+# Title: Cloudflare R2 Buckets and Worker Setup
+# Status: pending
+# Dependencies: 35
+# Priority: high
+# Description: Create R2 buckets for dev, staging, prod, and configure Cloudflare Worker project and routes.
+# Details:
+Create buckets, set CORS policies, initialize Worker project, set up /api/* routes, configure Pages for Next.js, custom domain, and SSL/TLS.
+
+# Test Strategy:
+Upload and retrieve files from each bucket, test Worker routes, verify SSL and custom domain setup.

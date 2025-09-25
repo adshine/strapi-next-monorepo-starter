@@ -1,0 +1,33 @@
+# Task ID: 62
+# Title: Migrate schema from download to remix terminology
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Complete migration of all database fields, API endpoints, and code references from 'download' terminology to 'remix' terminology for Framer templates
+# Details:
+Follow the migration plan in docs/schema-migration-plan.md:
+
+Phase 1: Documentation & UI Copy
+- Update all user-facing strings and documentation
+- Add migration notes to code comments
+
+Phase 2: Database Schema Migration
+- Rename downloadUrl to remixUrl
+- Rename downloadCount to remixCount  
+- Rename download-log collection to template-access-log
+- Update all related fields in user-profile and plan collections
+
+Phase 3: Code Updates
+- Update all API endpoints
+- Update service methods and controllers
+- Update frontend API clients
+- Add backwards compatibility layer
+
+This is a breaking change that needs careful planning and execution with proper deprecation warnings.
+
+# Test Strategy:
+1. Unit tests for field aliasing logic
+2. Integration tests for dual-write functionality
+3. E2E tests for complete user flows
+4. Migration script testing with production data copy
+5. Rollback procedure testing

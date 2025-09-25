@@ -1,0 +1,11 @@
+# Task ID: 2
+# Title: Provision PostgreSQL Database
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Set up PostgreSQL instance for Strapi with secure credentials.
+# Details:
+Provision managed PostgreSQL (e.g., via Cloud SQL, RDS, or local Docker). Configure user, password, and database for Strapi. Store credentials securely.
+
+# Test Strategy:
+Connect to DB from Strapi, run migrations, and verify connectivity.

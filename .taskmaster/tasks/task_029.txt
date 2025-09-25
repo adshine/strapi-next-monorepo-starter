@@ -1,0 +1,11 @@
+# Task ID: 29
+# Title: Conduct Security Testing
+# Status: pending
+# Dependencies: 15, 16, 17, 18, 22
+# Priority: high
+# Description: Test for vulnerabilities including auth, CSRF, rate limiting, and data leaks.
+# Details:
+Perform static analysis, penetration testing, and manual review. Validate CSRF, session, and quota enforcement.
+
+# Test Strategy:
+Document and remediate any vulnerabilities found. Retest after fixes.

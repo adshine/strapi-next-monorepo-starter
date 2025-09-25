@@ -1,0 +1,11 @@
+# Task ID: 34
+# Title: Provision PostgreSQL Database
+# Status: pending
+# Dependencies: 33
+# Priority: high
+# Description: Set up PostgreSQL database for development and production environments.
+# Details:
+Create database instances for dev, staging, and prod. Configure access credentials and network rules.
+
+# Test Strategy:
+Connect to each database instance, run basic CRUD operations, and validate connectivity from backend.

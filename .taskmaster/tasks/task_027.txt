@@ -1,0 +1,11 @@
+# Task ID: 27
+# Title: Build E2E Tests for Critical User Paths
+# Status: pending
+# Dependencies: 19, 20, 21, 22, 23
+# Priority: high
+# Description: Automate end-to-end tests for registration, subscription, remix, and dashboard flows using Playwright.
+# Details:
+Write Playwright scripts for user journeys: sign up, subscribe, remix, and manage account.
+
+# Test Strategy:
+Run E2E suite, verify all critical paths pass without regressions.

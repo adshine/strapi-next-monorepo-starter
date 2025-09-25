@@ -53,7 +53,7 @@
             "dependencies": [
               "3.1"
             ],
-            "details": "Use the Cloudflare dashboard or Wrangler CLI to create a new Worker. Implement routing logic for API endpoints and integrate authentication (e.g., JWT validation or upstream provider integration). Assign the Worker to the appropriate routes and domains. Store any required secrets or environment variables using Cloudflare's secret management.\n<info added on 2025-09-21T00:23:46.236Z>\nCreated a complete Cloudflare Worker implementation in apps/worker/ with full TypeScript support, serving as an API gateway with integrated R2 storage, health check endpoints, JWT-based authentication, rate limiting, and proxy handlers for Strapi. Configured wrangler.toml for development, staging, and production environments, including R2 bucket bindings and environment-specific rate limiting. Implemented download endpoint handlers with signed URL generation, Strapi API proxying with appropriate CORS and caching headers.\n</info added on 2025-09-21T00:23:46.236Z>",
+            "details": "Use the Cloudflare dashboard or Wrangler CLI to create a new Worker. Implement routing logic for API endpoints and integrate authentication (e.g., JWT validation or upstream provider integration). Assign the Worker to the appropriate routes and domains. Store any required secrets or environment variables using Cloudflare's secret management.\n<info added on 2025-09-21T00:23:46.236Z>\nCreated a complete Cloudflare Worker implementation in apps/worker/ with full TypeScript support, serving as an API gateway with integrated R2 storage, health check endpoints, JWT-based authentication, rate limiting, and proxy handlers for Strapi. Configured wrangler.toml for development, staging, and production environments, including R2 bucket bindings and environment-specific rate limiting. Implemented remix endpoint handlers with signed URL generation, Strapi API proxying with appropriate CORS and caching headers.\n</info added on 2025-09-21T00:23:46.236Z>",
             "status": "done",
             "testStrategy": "Deploy a test Worker, send requests to API endpoints, and verify correct routing and authentication enforcement."
           },
@@ -191,7 +191,7 @@
       {
         "id": 7,
         "title": "Create Strapi Collections",
-        "description": "Define Strapi v5 collections: Project, Plan, UserProfile, DownloadLog, TemplateRequest, SubscriptionEvent.",
+        "description": "Define Strapi v5 collections: Project, Plan, UserProfile, TemplateAccessLog, TemplateRequest, SubscriptionEvent.",
         "details": "Model entities in Strapi admin. Set up relations, validations, and permissions. Generate initial migrations.",
         "testStrategy": "Create, read, update, and delete entries via Strapi admin and API.",
         "priority": "high",
@@ -244,8 +244,8 @@
           },
           {
             "id": 5,
-            "title": "Define DownloadLog Collection Type",
-            "description": "Create the DownloadLog collection type with fields, relations, and validation rules.",
+            "title": "Define TemplateAccessLog Collection Type",
+            "description": "Create the TemplateAccessLog collection type with fields, relations, and validation rules.",
             "dependencies": [
               "7.1"
             ],
@@ -378,9 +378,9 @@
       {
         "id": 9,
         "title": "Build Quota Management System",
-        "description": "Implement plan-based monthly download quotas with row-level locking and atomic operations.",
+        "description": "Implement plan-based monthly remix quotas with row-level locking and atomic operations.",
         "details": "Add quota fields to UserProfile and Plan. Use DB transactions and row-level locks to enforce limits. Reset quotas at UTC midnight monthly.",
-        "testStrategy": "Simulate concurrent downloads, verify correct quota enforcement and reset.",
+        "testStrategy": "Simulate concurrent remixes, verify correct quota enforcement and reset.",
         "priority": "high",
         "dependencies": [
           7
@@ -390,7 +390,7 @@
           {
             "id": 1,
             "title": "Design Quota Data Model",
-            "description": "Define and implement database schema changes to support plan-based monthly download quotas, including fields for quota limits and usage in UserProfile and Plan tables.",
+            "description": "Define and implement database schema changes to support plan-based monthly remix quotas, including fields for quota limits and usage in UserProfile and Plan tables.",
             "dependencies": [],
             "details": "Add integer fields for monthly quota limits and current usage to UserProfile and Plan models. Ensure schema supports atomic updates and row-level locking. Document schema changes and update relevant ORM models.",
             "status": "pending",
@@ -399,13 +399,13 @@
           {
             "id": 2,
             "title": "Implement Quota Enforcement Logic",
-            "description": "Develop backend logic to check and enforce quota limits during download requests using database transactions and row-level locks.",
+            "description": "Develop backend logic to check and enforce quota limits during remix requests using database transactions and row-level locks.",
             "dependencies": [
               "9.1"
             ],
-            "details": "On each download request, start a DB transaction, acquire a row-level lock on the user's quota record, check if the quota allows the download, and atomically increment usage if permitted. Return appropriate errors if quota is exceeded.",
+            "details": "On each remix request, start a DB transaction, acquire a row-level lock on the user's quota record, check if the quota allows the remix, and atomically increment usage if permitted. Return appropriate errors if quota is exceeded.",
             "status": "pending",
-            "testStrategy": "Simulate concurrent download requests for a user. Confirm that quota is not exceeded and race conditions are prevented."
+            "testStrategy": "Simulate concurrent remix requests for a user. Confirm that quota is not exceeded and race conditions are prevented."
           },
           {
             "id": 3,
@@ -445,10 +445,10 @@
       },
       {
         "id": 10,
-        "title": "Develop Download System with R2 Signed URLs",
-        "description": "Enable secure template downloads with R2 signed URLs, single-use tokens, and retry logic.",
-        "details": "Generate signed URLs (15 min expiry) for downloads. Issue single-use tokens with hash verification. Allow up to 3 retries without quota charge. Log all attempts.",
-        "testStrategy": "Attempt downloads, verify URL expiry, token single-use, and retry behavior.",
+        "title": "Develop Remix System with R2 Signed URLs",
+        "description": "Enable secure template remixes with R2 signed URLs, single-use tokens, and retry logic.",
+        "details": "Generate signed URLs (15 min expiry) for remixes. Issue single-use tokens with hash verification. Allow up to 3 retries without quota charge. Log all attempts.",
+        "testStrategy": "Attempt remixes, verify URL expiry, token single-use, and retry behavior.",
         "priority": "high",
         "dependencies": [
           3,
@@ -544,7 +544,7 @@
         "id": 13,
         "title": "Develop API Endpoints (Spec Contracts)",
         "description": "Expose REST/GraphQL endpoints for all core entities and flows per API spec.",
-        "details": "Implement endpoints for template catalogue, user profile, download, subscription, and template requests. Enforce authentication and authorization.",
+        "details": "Implement endpoints for template catalogue, user profile, remix, subscription, and template requests. Enforce authentication and authorization.",
         "testStrategy": "Write integration tests for all endpoints, validate against spec.",
         "priority": "high",
         "dependencies": [
@@ -559,7 +559,7 @@
           {
             "id": 1,
             "title": "Define API Endpoint Specifications for Core Entities",
-            "description": "Draft detailed OpenAPI/GraphQL spec contracts for all required endpoints: template catalogue, user profile, download, subscription, and template requests.",
+            "description": "Draft detailed OpenAPI/GraphQL spec contracts for all required endpoints: template catalogue, user profile, remix, subscription, and template requests.",
             "dependencies": [],
             "details": "Review business requirements and data models. For each entity and flow, specify endpoint paths, HTTP methods (for REST) or queries/mutations (for GraphQL), request/response schemas, status codes, and error formats. Ensure endpoints are resource-based, use plural nouns, and follow consistent naming conventions. Document authentication and authorization requirements per endpoint.",
             "status": "pending",
@@ -602,15 +602,15 @@
           },
           {
             "id": 5,
-            "title": "Develop Download and Template Request Endpoints",
-            "description": "Implement endpoints for secure template downloads (with signed URLs, tokens) and for submitting/viewing template requests.",
+            "title": "Develop Remix and Template Request Endpoints",
+            "description": "Implement endpoints for secure template remixes (with signed URLs, tokens) and for submitting/viewing template requests.",
             "dependencies": [
               "13.1",
               "13.2"
             ],
-            "details": "For downloads, generate signed URLs and single-use tokens, enforce expiry and retry logic. For template requests, implement create and list endpoints. Ensure all endpoints validate user permissions and log relevant actions.",
+            "details": "For remixes, generate signed URLs and single-use tokens, enforce expiry and retry logic. For template requests, implement create and list endpoints. Ensure all endpoints validate user permissions and log relevant actions.",
             "status": "pending",
-            "testStrategy": "Test download flows for token validity, expiry, retries, and template request submission and retrieval."
+            "testStrategy": "Test remix flows for token validity, expiry, retries, and template request submission and retrieval."
           },
           {
             "id": 6,
@@ -724,8 +724,8 @@
       {
         "id": 21,
         "title": "Develop Account Dashboard",
-        "description": "Build dashboard for users to view subscription, quota, and download history.",
-        "details": "Create dashboard page with subscription status, quota usage, and download logs. Fetch data from API.",
+        "description": "Build dashboard for users to view subscription, quota, and remix history.",
+        "details": "Create dashboard page with subscription status, quota usage, and remix logs. Fetch data from API.",
         "testStrategy": "Login as user, verify dashboard displays accurate data.",
         "priority": "high",
         "dependencies": [
@@ -750,10 +750,10 @@
       },
       {
         "id": 23,
-        "title": "Build Download Modal with Quota Checking",
-        "description": "Implement download modal with quota validation and progress tracking.",
-        "details": "Show quota status, initiate download via API, display progress and errors. Handle retries and support ticket creation on failure.",
-        "testStrategy": "Attempt downloads with/without quota, verify UI and backend behavior.",
+        "title": "Build Remix Modal with Quota Checking",
+        "description": "Implement remix modal with quota validation and progress tracking.",
+        "details": "Show quota status, initiate remix via API, display progress and errors. Handle retries and support ticket creation on failure.",
+        "testStrategy": "Attempt remixes with/without quota, verify UI and backend behavior.",
         "priority": "high",
         "dependencies": [
           10,
@@ -809,8 +809,8 @@
       {
         "id": 27,
         "title": "Build E2E Tests for Critical User Paths",
-        "description": "Automate end-to-end tests for registration, subscription, download, and dashboard flows using Playwright.",
-        "details": "Write Playwright scripts for user journeys: sign up, subscribe, download, and manage account.",
+        "description": "Automate end-to-end tests for registration, subscription, remix, and dashboard flows using Playwright.",
+        "details": "Write Playwright scripts for user journeys: sign up, subscribe, remix, and manage account.",
         "testStrategy": "Run E2E suite, verify all critical paths pass without regressions.",
         "priority": "high",
         "dependencies": [
@@ -827,7 +827,7 @@
         "id": 28,
         "title": "Perform Load Testing with Concurrent Users",
         "description": "Test system under load to ensure performance requirements are met.",
-        "details": "Use tools like k6 or Artillery to simulate concurrent users on API and downloads. Monitor response times and error rates.",
+        "details": "Use tools like k6 or Artillery to simulate concurrent users on API and remixes. Monitor response times and error rates.",
         "testStrategy": "Analyze metrics, ensure <500ms p95 latency and <1% error rate.",
         "priority": "medium",
         "dependencies": [
@@ -1016,10 +1016,10 @@
       },
       {
         "id": 42,
-        "title": "Download System Implementation",
-        "description": "Develop download initiation, R2 signed URLs, completion tracking, and failure handling.",
-        "details": "Implement download initiation with quota validation, state machine, lock acquisition. Generate R2 signed URLs (15-min expiry, single-use tokens, hash storage). Track completion in DownloadLog, send analytics, and handle failures with retries and support ticket creation.",
-        "testStrategy": "Test download flow, URL expiry, single-use enforcement, completion tracking, and failure scenarios.",
+        "title": "Remix System Implementation",
+        "description": "Develop remix initiation, R2 signed URLs, completion tracking, and failure handling.",
+        "details": "Implement remix initiation with quota validation, state machine, lock acquisition. Generate R2 signed URLs (15-min expiry, single-use tokens, hash storage). Track completion in TemplateAccessLog, send analytics, and handle failures with retries and support ticket creation.",
+        "testStrategy": "Test remix flow, URL expiry, single-use enforcement, completion tracking, and failure scenarios.",
         "priority": "high",
         "dependencies": [
           41,
@@ -1073,7 +1073,7 @@
         "id": 46,
         "title": "Frontend Core Pages Development",
         "description": "Build landing page, template catalogue, template detail, pricing page, and account dashboard with all specified features.",
-        "details": "Use Next.js and Framer for UI. Implement hero, feature grid, pricing preview, catalogue grid/list, search, filters, sort, detail gallery/video, plan requirements, download button, pricing cards, feature comparison, FAQ, dashboard widgets.",
+        "details": "Use Next.js and Framer for UI. Implement hero, feature grid, pricing preview, catalogue grid/list, search, filters, sort, detail gallery/video, plan requirements, remix button, pricing cards, feature comparison, FAQ, dashboard widgets.",
         "testStrategy": "Manual and automated UI tests for layout, navigation, feature completeness, and responsiveness.",
         "priority": "high",
         "dependencies": [
@@ -1099,8 +1099,8 @@
       {
         "id": 48,
         "title": "Account Management Features",
-        "description": "Build billing section, downloads history, template requests, and settings page with all specified features.",
-        "details": "Implement billing (plan display, upgrade/downgrade, payment history, portal), downloads history (list, status, retry, filters, CSV export), template requests (form, status, comments), settings (profile, timezone, theme, notifications).",
+        "description": "Build billing section, remixes history, template requests, and settings page with all specified features.",
+        "details": "Implement billing (plan display, upgrade/downgrade, payment history, portal), remixes history (list, status, retry, filters, CSV export), template requests (form, status, comments), settings (profile, timezone, theme, notifications).",
         "testStrategy": "Test all account management features for correctness, UI/UX, and integration with backend.",
         "priority": "medium",
         "dependencies": [
@@ -1113,7 +1113,7 @@
       {
         "id": 49,
         "title": "Reusable UI Components Development",
-        "description": "Create template card, download modal, subscription banner, search component, and quota indicator with all interactive states.",
+        "description": "Create template card, remix modal, subscription banner, search component, and quota indicator with all interactive states.",
         "details": "Develop components with hover previews, quota badges, favorite toggles, loading/error states, confirmation/progress indicators, state colors, action buttons, countdowns, debounced input, suggestions, recent searches, visual progress, reset timer, upgrade prompt.",
         "testStrategy": "Unit and integration tests for component behavior, state transitions, and accessibility.",
         "priority": "medium",
@@ -1141,7 +1141,7 @@
         "id": 51,
         "title": "Unit Testing Implementation",
         "description": "Develop unit tests for Strapi services, React components, and Worker functions to achieve 80% coverage.",
-        "details": "Write tests for quota calculations, state transitions, download logic, user interactions, error/loading states, caching, rate limiting, security checks using Jest and React Testing Library.",
+        "details": "Write tests for quota calculations, state transitions, remix logic, user interactions, error/loading states, caching, rate limiting, security checks using Jest and React Testing Library.",
         "testStrategy": "Run coverage reports, ensure 80%+ coverage, and validate test pass/fail for all units.",
         "priority": "high",
         "dependencies": [
@@ -1156,7 +1156,7 @@
         "id": 52,
         "title": "Integration Testing Implementation",
         "description": "Build integration tests for API endpoints, database operations, and Stripe webhooks.",
-        "details": "Test auth, download, payment flows; database transactions, lock handling, race conditions; Stripe event processing, idempotency, retries using Supertest and Stripe CLI.",
+        "details": "Test auth, remix, payment flows; database transactions, lock handling, race conditions; Stripe event processing, idempotency, retries using Supertest and Stripe CLI.",
         "testStrategy": "Automated integration test suite with pass/fail criteria for all flows and edge cases.",
         "priority": "high",
         "dependencies": [
@@ -1169,7 +1169,7 @@
         "id": 53,
         "title": "End-to-End Testing (Playwright)",
         "description": "Implement E2E tests for critical user paths, error scenarios, and cross-browser compatibility.",
-        "details": "Use Playwright to automate visitor signup, purchase, login, browse, download, payment failure/recovery, template request flow, network failures, quota exceeded, session expiry, payment declined across Chrome, Safari, Firefox, Edge.",
+        "details": "Use Playwright to automate visitor signup, purchase, login, browse, remix, payment failure/recovery, template request flow, network failures, quota exceeded, session expiry, payment declined across Chrome, Safari, Firefox, Edge.",
         "testStrategy": "Run E2E suite, validate all critical paths and error scenarios across supported browsers.",
         "priority": "high",
         "dependencies": [
@@ -1182,7 +1182,7 @@
         "id": 54,
         "title": "Performance Testing and Optimization",
         "description": "Conduct load testing, Lighthouse audits, bundle analysis, and API response time measurements.",
-        "details": "Use k6 for load tests (100 concurrent users, download stress, DB locks), Lighthouse for performance (>90), accessibility (>95), SEO (>90), analyze bundle size, and measure API response times.",
+        "details": "Use k6 for load tests (100 concurrent users, remix stress, DB locks), Lighthouse for performance (>90), accessibility (>95), SEO (>90), analyze bundle size, and measure API response times.",
         "testStrategy": "Review test reports, optimize as needed, and confirm benchmarks are met.",
         "priority": "medium",
         "dependencies": [
@@ -1288,7 +1288,7 @@
         "description": "Complete migration of all database fields, API endpoints, and code references from 'download' terminology to 'remix' terminology for Framer templates",
         "details": "Follow the migration plan in docs/schema-migration-plan.md:\n\nPhase 1: Documentation & UI Copy\n- Update all user-facing strings and documentation\n- Add migration notes to code comments\n\nPhase 2: Database Schema Migration\n- Rename downloadUrl to remixUrl\n- Rename downloadCount to remixCount  \n- Rename download-log collection to template-access-log\n- Update all related fields in user-profile and plan collections\n\nPhase 3: Code Updates\n- Update all API endpoints\n- Update service methods and controllers\n- Update frontend API clients\n- Add backwards compatibility layer\n\nThis is a breaking change that needs careful planning and execution with proper deprecation warnings.",
         "testStrategy": "1. Unit tests for field aliasing logic\n2. Integration tests for dual-write functionality\n3. E2E tests for complete user flows\n4. Migration script testing with production data copy\n5. Rollback procedure testing",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "subtasks": []
@@ -1296,7 +1296,7 @@
     ],
     "metadata": {
       "created": "2025-09-20T01:11:59.758Z",
-      "updated": "2025-09-21T04:03:48.411Z",
+      "updated": "2025-09-23T00:01:08.450Z",
       "description": "Tasks for master context"
     }
   }

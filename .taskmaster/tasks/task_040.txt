@@ -1,0 +1,11 @@
+# Task ID: 40
+# Title: Implement Authentication System
+# Status: pending
+# Dependencies: 39
+# Priority: high
+# Description: Develop registration, login, email verification, password reset endpoints, and NextAuth integration.
+# Details:
+Implement endpoints for registration (email validation, password strength, verification email), login (credential validation, session, remember me), email verification (6-digit code, expiry, retry), password reset (token, secure flow, auto-login), and NextAuth configuration.
+
+# Test Strategy:
+Test all auth flows via API and UI, including edge cases for expiry, retries, and session handling.

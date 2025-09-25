@@ -1,0 +1,49 @@
+# Task ID: 13
+# Title: Develop API Endpoints (Spec Contracts)
+# Status: pending
+# Dependencies: 7, 8, 9, 10, 12
+# Priority: high
+# Description: Expose REST/GraphQL endpoints for all core entities and flows per API spec.
+# Details:
+Implement endpoints for template catalogue, user profile, remix, subscription, and template requests. Enforce authentication and authorization.
+
+# Test Strategy:
+Write integration tests for all endpoints, validate against spec.
+
+# Subtasks:
+## 1. Define API Endpoint Specifications for Core Entities [pending]
+### Dependencies: None
+### Description: Draft detailed OpenAPI/GraphQL spec contracts for all required endpoints: template catalogue, user profile, remix, subscription, and template requests.
+### Details:
+Review business requirements and data models. For each entity and flow, specify endpoint paths, HTTP methods (for REST) or queries/mutations (for GraphQL), request/response schemas, status codes, and error formats. Ensure endpoints are resource-based, use plural nouns, and follow consistent naming conventions. Document authentication and authorization requirements per endpoint.
+
+## 2. Implement Authentication and Authorization Middleware [pending]
+### Dependencies: 13.1
+### Description: Develop and integrate middleware to enforce authentication (e.g., JWT, OAuth2) and role-based access control for all API endpoints.
+### Details:
+Choose and configure authentication strategy (JWT or OAuth2). Implement middleware to validate tokens and extract user context. Define authorization rules for each endpoint based on user roles and permissions. Ensure all endpoints require authentication unless explicitly public.
+
+## 3. Develop Template Catalogue Endpoints [pending]
+### Dependencies: 13.1, 13.2
+### Description: Implement REST/GraphQL endpoints for listing, searching, filtering, and retrieving template catalogue items as per the API spec.
+### Details:
+Create controllers/resolvers for catalogue endpoints. Support query parameters for search, filter, and sort. Ensure endpoints return paginated results and conform to the defined response schema. Apply authentication and authorization middleware.
+
+## 4. Develop User Profile and Subscription Endpoints [pending]
+### Dependencies: 13.1, 13.2
+### Description: Implement endpoints for user profile management (view, update) and subscription flows (view status, update plan, cancel).
+### Details:
+Build controllers/resolvers for user profile and subscription endpoints. Enforce that users can only access and modify their own data. Validate input and handle errors with appropriate status codes. Integrate with authentication middleware.
+
+## 5. Develop Remix and Template Request Endpoints [pending]
+### Dependencies: 13.1, 13.2
+### Description: Implement endpoints for secure template remixes (with signed URLs, tokens) and for submitting/viewing template requests.
+### Details:
+For remixes, generate signed URLs and single-use tokens, enforce expiry and retry logic. For template requests, implement create and list endpoints. Ensure all endpoints validate user permissions and log relevant actions.
+
+## 6. Write Integration Tests and Generate API Documentation [pending]
+### Dependencies: 13.3, 13.4, 13.5
+### Description: Develop comprehensive integration tests for all endpoints and generate interactive API documentation (e.g., Swagger/OpenAPI or GraphQL Playground).
+### Details:
+Write integration tests covering all endpoints, including authentication, authorization, error handling, and edge cases. Use tools like Swagger/OpenAPI or GraphQL Playground to generate and publish interactive API docs. Ensure documentation is accurate and up to date with implementation.
+

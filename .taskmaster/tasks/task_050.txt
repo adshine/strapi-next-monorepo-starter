@@ -1,0 +1,11 @@
+# Task ID: 50
+# Title: Accessibility and Mobile Optimization
+# Status: pending
+# Dependencies: 46, 49
+# Priority: high
+# Description: Ensure keyboard navigation, ARIA labels, focus management, skip links, color contrast, reduced motion, responsive layouts, touch targets, bottom sheets, gestures, PWA manifest, and service worker.
+# Details:
+Audit UI for accessibility (WCAG 2.1 AA), implement ARIA, focus, skip links, color contrast (4.5:1), reduced motion. Optimize for mobile: responsive layouts, 44px touch targets, bottom sheets, gestures, PWA manifest, service worker.
+
+# Test Strategy:
+Accessibility testing with screen readers, keyboard, Lighthouse; mobile testing on multiple devices and browsers.

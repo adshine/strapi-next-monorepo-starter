@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Configure Email Service Provider
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Integrate transactional email provider for authentication and notifications.
+# Details:
+Choose provider (e.g., SendGrid, Postmark). Set up API keys, sender domains, and templates for verification, reset, and notifications.
+
+# Test Strategy:
+Send test emails for verification and password reset flows.

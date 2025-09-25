@@ -1,0 +1,11 @@
+# Task ID: 37
+# Title: Stripe Product and Webhook Configuration
+# Status: pending
+# Dependencies: 36
+# Priority: high
+# Description: Set up Stripe products, prices, webhook endpoints, Customer Portal, tax settings, and test data.
+# Details:
+Create products/prices per stripe-setup.md, configure webhook endpoints, enable Customer Portal, set tax settings, document price IDs in .env.
+
+# Test Strategy:
+Trigger test webhook events, verify product and price creation, access Customer Portal, and confirm tax calculations.

@@ -1,0 +1,49 @@
+# Task ID: 3
+# Title: Configure Cloudflare Infrastructure
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: Set up Cloudflare Workers, Pages, and R2 buckets for storage and edge compute.
+# Details:
+Create Cloudflare account, configure Workers for API gateway, Pages for static hosting, and R2 for template storage. Set up access keys and permissions.
+
+# Test Strategy:
+Deploy test worker, upload file to R2, and verify access from Pages.
+
+# Subtasks:
+## 1. Create and Configure Cloudflare Account [done]
+### Dependencies: None
+### Description: Set up a new Cloudflare account or access an existing one, and configure the necessary global account settings for the project.
+### Details:
+Sign up for Cloudflare if not already done. Log into the Cloudflare dashboard and ensure account-level settings (such as billing, team access, and security) are configured. Retrieve your Account ID and set up API tokens with appropriate permissions for Workers, Pages, and R2. Document all credentials securely for later use.
+<info added on 2025-09-21T00:23:12.850Z>
+Added comprehensive Cloudflare setup documentation at docs/cloudflare-setup.md, providing step-by-step instructions for account creation, API token generation with required permissions, and listing all necessary environment variables. Updated .env.example to include detailed Cloudflare configuration sections with explanatory comments for each value. Developed scripts/setup-cloudflare.sh to automate R2 bucket creation and configure CORS settings.
+</info added on 2025-09-21T00:23:12.850Z>
+
+## 2. Set Up Cloudflare Workers for API Gateway [done]
+### Dependencies: 3.1
+### Description: Deploy and configure Cloudflare Workers to serve as the API gateway, including authentication and routing logic.
+### Details:
+Use the Cloudflare dashboard or Wrangler CLI to create a new Worker. Implement routing logic for API endpoints and integrate authentication (e.g., JWT validation or upstream provider integration). Assign the Worker to the appropriate routes and domains. Store any required secrets or environment variables using Cloudflare's secret management.
+<info added on 2025-09-21T00:23:46.236Z>
+Created a complete Cloudflare Worker implementation in apps/worker/ with full TypeScript support, serving as an API gateway with integrated R2 storage, health check endpoints, JWT-based authentication, rate limiting, and proxy handlers for Strapi. Configured wrangler.toml for development, staging, and production environments, including R2 bucket bindings and environment-specific rate limiting. Implemented remix endpoint handlers with signed URL generation, Strapi API proxying with appropriate CORS and caching headers.
+</info added on 2025-09-21T00:23:46.236Z>
+
+## 3. Configure Cloudflare Pages for Static Hosting [done]
+### Dependencies: 3.1
+### Description: Set up Cloudflare Pages to host static frontend assets, connect to the repository, and configure build settings.
+### Details:
+In the Cloudflare dashboard, create a new Pages project and connect it to the desired Git repository. Configure build commands and output directory. Set environment variables as needed. Link the Pages deployment to the custom domain and configure any required redirects or headers.
+
+## 4. Provision and Secure R2 Buckets for Storage [done]
+### Dependencies: 3.1
+### Description: Create R2 buckets for template and asset storage, configure access policies, and generate access keys.
+### Details:
+In the Cloudflare dashboard, navigate to R2 and create one or more buckets for storage needs. Set bucket permissions and generate access keys with least privilege. Configure CORS and bucket policies as required for integration with Workers and Pages. Store access keys securely.
+
+## 5. Integrate Access Controls and Permissions Across Services [done]
+### Dependencies: 3.2, 3.3, 3.4
+### Description: Set up and validate access controls, environment variables, and permissions to ensure secure interoperability between Workers, Pages, and R2.
+### Details:
+Configure environment variables and secrets in Workers and Pages for accessing R2 buckets. Ensure Workers have the correct permissions to read/write to R2 and that Pages can access public assets as needed. Review and enforce least-privilege access for all API tokens and keys. Document the configuration for future maintenance.
+

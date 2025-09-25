@@ -1,0 +1,11 @@
+# Task ID: 19
+# Title: Build Template Catalogue UI
+# Status: pending
+# Dependencies: 13
+# Priority: high
+# Description: Develop frontend catalogue with search, filters, and sorting.
+# Details:
+Use Next.js 15 and React to build catalogue page. Integrate with API for dynamic data. Implement search, filter, and sort UI components.
+
+# Test Strategy:
+Test UI interactions, verify correct API calls and results display.

@@ -1,0 +1,49 @@
+# Task ID: 8
+# Title: Implement Authentication System
+# Status: pending
+# Dependencies: 5, 7
+# Priority: high
+# Description: Build authentication with email verification, password reset, and NextAuth.js integration.
+# Details:
+Configure NextAuth.js with httpOnly cookies. Implement email verification with 6-digit codes (10 min expiry), password reset with secure tokens, and 'remember me' sessions.
+
+# Test Strategy:
+Test registration, login, verification, reset, and session persistence flows.
+
+# Subtasks:
+## 1. Set Up NextAuth.js Core Configuration [pending]
+### Dependencies: None
+### Description: Install and configure NextAuth.js in the Next.js project, ensuring httpOnly cookies and secure session management.
+### Details:
+Install NextAuth.js and its peer dependencies. Create the API route (e.g., /api/auth/[...nextauth].ts) and configure providers, session options (including httpOnly cookies), and callbacks. Ensure session persistence and security settings are correctly applied. Integrate with a database adapter if needed for user and session storage.
+
+## 2. Implement User Registration with Email Verification Trigger [pending]
+### Dependencies: 8.1
+### Description: Develop the registration flow to create new users and initiate email verification by sending a 6-digit code with a 10-minute expiry.
+### Details:
+Create a registration API endpoint and form. On successful registration, generate a random 6-digit code, store it with a 10-minute expiry, and send it to the user's email. Ensure the code is securely stored and associated with the user record.
+
+## 3. Build Email Verification Logic [pending]
+### Dependencies: 8.2
+### Description: Enable users to verify their email by submitting the 6-digit code, updating their verification status upon success.
+### Details:
+Create an API endpoint and form for code submission. Validate the code against the stored value and expiry. On success, mark the user's email as verified and remove or invalidate the code. Handle error cases for expired or incorrect codes.
+
+## 4. Implement Secure Login with 'Remember Me' Sessions [pending]
+### Dependencies: 8.1, 8.3
+### Description: Develop the login flow using NextAuth.js credentials provider, supporting 'remember me' for extended session duration.
+### Details:
+Create a login form and API logic using NextAuth.js credentials provider. Add a 'remember me' option that adjusts session expiry (e.g., longer maxAge for persistent sessions). Ensure only verified users can log in. Configure session options to reflect 'remember me' selection.
+
+## 5. Develop Password Reset Flow with Secure Tokens [pending]
+### Dependencies: 8.1
+### Description: Allow users to request password resets, generating secure tokens and enabling password updates via a reset link.
+### Details:
+Create an API endpoint for password reset requests. Generate a secure, time-limited token and email it to the user. Build a reset form and endpoint to validate the token and update the password. Ensure tokens are single-use and expire after a set time (e.g., 1 hour).
+
+## 6. Protect Routes and APIs Using NextAuth.js Session Validation [pending]
+### Dependencies: 8.1, 8.3, 8.4
+### Description: Enforce authentication and email verification on protected pages and API routes using NextAuth.js session validation.
+### Details:
+Use NextAuth.js utilities (e.g., getServerSession) to check session and user verification status in server components and API routes. Redirect unauthenticated or unverified users as appropriate. Apply middleware for route protection where needed.
+

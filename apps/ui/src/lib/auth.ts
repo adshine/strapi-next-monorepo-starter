@@ -9,7 +9,7 @@ import type {
 } from "next"
 import type { NextAuthOptions } from "next-auth"
 
-import { PrivateStrapiClient } from "@/lib/strapi-api"
+import { PrivateClient } from "@/lib/strapi-api/private"
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -28,18 +28,20 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        return PrivateStrapiClient.fetchAPI(
-          `/auth/local`,
-          undefined,
-          {
-            body: JSON.stringify({
-              identifier: credentials.email,
-              password: credentials.password,
-            }),
-            method: "POST",
-          },
-          { omitUserAuthorization: true }
-        )
+        const privateClient = new PrivateClient()
+        return privateClient
+          .fetchAPI(
+            `/auth/local`,
+            undefined,
+            {
+              body: JSON.stringify({
+                identifier: credentials.email,
+                password: credentials.password,
+              }),
+              method: "POST",
+            },
+            { omitUserAuthorization: true }
+          )
           .then((data) => {
             const { jwt, user } = data
             if (jwt == null || user == null) {
@@ -80,7 +82,8 @@ export const authOptions: NextAuthOptions = {
         if (account.access_token != null) {
           // OAuth login - connect the account
           try {
-            const data = await PrivateStrapiClient.fetchAPI(
+            const privateClient = new PrivateClient()
+            const data = await privateClient.fetchAPI(
               `/auth/${account.provider}/callback?access_token=${account.access_token}`,
               undefined
             )
@@ -127,13 +130,11 @@ export const authOptions: NextAuthOptions = {
         // it can be removed to improve performance but weird things can happen
         // (user is logged in within NextAuth and UI but not in Strapi API)
         try {
+          const privateClient = new PrivateClient()
           const fetchedUser: Result<"plugin::users-permissions.user"> =
-            await PrivateStrapiClient.fetchAPI(
-              "/users/me",
-              undefined,
-              undefined,
-              { userJWT: token.strapiJWT }
-            )
+            await privateClient.fetchAPI("/users/me", undefined, undefined, {
+              userJWT: token.strapiJWT,
+            })
 
           // API token is valid - update/reload user data or add more data
           token.name = fetchedUser.username

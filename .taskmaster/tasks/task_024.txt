@@ -1,0 +1,11 @@
+# Task ID: 24
+# Title: Create Template Request Submission and Tracking
+# Status: pending
+# Dependencies: 13, 21
+# Priority: medium
+# Description: Allow users to submit and track template requests from frontend.
+# Details:
+Build submission form, integrate with API, and display request status/history in dashboard.
+
+# Test Strategy:
+Submit requests, verify backend entry and status updates.

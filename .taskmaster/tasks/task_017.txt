@@ -1,0 +1,11 @@
+# Task ID: 17
+# Title: Create Caching Layer for Public Endpoints
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Cache public API responses at edge for performance.
+# Details:
+Configure Worker to cache GET responses for catalogue and pricing endpoints. Set cache headers and invalidation logic.
+
+# Test Strategy:
+Check cache hits/misses and response times for cached endpoints.

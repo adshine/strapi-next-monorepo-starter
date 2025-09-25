@@ -61,6 +61,15 @@ module.exports = {
       console.log("✓ Renamed user_profiles.total_downloads to total_remixes")
     }
 
+    if (await knex.schema.hasColumn("user_profiles", "download_lock_version")) {
+      await knex.schema.alterTable("user_profiles", (table) => {
+        table.renameColumn("download_lock_version", "remix_lock_version")
+      })
+      console.log(
+        "✓ Renamed user_profiles.download_lock_version to remix_lock_version"
+      )
+    }
+
     // 3. Rename columns in the plans table
     if (await knex.schema.hasColumn("plans", "daily_download_limit")) {
       await knex.schema.alterTable("plans", (table) => {
@@ -209,6 +218,12 @@ module.exports = {
     if (await knex.schema.hasColumn("user_profiles", "total_remixes")) {
       await knex.schema.alterTable("user_profiles", (table) => {
         table.renameColumn("total_remixes", "total_downloads")
+      })
+    }
+
+    if (await knex.schema.hasColumn("user_profiles", "remix_lock_version")) {
+      await knex.schema.alterTable("user_profiles", (table) => {
+        table.renameColumn("remix_lock_version", "download_lock_version")
       })
     }
 

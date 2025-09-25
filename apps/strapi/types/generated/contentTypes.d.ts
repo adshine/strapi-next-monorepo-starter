@@ -980,8 +980,6 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     dailyRemixesUsed: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     dailyResetAt: Schema.Attribute.DateTime
     displayName: Schema.Attribute.String
-    downloadLockVersion: Schema.Attribute.Integer &
-      Schema.Attribute.DefaultTo<0>
     emailNotifications: Schema.Attribute.JSON
     emailVerificationExpiry: Schema.Attribute.DateTime
     emailVerificationToken: Schema.Attribute.String
@@ -1009,6 +1007,7 @@ export interface ApiUserProfileUserProfile extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime
     quotaResetDate: Schema.Attribute.DateTime
     referralSource: Schema.Attribute.String
+    remixLockVersion: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>
     stripeCustomerId: Schema.Attribute.String & Schema.Attribute.Unique
     subscriptionEndDate: Schema.Attribute.DateTime
     subscriptionStartDate: Schema.Attribute.DateTime

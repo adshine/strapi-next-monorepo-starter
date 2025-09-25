@@ -1,0 +1,11 @@
+# Task ID: 38
+# Title: Email Service Integration and Template Setup
+# Status: pending
+# Dependencies: 37
+# Priority: high
+# Description: Configure email provider API, create and test all required email templates, and set up SPF/DKIM.
+# Details:
+Integrate SendGrid/Postmark, create templates for welcome, verification, password reset, payment events, receipt, and template request confirmation. Configure SPF/DKIM records.
+
+# Test Strategy:
+Send test emails for each template, verify delivery, and check SPF/DKIM status.

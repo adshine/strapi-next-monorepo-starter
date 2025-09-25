@@ -187,13 +187,23 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                 Templates
               </Link>
               <span>→</span>
-              <Link
-                href={`/templates?category=${encodeURIComponent(template.category.toLowerCase())}`}
-                className="hover:text-[var(--text-primary)]"
-              >
-                {template.category}
-              </Link>
-              <span>→</span>
+              {template.category && (
+                <>
+                  <Link
+                    href={`/templates?category=${encodeURIComponent(
+                      typeof template.category === "string"
+                        ? template.category.toLowerCase()
+                        : template.category.slug || "general"
+                    )}`}
+                    className="hover:text-[var(--text-primary)]"
+                  >
+                    {typeof template.category === "string"
+                      ? template.category
+                      : template.category?.name || "General"}
+                  </Link>
+                  <span>→</span>
+                </>
+              )}
               <span className="text-[var(--text-primary)]">
                 {template.title}
               </span>
@@ -221,16 +231,29 @@ export default function TemplatePage({ params }: TemplatePageProps) {
           <div className="lg:col-span-5">
             <div className="sticky top-8 space-y-6 py-8">
               <div className="space-y-4">
-                <p className="text-sm text-[var(--text-muted)]">
-                  by{" "}
-                  <span className="font-semibold text-[var(--text-primary)]">
-                    {template.creator}
-                  </span>{" "}
-                  in{" "}
-                  <span className="font-semibold text-[var(--text-primary)]">
-                    {template.category}
-                  </span>
-                </p>
+                {(template.creator || template.category) && (
+                  <p className="text-sm text-[var(--text-muted)]">
+                    {template.creator && (
+                      <>
+                        by{" "}
+                        <span className="font-semibold text-[var(--text-primary)]">
+                          {template.creator}
+                        </span>
+                      </>
+                    )}
+                    {template.creator && template.category && " "}
+                    {template.category && (
+                      <>
+                        in{" "}
+                        <span className="font-semibold text-[var(--text-primary)]">
+                          {typeof template.category === "string"
+                            ? template.category
+                            : template.category?.name || "General"}
+                        </span>
+                      </>
+                    )}
+                  </p>
+                )}
                 <h1 className="text-4xl leading-tight font-bold md:text-5xl">
                   {template.title}
                 </h1>

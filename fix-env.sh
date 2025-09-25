@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "📝 To permanently fix the DATABASE environment variable conflicts, run these commands:"
+echo ""
+echo "# Remove or comment out these lines from your ~/.zshrc or ~/.bashrc:"
+echo "export DATABASE_HOST=localhost"
+echo "export DATABASE_NAME=framer_templates"
+echo "export DATABASE_PASSWORD=postgres"
+echo "export DATABASE_PORT=5432"
+echo "export DATABASE_SSL=false"
+echo "export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/framer_templates"
+echo "export DATABASE_USERNAME=postgres"
+echo ""
+echo "Run: nano ~/.zshrc"
+echo "Comment out the DATABASE_* exports by adding # at the beginning of each line"
+echo "Save and exit, then run: source ~/.zshrc"
+echo ""
+echo "This will prevent conflicts with the project's .env file."

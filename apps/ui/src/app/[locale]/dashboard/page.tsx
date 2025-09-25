@@ -29,11 +29,11 @@ export default function DashboardPage() {
     userPlan && ["studio", "agency", "lifetime"].includes(userPlan.slug)
 
   // Calculate quota usage
-  const dailyQuotaUsed = profile.remixesUsed || 0 // TODO: Backend still uses downloadsUsed
+  const dailyQuotaUsed = profile.monthlyRemixesUsed || 0
   const dailyQuotaLimit =
-    userPlan?.dailyRemixLimit === -1 // TODO: Backend still uses dailyDownloadLimit
+    profile?.monthlyRemixesLimit === -1
       ? 100
-      : userPlan?.dailyRemixLimit || 0
+      : profile?.monthlyRemixesLimit || 0
   const dailyQuotaPercent =
     dailyQuotaLimit > 0 ? (dailyQuotaUsed / dailyQuotaLimit) * 100 : 0
 

@@ -1,0 +1,61 @@
+# Task ID: 7
+# Title: Create Strapi Collections
+# Status: done
+# Dependencies: 2
+# Priority: high
+# Description: Define Strapi v5 collections: Project, Plan, UserProfile, TemplateAccessLog, TemplateRequest, SubscriptionEvent.
+# Details:
+Model entities in Strapi admin. Set up relations, validations, and permissions. Generate initial migrations.
+
+# Test Strategy:
+Create, read, update, and delete entries via Strapi admin and API.
+
+# Subtasks:
+## 1. Set Up Strapi v5 Project Environment [done]
+### Dependencies: None
+### Description: Install and initialize a new Strapi v5 project, ensuring the development environment is ready for collection modeling.
+### Details:
+Run `npx create-strapi-app@latest` and follow prompts to set up the project. Start the Strapi server and create the initial admin user. Confirm access to the Content-Type Builder in the admin panel.
+
+## 2. Define Project Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the Project collection type with all required fields, relations, and validation rules.
+### Details:
+In Content-Type Builder, add a new collection type 'Project'. Define fields (e.g., name, description, owner, status). Set up relations to UserProfile and Plan as needed. Configure field validations (required, unique, etc.).
+
+## 3. Define Plan Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the Plan collection type with fields, relations, and validation rules.
+### Details:
+Add 'Plan' collection type. Define fields (e.g., name, price, features). Set up relations to Project and SubscriptionEvent. Apply validation rules for required fields and data types.
+
+## 4. Define UserProfile Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the UserProfile collection type, including all necessary fields, relations, and validations.
+### Details:
+Add 'UserProfile' collection type. Define fields (e.g., user reference, display name, avatar, bio). Relate to Project and DownloadLog. Set up validations for required and unique fields.
+
+## 5. Define TemplateAccessLog Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the TemplateAccessLog collection type with fields, relations, and validation rules.
+### Details:
+Add 'DownloadLog' collection type. Define fields (e.g., file reference, timestamp, user reference). Relate to UserProfile and Project. Set up validations for required fields and correct data types.
+
+## 6. Define TemplateRequest Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the TemplateRequest collection type with fields, relations, and validation rules.
+### Details:
+Add 'TemplateRequest' collection type. Define fields (e.g., template name, description, requester reference, status). Relate to UserProfile. Apply validations for required fields and status values.
+
+## 7. Define SubscriptionEvent Collection Type [done]
+### Dependencies: 7.1
+### Description: Create the SubscriptionEvent collection type with fields, relations, and validation rules.
+### Details:
+Add 'SubscriptionEvent' collection type. Define fields (e.g., event type, timestamp, plan reference, user reference). Relate to Plan and UserProfile. Set up validations for event type and required fields.
+
+## 8. Configure Permissions and Generate Initial Migrations [done]
+### Dependencies: 7.2, 7.3, 7.4, 7.5, 7.6, 7.7
+### Description: Set up permissions for each collection type and generate initial database migrations.
+### Details:
+In Strapi admin, configure public and authenticated permissions for each collection. Ensure only appropriate roles can access or modify data. Run migration generation to update the database schema.
+

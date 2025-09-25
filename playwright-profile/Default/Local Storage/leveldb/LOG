@@ -1,2 +1,6 @@
-2025/09/20-23:29:05.322 8ed1f2 Creating DB /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb since it was missing.
-2025/09/20-23:29:05.331 8ed1f2 Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2025/09/24-08:03:03.375 18d1ec Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2025/09/24-08:03:03.378 18d1ec Recovering log #3
+2025/09/24-08:03:03.379 18d1ec Reusing old log /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/000003.log 
+2025/09/24-16:12:39.218 18d1ec Level-0 table #5: started
+2025/09/24-16:12:39.229 18d1ec Level-0 table #5: 64875 bytes OK
+2025/09/24-16:12:39.235 18d1ec Delete type=0 #3

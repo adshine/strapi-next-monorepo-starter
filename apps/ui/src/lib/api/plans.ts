@@ -11,9 +11,9 @@ export interface Plan {
   stripePriceId: string
   stripePriceIdAnnual: string
   billingCycle: "day" | "month" | "year" | "lifetime"
-  dailyDownloadLimit: number // TODO: Backend still uses this field name
+  dailyRemixLimit: number
   templateRequestLimit: number
-  monthlyDownloadLimit: number // TODO: Backend still uses this field name
+  monthlyRemixLimit: number
   isLifetime: boolean
   perksRichText?: string
   priority: number
@@ -23,7 +23,7 @@ export interface Plan {
   popularBadge: boolean
   supportSLA?: number
   allowsFavorites: boolean
-  allowsBulkDownload: boolean // TODO: Backend still uses this field name
+  allowsBulkRemix: boolean
   allowsCollections: boolean
   tier: "free" | "starter" | "professional" | "enterprise"
   recommended: boolean
@@ -115,9 +115,9 @@ class PlansAPI {
       stripePriceId: data.stripePriceId || data.stripePriceIdMonthly,
       stripePriceIdAnnual: data.stripePriceIdAnnual,
       billingCycle: data.billingCycle || "month",
-      dailyDownloadLimit: data.dailyDownloadLimit || 0, // TODO: Backend still uses this field name
+      dailyRemixLimit: data.dailyRemixLimit || 0,
       templateRequestLimit: data.templateRequestLimit || 0,
-      monthlyDownloadLimit: data.monthlyDownloadLimit || 0, // TODO: Backend still uses this field name
+      monthlyRemixLimit: data.monthlyRemixLimit || 0,
       isLifetime: data.isLifetime || false,
       perksRichText: data.perksRichText,
       priority: data.priority || 0,
@@ -127,7 +127,7 @@ class PlansAPI {
       popularBadge: data.popularBadge || false,
       supportSLA: data.supportSLA,
       allowsFavorites: data.allowsFavorites || false,
-      allowsBulkDownload: data.allowsBulkDownload || false, // TODO: Backend still uses this field name
+      allowsBulkRemix: data.allowsBulkRemix || false,
       allowsCollections: data.allowsCollections || false,
       tier: data.tier,
       recommended: data.recommended || false,

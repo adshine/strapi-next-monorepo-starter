@@ -1,0 +1,43 @@
+# Task ID: 4
+# Title: Set Up Stripe Products and Webhooks
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Configure Stripe products, prices, and webhook endpoints for subscriptions and add-ons.
+# Details:
+Create Stripe products and pricing for plans and add-ons. Register webhook endpoints for subscription events. Store API keys securely.
+
+# Test Strategy:
+Trigger test events from Stripe dashboard and verify webhook receipt.
+
+# Subtasks:
+## 1. Define Stripe Product and Pricing Structure [pending]
+### Dependencies: None
+### Description: Identify all subscription plans and add-ons required for the business, and specify their pricing models (e.g., recurring, one-time, usage-based).
+### Details:
+List all products and add-ons to be offered. For each, determine the billing interval, price, and any relevant metadata. Document these requirements for implementation in Stripe.
+
+## 2. Create Stripe Products and Prices [pending]
+### Dependencies: 4.1
+### Description: Set up the defined products and prices in the Stripe Dashboard or via the Stripe API, ensuring each plan and add-on is represented accurately.
+### Details:
+Log in to the Stripe Dashboard and use the Products section to add each product. For each product, create one or more Price objects as needed (e.g., monthly, yearly, per-seat). Use the API for automation if required. Record the resulting product and price IDs for later use.[1][3]
+
+## 3. Register Webhook Endpoints in Stripe [pending]
+### Dependencies: 4.2
+### Description: Configure webhook endpoints in the Stripe Dashboard to receive events related to subscriptions and add-ons.
+### Details:
+Navigate to the Developers > Webhooks section in the Stripe Dashboard. Add a new endpoint for your application's webhook handler URL. Select relevant event types (e.g., invoice.paid, customer.subscription.created, payment_intent.succeeded). Store the webhook signing secret securely.
+
+## 4. Securely Store Stripe API Keys and Webhook Secrets [pending]
+### Dependencies: 4.2, 4.3
+### Description: Store all Stripe API keys and webhook signing secrets in a secure location, such as environment variables or a secrets manager.
+### Details:
+Add the Stripe secret key, publishable key, and webhook signing secret to your application's environment configuration (e.g., .env files, cloud secrets manager). Ensure these values are not committed to version control. Update documentation to reflect where these secrets are stored.
+
+## 5. Document Stripe Product and Webhook Configuration [pending]
+### Dependencies: 4.4
+### Description: Document all created product and price IDs, webhook endpoint URLs, and secret storage locations for future reference and onboarding.
+### Details:
+Create or update internal documentation to include a table of product and price IDs, webhook endpoint configuration, and instructions for managing Stripe secrets. Ensure this documentation is accessible to relevant team members.
+

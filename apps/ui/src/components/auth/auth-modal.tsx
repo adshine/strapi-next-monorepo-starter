@@ -2,22 +2,30 @@
 
 import React, { useState } from "react"
 import {
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  User as UserIcon,
+} from "lucide-react"
+
+import type { User } from "@/types/auth"
+
+import { useAuth } from "@/lib/auth-context" // eslint-disable-line @typescript-eslint/no-unused-vars
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Eye, EyeOff, Mail, Lock, User, CheckCircle } from "lucide-react"
-
-import { useAuth } from "@/lib/auth-context" // eslint-disable-line @typescript-eslint/no-unused-vars
-import type { User } from "@/types/auth"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type AuthMode = "login" | "signup" | "forgot-password"
 
@@ -462,7 +470,7 @@ export function AuthModal({
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
                   <div className="relative">
-                    <User className="text-text-muted absolute top-3 left-3 h-4 w-4" />
+                    <UserIcon className="text-text-muted absolute top-3 left-3 h-4 w-4" />
                     <Input
                       id="signup-name"
                       type="text"

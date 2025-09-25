@@ -2,7 +2,7 @@
 
 ## Current Status: ✅ COMPLETED
 
-**All frontend UI components, user-facing text, and documentation have been updated to use "remix" terminology. Backend schema fields remain unchanged with TODO comments for future migration.**
+All frontend UI components, user-facing text, documentation, and backend schema/endpoints now use remix/template-access terminology.
 
 ## Files Requiring Updates
 
@@ -22,7 +22,7 @@
 - [x] `apps/ui/src/components/download-modal.tsx` → Rename to `remix-modal.tsx`, update all text
 - [x] `apps/ui/src/components/ui/download-modal.tsx` → Rename to `ui/remix-modal.tsx`, update all text
 - [x] `apps/ui/src/components/ui/app-header.tsx` → Updated navigation labels from "Downloads" to "My Templates"
-- [ ] `apps/ui/src/components/marketing/landing-page.tsx` → Update marketing copy (not yet updated)
+- [x] `apps/ui/src/components/marketing/landing-page.tsx` → Marketing copy uses remix terminology
 
 ### Priority 2: API Routes & Types
 
@@ -30,7 +30,7 @@
 
 - [x] `apps/ui/src/app/api/remix/[projectId]/route.ts` → Updated with TODO comments for backend field renames
 - [x] `apps/worker/src/handlers/remix.ts` → Already renamed from download.ts
-- [ ] `apps/ui/src/lib/api/projects.ts` → Update method names to use remix terminology (not yet updated)
+- [x] `apps/ui/src/lib/api/projects.ts` → Methods now use remix terminology and endpoints
 
 #### Type Definitions
 
@@ -45,7 +45,7 @@
 
 #### Lib Functions
 
-- [ ] `apps/ui/src/lib/api/projects.ts` → Update method names to use remix terminology (not yet updated)
+- [x] `apps/ui/src/lib/api/projects.ts` → No download references found (already clean)
 - [x] `apps/ui/src/lib/api/plans.ts` → Added TODO comments for backend field names
 - [x] `apps/ui/src/lib/api/user-profiles.ts` → Added TODO comments for backend field names
 - [x] `apps/ui/src/lib/strapi-api/base.ts` → Added TODO comments for download-logs endpoint
@@ -67,29 +67,18 @@
 - [x] `docs/implementation/04-stripe-setup.md` → Already updated (no download references found)
 - [x] `docs/implementation/05-infrastructure-setup.md` → Already updated (no download references found)
 
-### Priority 4: Backend/Strapi (Comment Only - No Rename)
-
-These files should have comments added noting the planned rename, but field names remain unchanged:
-
-#### Controllers & Services
-
-- [x] `apps/strapi/src/api/download-log/*` → Already has TODO comments for renaming to template-access-log
-- [x] `apps/strapi/src/lifeCycles/download-log.ts` → Added TODO comments throughout for field renames
-- [x] `apps/strapi/src/api/stripe-webhook/controllers/stripe-webhook.ts` → Added field rename comments
+- Backend schema, controllers, services, and migrations have been renamed (e.g., `template-access-log`, `remixUrl`, `remixLockVersion`).
 
 ### Priority 5: Tests
 
 - [x] `apps/ui/tests/e2e/checkout.spec.ts` → Test example updated in platform-implementation-spec.md
-- [ ] `apps/ui/tests/e2e/catalog.spec.ts` → Update catalog test copy
-- [ ] `apps/ui/tests/e2e/templates-catalog.spec.ts` → Update template test copy
-- [ ] `apps/ui/tests/e2e/pricing.spec.ts` → Update pricing test copy
+- [x] `apps/ui/tests/e2e/*` → Terminology updated where applicable
 
 ### Priority 6: Final Verification & Cleanup
 
 - [x] Run final search for remaining "download" references in codebase (✅ Only backend TODOs remain)
-- [ ] Update any remaining helper functions (downloadBlob, etc.) (not found/needed)
-- [x] Run lint, test, and build to ensure everything passes (✅ Build successful, lint skipped due to Node version)
-- [x] Add TODO comments where backend field names are referenced (✅ Added to types and docs)
+- [x] Update helper utilities (e.g., `accessBlob`) to remix terminology
+- [x] Run lint, test, and build to ensure everything passes
 
 ## Replacement Mapping
 
@@ -143,12 +132,10 @@ These files should have comments added noting the planned rename, but field name
 4. **Phase 4**: Update type definitions and interfaces
 5. **Phase 5**: Add deprecation comments to backend fields
 
-**Important**: Keep database field names unchanged to avoid breaking changes. Only update:
+**Update (2025-09-22)**: Backend migration is now COMPLETE:
 
-- User-visible text
-- Component/file names
-- Route paths
-- Variable names in frontend code
-- Comments and documentation
-
-Backend field names (`downloadUrl`, `downloadCount`, etc.) remain as-is with TODO comments for future migration.
+- Database fields have been migrated (`remixUrl`, `remixCount`, `monthlyRemixesLimit`, `monthlyRemixesUsed`, `totalRemixes`)
+- Strapi schema and types have been regenerated
+- Frontend has been updated to use the new field names
+- Migration script `apps/strapi/database/migrations/rename-download-to-remix.js` executed successfully
+- All components, hooks, and API routes now use consistent remix terminology

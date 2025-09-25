@@ -76,8 +76,6 @@ export default function RemixesPage() {
     }
   }, [user])
 
-  if (!user) return null
-
   // Filter remixes for current user and apply status filter
   const userRemixes = useMemo(() => {
     let filtered = remixes.filter((remix) => {
@@ -96,6 +94,8 @@ export default function RemixesPage() {
         new Date(b.remixedAt).getTime() - new Date(a.remixedAt).getTime()
     )
   }, [remixes, statusFilter])
+
+  if (!user) return null
 
   const getStatusIcon = (status: RemixStatus) => {
     switch (status) {

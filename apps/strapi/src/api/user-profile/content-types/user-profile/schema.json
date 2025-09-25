@@ -140,7 +140,7 @@
     "collections": {
       "type": "json"
     },
-    "downloadLockVersion": {
+    "remixLockVersion": {
       "type": "integer",
       "default": 0
     },

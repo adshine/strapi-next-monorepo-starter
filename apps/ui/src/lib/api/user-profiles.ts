@@ -11,7 +11,7 @@ export interface UserProfile {
   stripeCustomerId?: string
   plan?: Plan
   planExpiresAt?: string
-  dailyDownloadsUsed: number // TODO: Backend still uses this field name
+  dailyRemixesUsed: number
   dailyResetAt?: string
   templateRequestsUsed: number
   subscriptionState:
@@ -25,10 +25,10 @@ export interface UserProfile {
   subscriptionStatus: string
   subscriptionStartDate?: string
   subscriptionEndDate?: string
-  monthlyDownloadsUsed: number // TODO: Backend still uses this field name
-  monthlyDownloadsLimit: number // TODO: Backend still uses this field name
+  monthlyRemixesUsed: number
+  monthlyRemixesLimit: number
   quotaResetDate?: string
-  totalDownloads: number // TODO: Backend still uses this field name
+  totalRemixes: number
   timezone: string
   emailVerified: boolean
   preferences?: any
@@ -40,7 +40,7 @@ export interface UserProfile {
   activeSessions?: any
   favorites?: any[]
   collections?: any
-  downloadLockVersion?: number // TODO: Backend still uses this field name
+  remixLockVersion?: number
   lastLoginAt?: string
   accountCreatedAt?: string
   referralSource?: string
@@ -141,7 +141,7 @@ class UserProfileAPI {
       stripeCustomerId: data.stripeCustomerId,
       plan: data.plan,
       planExpiresAt: data.planExpiresAt,
-      dailyDownloadsUsed: data.dailyDownloadsUsed || 0, // TODO: Backend still uses this field name
+      dailyRemixesUsed: data.dailyRemixesUsed || 0,
       dailyResetAt: data.dailyResetAt,
       templateRequestsUsed: data.templateRequestsUsed || 0,
       subscriptionState: data.subscriptionState || "active",
@@ -149,11 +149,11 @@ class UserProfileAPI {
       subscriptionStatus: data.subscriptionStatus || "active",
       subscriptionStartDate: data.subscriptionStartDate,
       subscriptionEndDate: data.subscriptionEndDate,
-      monthlyDownloadsUsed: data.monthlyDownloadsUsed || 0, // TODO: Backend still uses this field name
-      monthlyDownloadsLimit:
-        data.monthlyDownloadsLimit || data.plan?.monthlyDownloadLimit || 0, // TODO: Backend still uses this field name
+      monthlyRemixesUsed: data.monthlyRemixesUsed || 0,
+      monthlyRemixesLimit:
+        data.monthlyRemixesLimit || data.plan?.monthlyRemixLimit || 0,
       quotaResetDate: data.quotaResetDate,
-      totalDownloads: data.totalDownloads || 0, // TODO: Backend still uses this field name
+      totalRemixes: data.totalRemixes || 0,
       timezone: data.timezone || "UTC",
       emailVerified: data.emailVerified || false,
       preferences: data.preferences,
@@ -165,7 +165,7 @@ class UserProfileAPI {
       activeSessions: data.activeSessions,
       favorites: data.favorites || [],
       collections: data.collections,
-      downloadLockVersion: data.downloadLockVersion, // TODO: Backend still uses this field name
+      remixLockVersion: data.remixLockVersion,
       lastLoginAt: data.lastLoginAt,
       accountCreatedAt: data.accountCreatedAt,
       referralSource: data.referralSource,

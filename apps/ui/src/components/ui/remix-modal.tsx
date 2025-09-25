@@ -44,9 +44,9 @@ export function RemixModal({ template, isOpen, onClose }: RemixModalProps) {
   // Calculate quota remaining
   const getQuotaRemaining = () => {
     if (!profile || !userPlan) return 0
-    const dailyLimit = userPlan.dailyRemixes || 0 // TODO: rename from dailyDownloads in schema
-    const used = profile.remixesUsed || 0 // TODO: rename from downloadsUsed in schema
-    return Math.max(0, dailyLimit === -1 ? 999 : dailyLimit - used)
+    const monthlyLimit = profile.monthlyRemixesLimit || 0
+    const used = profile.monthlyRemixesUsed || 0
+    return Math.max(0, monthlyLimit === -1 ? 999 : monthlyLimit - used)
   }
 
   const quotaRemaining = getQuotaRemaining()

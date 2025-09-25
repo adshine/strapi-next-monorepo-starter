@@ -4,7 +4,7 @@
 
 ### Important: Template Access Terminology
 
-This platform provides **Framer templates** that users can **remix** directly in their Framer account. We DO NOT use "download" terminology for templates.
+This platform provides **Framer templates** that users can **remix** directly in their Framer account. Backend and frontend both use remix terminology end-to-end.
 
 **Correct terminology:**
 
@@ -20,16 +20,9 @@ This platform provides **Framer templates** that users can **remix** directly in
 - ❌ "Download files"
 - ❌ "Template download"
 
-### Schema Migration Note
+### Schema Migration
 
-**TODO: Future Schema Updates**
-The current Strapi schema uses legacy "download" field names that need to be renamed:
-
-- `downloadUrl` → `remixUrl` or `accessUrl`
-- `downloadCount` → `remixCount` or `useCount`
-- `download-log` → `template-access-log` or `remix-log`
-
-These field names remain unchanged in the database for now to avoid breaking changes. When referencing them in code, add comments noting the planned rename.
+The Strapi schema has been migrated from legacy `download*` naming to remix/template-access naming (`remixUrl`, `remixCount`, `template-access-log`, etc.). When you encounter the old naming in historical docs or migrations, treat it as legacy only.
 
 ## Project Overview
 
@@ -50,7 +43,7 @@ The platform provides a marketplace for Framer templates where users can browse,
 3. System checks user's subscription tier
 4. If authorized, user receives a Framer remix link
 5. User clicks link to duplicate template in their Framer account
-6. System logs the template access (currently in `download-log` table)
+6. System logs the template access in `template_access_logs`
 
 ### Subscription Tiers
 
@@ -106,7 +99,7 @@ yarn typecheck    # Type checking
 ### Important Files
 
 - `apps/strapi/src/api/project/` - Template/project management
-- `apps/strapi/src/api/download-log/` - Template access tracking (needs rename)
+- `apps/strapi/src/api/template-access-log/` - Template access tracking API
 - `apps/ui/src/app/[locale]/templates/` - Template browsing UI
 - `apps/ui/src/lib/strapi/` - API client implementation
 
@@ -125,12 +118,11 @@ When working on UI components:
 # Create test user and subscription
 curl -X POST http://localhost:1337/api/auth/local/register
 
-# Access template (currently uses download-log endpoint)
-curl -X POST http://localhost:1337/api/download-logs
-# Note: This endpoint name will change to /api/template-access-logs
+# Access template
+curl -X POST http://localhost:1337/api/template-access-logs
 
 # Check user's template access history
-curl http://localhost:1337/api/users/me?populate=download_logs
+curl http://localhost:1337/api/users/me?populate=template_access_logs
 ```
 
 ## Future Improvements

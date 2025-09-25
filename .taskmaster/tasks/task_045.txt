@@ -1,0 +1,11 @@
+# Task ID: 45
+# Title: Caching Layer and Performance Optimization
+# Status: pending
+# Dependencies: 44
+# Priority: medium
+# Description: Implement caching for public endpoints, user sessions, cache invalidation, stale-while-revalidate, and performance features.
+# Details:
+Cache /api/projects (5 min), /api/plans (1 hr), /api/projects/:slug (5 min), user session (20s). Implement cache invalidation, stale-while-revalidate, response compression, edge-side includes, request coalescing, error response caching.
+
+# Test Strategy:
+Test cache hits/misses, TTLs, invalidation, compression, and performance under load.

@@ -24,9 +24,11 @@ export class PublicClient extends BaseStrapiClient {
     let completeUrl = ""
     let headers: Record<string, string> = {}
 
-    if (options?.useProxy) {
-      // If useProxy is set, we need to use the public-proxy endpoint here in Next.js
-      // (for client-side requests)
+    // Auto-detect browser environment if useProxy is not explicitly set
+    const shouldUseProxy = options?.useProxy ?? typeof window !== "undefined"
+
+    if (shouldUseProxy) {
+      // Use the public-proxy endpoint for client-side requests
       completeUrl = `/api/public-proxy${url}`
 
       if (typeof window === "undefined") {
@@ -35,8 +37,14 @@ export class PublicClient extends BaseStrapiClient {
         completeUrl = `${env.APP_PUBLIC_URL}${completeUrl}`
       }
     } else {
-      // Directly use the Strapi URL. Same logic as in proxy route handler must be applied
-      // (for SSR components and server actions/context)
+      // Directly use the Strapi URL (server-side only)
+      // Throw error if someone tries to force direct connection from client
+      if (typeof window !== "undefined") {
+        throw new Error(
+          "Direct Strapi connection is not allowed from the browser. Remove useProxy: false or let it auto-detect."
+        )
+      }
+
       completeUrl = `${env.STRAPI_URL}${url}`
 
       // If there is no method specified in requestInit, default is GET

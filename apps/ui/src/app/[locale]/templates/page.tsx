@@ -3,7 +3,16 @@
 import React, { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, Grid3X3, Heart, List, Play, Search, Star } from "lucide-react"
+import {
+  Clock,
+  Grid3X3,
+  Heart,
+  Layers,
+  List,
+  Play,
+  Search,
+  Star,
+} from "lucide-react"
 
 import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
@@ -159,18 +168,26 @@ export default function TemplatesPage() {
               viewMode === "list" && "w-48 flex-shrink-0"
             )}
           >
-            <Image
-              src={template.thumbnailUrl}
-              alt={template.title}
-              width={400}
-              height={225}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            {template.featuredImage?.url ? (
+              <Image
+                src={template.featuredImage.url}
+                alt={template.title}
+                width={400}
+                height={225}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[var(--accent-primary)]/10 to-[var(--accent-primary)]/20">
+                <Layers className="h-12 w-12 text-[var(--text-muted)]" />
+              </div>
+            )}
 
             {/* Plan Badge */}
-            <div className="absolute top-3 right-3 rounded-full bg-[var(--bg-primary)]/90 px-2 py-1 text-xs font-medium backdrop-blur-sm">
-              {templatePlan?.badge || "Pro"}
-            </div>
+            {template.requiredPlan && (
+              <div className="absolute top-3 right-3 rounded-full bg-[var(--bg-primary)]/90 px-2 py-1 text-xs font-medium capitalize backdrop-blur-sm">
+                {template.requiredPlan}
+              </div>
+            )}
 
             {/* Access Indicator */}
             {!canAccess && user && (
@@ -180,7 +197,7 @@ export default function TemplatesPage() {
                     Upgrade Required
                   </div>
                   <div className="mt-1 text-xs text-white/80">
-                    Requires {templatePlan?.name}
+                    Requires {template.requiredPlan || "Premium"} plan
                   </div>
                 </div>
               </div>
@@ -196,11 +213,12 @@ export default function TemplatesPage() {
                 </h3>
 
                 <div className="flex items-center space-x-3 text-sm text-[var(--text-muted)]">
-                  <span>by {template.creator}</span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-3 w-3 fill-[var(--accent-warning)] text-[var(--accent-warning)]" />
-                    <span>{template.rating}</span>
-                  </div>
+                  {template.rating && (
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-3 w-3 fill-[var(--accent-warning)] text-[var(--accent-warning)]" />
+                      <span>{template.rating}</span>
+                    </div>
+                  )}
                   <span>
                     {template.remixCount?.toLocaleString() || 0} remixes
                   </span>
@@ -218,20 +236,22 @@ export default function TemplatesPage() {
             </p>
 
             {/* Tags */}
-            <div className="mt-3 flex flex-wrap gap-1">
-              {template.tags
-                .slice(0, viewMode === "list" ? 4 : 3)
-                .map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {tag}
+            {template.tags && template.tags.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1">
+                {template.tags
+                  .slice(0, viewMode === "list" ? 4 : 3)
+                  .map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                {template.tags.length > (viewMode === "list" ? 4 : 3) && (
+                  <Badge variant="outline" className="text-xs">
+                    +{template.tags.length - (viewMode === "list" ? 4 : 3)}
                   </Badge>
-                ))}
-              {template.tags.length > (viewMode === "list" ? 4 : 3) && (
-                <Badge variant="outline" className="text-xs">
-                  +{template.tags.length - (viewMode === "list" ? 4 : 3)}
-                </Badge>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </Link>
 
@@ -306,8 +326,19 @@ export default function TemplatesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category === "all" ? "All Categories" : category}
+                    <SelectItem
+                      key={
+                        typeof category === "string" ? category : category.slug
+                      }
+                      value={
+                        typeof category === "string" ? category : category.slug
+                      }
+                    >
+                      {typeof category === "string"
+                        ? category === "all"
+                          ? "All Categories"
+                          : category
+                        : category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

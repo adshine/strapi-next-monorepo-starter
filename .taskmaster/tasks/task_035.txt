@@ -1,0 +1,11 @@
+# Task ID: 35
+# Title: Initialize Strapi v5 Project
+# Status: pending
+# Dependencies: 34
+# Priority: high
+# Description: Create a new Strapi v5 project and configure database connection.
+# Details:
+Run Strapi initialization, connect to PostgreSQL, set up admin user, enable API tokens, configure CORS, and file upload provider.
+
+# Test Strategy:
+Access Strapi admin panel, verify API token generation, test file uploads, and check CORS headers.

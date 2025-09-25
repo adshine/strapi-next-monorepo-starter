@@ -1,12 +1,10 @@
 import withPlaiceholder from "@plaiceholder/next"
-// import { withSentryConfig } from "@sentry/nextjs"
-// import plugin from "next-intl/plugin"
+import { withSentryConfig } from "@sentry/nextjs"
+import plugin from "next-intl/plugin"
 
 import { env } from "./src/env.mjs"
 
-// Temporarily disable Sentry and i18n for debugging
-// const withSentryConfig = require('@sentry/nextjs').withSentryConfig
-// const withNextIntl = plugin("./src/lib/i18n.ts")
+const withNextIntl = plugin("./src/lib/i18n.ts")
 
 // Temporarily disable Sentry by removing config files
 
@@ -92,5 +90,5 @@ const nextConfig = {
   },
 }
 
-// Temporarily disable complex wrappers for debugging
-export default nextConfig
+// Enable internationalization with next-intl
+export default withNextIntl(nextConfig)

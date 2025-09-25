@@ -7,19 +7,14 @@ import type { ProjectResponse, ProjectsResponse } from "@/lib/strapi-api/types"
 import { PrivateStrapiClient, PublicStrapiClient } from "@/lib/strapi-api"
 
 class ProjectsAPI {
-  private publicClient: PublicStrapiClient
-  private privateClient: PrivateStrapiClient
-
-  constructor() {
-    this.publicClient = new PublicStrapiClient()
-    this.privateClient = new PrivateStrapiClient()
-  }
+  private publicClient = PublicStrapiClient
+  private privateClient = PrivateStrapiClient
 
   /**
    * Get all public projects (templates)
    */
   async getAllProjects(params?: {
-    populate?: string
+    populate?: string | Record<string, any>
     filters?: Record<string, any>
     sort?: string[]
     pagination?: {
@@ -27,15 +22,12 @@ class ProjectsAPI {
       pageSize?: number
     }
   }) {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        populate: params?.populate || "plan,tags,screenshots,category",
-        filters: params?.filters,
-        sort: params?.sort,
-        pagination: params?.pagination,
-      }
-    )
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      populate: params?.populate || "*",
+      filters: params?.filters,
+      sort: params?.sort,
+      pagination: params?.pagination,
+    })
     return response.data
   }
 
@@ -43,11 +35,11 @@ class ProjectsAPI {
    * Get a project by ID
    */
   async getProjectById(id: string | number) {
-    const response = await this.publicClient.findOne<ProjectResponse>(
-      "projects",
+    const response = await this.publicClient.fetchOne(
+      "api::project.project",
       id,
       {
-        populate: "plan,tags,screenshots,category",
+        populate: "*",
       }
     )
     return response.data
@@ -57,17 +49,14 @@ class ProjectsAPI {
    * Get a project by slug
    */
   async getProjectBySlug(slug: string) {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        filters: {
-          slug: {
-            $eq: slug,
-          },
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      filters: {
+        slug: {
+          $eq: slug,
         },
-        populate: "plan,tags,screenshots,category",
-      }
-    )
+      },
+      populate: "*",
+    })
     return response.data?.[0] || null
   }
 
@@ -75,20 +64,17 @@ class ProjectsAPI {
    * Search projects
    */
   async searchProjects(query: string, filters?: Record<string, any>) {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        filters: {
-          $or: [
-            { title: { $containsi: query } },
-            { description: { $containsi: query } },
-            { tags: { $containsi: query } },
-          ],
-          ...filters,
-        },
-        populate: "plan,tags,screenshots,category",
-      }
-    )
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      filters: {
+        $or: [
+          { title: { $containsi: query } },
+          { description: { $containsi: query } },
+          { tags: { $containsi: query } },
+        ],
+        ...filters,
+      },
+      populate: "*",
+    })
     return response.data
   }
 
@@ -96,19 +82,16 @@ class ProjectsAPI {
    * Get projects by category
    */
   async getProjectsByCategory(categorySlug: string) {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        filters: {
-          category: {
-            slug: {
-              $eq: categorySlug,
-            },
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      filters: {
+        category: {
+          slug: {
+            $eq: categorySlug,
           },
         },
-        populate: "plan,tags,screenshots,category",
-      }
-    )
+      },
+      populate: "*",
+    })
     return response.data
   }
 
@@ -116,24 +99,21 @@ class ProjectsAPI {
    * Get featured projects
    */
   async getFeaturedProjects() {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        filters: {
-          featured: {
-            $eq: true,
-          },
-          publishedAt: {
-            $ne: null,
-          },
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      filters: {
+        featured: {
+          $eq: true,
         },
-        populate: "plan,tags,screenshots,category",
-        sort: ["order:asc", "publishedAt:desc"],
-        pagination: {
-          limit: 6,
+        publishedAt: {
+          $ne: null,
         },
-      }
-    )
+      },
+      populate: "*",
+      sort: ["order:asc", "publishedAt:desc"],
+      pagination: {
+        limit: 6,
+      },
+    })
     return response.data
   }
 
@@ -141,21 +121,18 @@ class ProjectsAPI {
    * Get trending projects (most remixes)
    */
   async getTrendingProjects(limit = 10) {
-    const response = await this.publicClient.find<ProjectsResponse>(
-      "projects",
-      {
-        filters: {
-          publishedAt: {
-            $ne: null,
-          },
+    const response = await this.publicClient.fetchMany("api::project.project", {
+      filters: {
+        publishedAt: {
+          $ne: null,
         },
-        populate: "plan,tags,screenshots,category",
-        sort: ["remixCount:desc"],
-        pagination: {
-          limit,
-        },
-      }
-    )
+      },
+      populate: "*",
+      sort: ["remixCount:desc"],
+      pagination: {
+        limit,
+      },
+    })
     return response.data
   }
 
@@ -183,11 +160,20 @@ class ProjectsAPI {
    * Get project categories
    */
   async getCategories() {
-    // Assuming categories are a separate content type
-    const response = await this.publicClient.find("categories", {
-      sort: ["name:asc"],
-    })
-    return response.data
+    try {
+      // Assuming categories are a separate content type
+      const response = await this.publicClient.fetchMany(
+        "api::category.category" as any,
+        {
+          sort: ["name:asc"],
+        }
+      )
+      return response.data
+    } catch (error) {
+      // Return empty array if categories don't exist yet
+      console.warn("Categories API not available:", error)
+      return []
+    }
   }
 }
 

@@ -1,0 +1,11 @@
+# Task ID: 39
+# Title: Create Strapi Collections
+# Status: pending
+# Dependencies: 35
+# Priority: high
+# Description: Implement all required Strapi collections with specified fields, relations, and hooks.
+# Details:
+Use Strapi MCP to create Project, Plan, UserProfile, DownloadLog, TemplateRequest, SubscriptionEvent, and supporting collections. Configure media fields, slug generation, idempotency, and lifecycle hooks.
+
+# Test Strategy:
+Create, update, and query each collection via API and admin panel. Validate relations and hooks.

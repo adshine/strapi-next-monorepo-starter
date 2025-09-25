@@ -1,0 +1,11 @@
+# Task ID: 46
+# Title: Frontend Core Pages Development
+# Status: pending
+# Dependencies: 45
+# Priority: high
+# Description: Build landing page, template catalogue, template detail, pricing page, and account dashboard with all specified features.
+# Details:
+Use Next.js and Framer for UI. Implement hero, feature grid, pricing preview, catalogue grid/list, search, filters, sort, detail gallery/video, plan requirements, remix button, pricing cards, feature comparison, FAQ, dashboard widgets.
+
+# Test Strategy:
+Manual and automated UI tests for layout, navigation, feature completeness, and responsiveness.

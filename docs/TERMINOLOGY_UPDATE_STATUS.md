@@ -1,10 +1,10 @@
 # Terminology Update Status
 
-**Last Updated**: 2025-01-21
+**Last Updated**: 2025-09-22
 
 ## Status: ✅ COMPLETED
 
-The "download → remix" terminology migration is now complete. All user-facing copy, documentation, and UI components use "remix" terminology instead of "download" to accurately reflect how Framer templates work. Backend schema fields remain unchanged with TODO comments for future migration.
+The "download → remix" terminology migration is complete across both frontend and backend. UI copy, documentation, APIs, and database schema now use "remix" (or "template access") terminology to reflect how Framer templates are duplicated rather than downloaded. The legacy download schemas have been migrated and removed.
 
 ## Summary
 
@@ -41,37 +41,35 @@ All user-facing copy, documentation, and UI components now use "remix" terminolo
 
 - plans.js - Updated plan features to use "template remixes"
 
-## What Still Needs Attention ⚠️
+## Backend Migration Summary
 
-### 1. Documentation Files (IN PROGRESS)
+- All Strapi collections and fields have been renamed (e.g., `download_logs` → `template_access_logs`, `download_url` → `remix_url`, `download_lock_version` → `remix_lock_version`).
+- New `/api/template-access-logs` endpoint is active; legacy `/api/download-logs` has been removed.
+- Lifecycle hooks, services, controllers, and migrations now use remix terminology.
+- Frontend helpers and API clients were updated to the new endpoints; only historical notes remain in documentation for reference.
 
-- CLAUDE.md - ✅ Updated with remix terminology and TODO comments
-- platform-user-flows.md - ❌ Still contains "download" references
-- platform-ui-design.md - ❌ Still contains "download" references
-- cloudflare-setup.md - ❌ Still contains "download" references
-- terminology-update-guide.md - ❌ Needs final task updates
+## Final Migration Completion (2025-09-22)
 
-### 2. Backend Schema Fields (TODO)
+### Backend Schema Migration
 
-- Strapi collections and fields still use "download" terminology
-- API endpoints still reference "/downloads"
-- TODO comments needed throughout codebase
+- ✅ Database migration script executed successfully (`rename-download-to-remix.js`)
+- ✅ Strapi types regenerated with new field names
+- ✅ Backend starts successfully with migrated schema
+- ✅ User profile fields renamed: `monthlyRemixesLimit`, `monthlyRemixesUsed`, `totalRemixes`
 
-## Backend Schema Fields (Preserved with TODOs)
+### Frontend Field Alignment
 
-The following backend schema fields remain unchanged but have TODO comments for future migration:
+- ✅ API routes updated to use correct field names (`monthlyRemixesLimit`, `monthlyRemixesUsed`, `totalRemixes`)
+- ✅ UI components updated (remix-modal.tsx, dashboard/page.tsx)
+- ✅ Hooks cleaned up - removed stale TODO comments (use-user-profile.ts)
+- ✅ All field names now match Strapi schema exactly
 
-### Strapi Collections
+### Verification Complete
 
-- `download-log` → Future: `template-access-log` or `remix-log`
-- Field: `downloadUrl` → Future: `remixUrl`
-- Field: `downloadCount` → Future: `remixCount`
-- Field: `monthlyDownloadLimit` → Future: `monthlyRemixLimit`
-
-### API Endpoints
-
-- `/api/downloads` → Future: `/api/remix` or `/api/template-access`
-- `/api/download-logs` → Future: `/api/template-access-logs`
+- ✅ Lint passes with no migration-related warnings
+- ✅ Build compiles successfully
+- ✅ Strapi starts and runs with migrated schema
+- ✅ TypeScript types are consistent across frontend and backend
 
 ## Migration Strategy
 
@@ -90,8 +88,8 @@ All frontend code has been updated to use the new terminology. Backend field nam
 - [x] Hooks updated with new field names
 - [x] Routes updated from /download to /remix
 - [x] Documentation files updated (cloudflare-setup.md, platform-ui-design.md, platform-user-flows.md)
-- [x] Backend field references include TODO comments throughout codebase
-- [x] terminology-update-guide.md updated with remaining tasks
+- [x] Backend schema migrated (collections/fields/endpoints renamed)
+- [x] terminology-update-guide.md updated with completion notes
 - [x] Build and test verification completed successfully
 
 ## Next Steps (Future)

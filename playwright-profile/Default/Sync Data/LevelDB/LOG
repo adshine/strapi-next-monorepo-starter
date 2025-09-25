@@ -1,2 +1,3 @@
-2025/09/20-23:29:05.251 8ed18a Creating DB /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Sync Data/LevelDB since it was missing.
-2025/09/20-23:29:05.281 8ed18a Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Sync Data/LevelDB/MANIFEST-000001
+2025/09/24-08:03:03.326 18d1b1 Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Sync Data/LevelDB/MANIFEST-000001
+2025/09/24-08:03:03.332 18d1b1 Recovering log #3
+2025/09/24-08:03:03.332 18d1b1 Reusing old log /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Sync Data/LevelDB/000003.log 

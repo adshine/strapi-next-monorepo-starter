@@ -1,0 +1,11 @@
+# Task ID: 18
+# Title: Configure Request Proxying and Response Optimization
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Optimize request/response handling in Worker for latency and payload size.
+# Details:
+Implement compression, header stripping, and selective proxying. Tune for <500ms p95 latency.
+
+# Test Strategy:
+Benchmark API response times and payload sizes via Worker.

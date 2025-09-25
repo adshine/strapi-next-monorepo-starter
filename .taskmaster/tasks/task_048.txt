@@ -1,0 +1,11 @@
+# Task ID: 48
+# Title: Account Management Features
+# Status: pending
+# Dependencies: 47, 43
+# Priority: medium
+# Description: Build billing section, remixes history, template requests, and settings page with all specified features.
+# Details:
+Implement billing (plan display, upgrade/downgrade, payment history, portal), remixes history (list, status, retry, filters, CSV export), template requests (form, status, comments), settings (profile, timezone, theme, notifications).
+
+# Test Strategy:
+Test all account management features for correctness, UI/UX, and integration with backend.

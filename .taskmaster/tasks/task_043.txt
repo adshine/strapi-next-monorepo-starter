@@ -1,0 +1,11 @@
+# Task ID: 43
+# Title: Stripe Integration and Event Handling
+# Status: pending
+# Dependencies: 37, 40
+# Priority: high
+# Description: Implement Stripe checkout session, webhook handler, subscription event processing, Customer Portal, and grace period logic.
+# Details:
+Create checkout session endpoint (price validation, metadata, URLs), webhook handler (signature, idempotency, queue), process subscription events, implement Customer Portal session, and build grace period logic with state transitions and notifications.
+
+# Test Strategy:
+Simulate payment flows, webhook events, subscription changes, and verify state transitions and notifications.

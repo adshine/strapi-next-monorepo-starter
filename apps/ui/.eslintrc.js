@@ -3,7 +3,7 @@ module.exports = {
   root: true,
   extends: ["@repo/eslint-config/next.js", "plugin:jsx-a11y/recommended"],
   parser: "@typescript-eslint/parser",
-  plugins: ["jsx-a11y"],
+  plugins: ["jsx-a11y", "@typescript-eslint"],
   settings: {
     tailwindcss: {
       callees: ["cn"],
@@ -16,7 +16,8 @@ module.exports = {
   rules: {
     "no-console": ["warn", { allow: ["warn", "error"] }],
     "@next/next/no-html-link-for-pages": "off",
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "react/function-component-definition": "off",
     "react/hook-use-state": "off",
     "react/jsx-no-leaked-render": "off",
@@ -52,6 +53,7 @@ module.exports = {
         "react/jsx-curly-brace-presence": "off",
         "tailwindcss/no-unnecessary-arbitrary-value": "off",
         "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off",
       },
     },
   ],

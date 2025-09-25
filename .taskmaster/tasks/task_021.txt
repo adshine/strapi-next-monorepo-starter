@@ -1,0 +1,11 @@
+# Task ID: 21
+# Title: Develop Account Dashboard
+# Status: pending
+# Dependencies: 13, 12
+# Priority: high
+# Description: Build dashboard for users to view subscription, quota, and remix history.
+# Details:
+Create dashboard page with subscription status, quota usage, and remix logs. Fetch data from API.
+
+# Test Strategy:
+Login as user, verify dashboard displays accurate data.

@@ -1,0 +1,11 @@
+# Task ID: 25
+# Title: Write Unit Tests for Strapi Services
+# Status: pending
+# Dependencies: 7, 9, 10, 11, 12
+# Priority: high
+# Description: Achieve 80%+ coverage for Strapi business logic and services.
+# Details:
+Write Jest or similar unit tests for all custom services, controllers, and utilities in Strapi.
+
+# Test Strategy:
+Run coverage report, ensure >80% lines covered and all tests pass.
