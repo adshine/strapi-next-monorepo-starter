@@ -66,14 +66,21 @@ export default function TemplatePage({ params }: TemplatePageProps) {
 
         // Fetch related templates
         if (foundTemplate?.category) {
-          const related = await projectsAPI.getAllProjects({
-            filters: {
-              category: foundTemplate.category,
-              id: { $ne: foundTemplate.id },
-            },
-            pagination: { pageSize: 4 },
-          })
-          setRelatedTemplates(related)
+          const categoryFilter =
+            typeof foundTemplate.category === "string"
+              ? foundTemplate.category
+              : foundTemplate.category?.slug || foundTemplate.category?.id
+
+          if (categoryFilter) {
+            const related = await projectsAPI.getAllProjects({
+              filters: {
+                category: categoryFilter,
+                id: { $ne: foundTemplate.id },
+              },
+              pagination: { pageSize: 4 },
+            })
+            setRelatedTemplates(related)
+          }
         }
       } catch (error) {
         // eslint-disable-next-line no-console
