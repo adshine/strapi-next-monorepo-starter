@@ -1,87 +1,59 @@
 import { Data } from "@strapi/strapi"
-import { ROOT_PAGE_PATH } from "@repo/shared-data"
 
-type Document = Data.ContentType<"api::page.page">
-
-type DocumentType = "api::page.page"
-
-type Breadcrumb = {
+export interface Breadcrumb {
   title: string
-  fullPath: string
+  path: string
 }
 
-export const generateBreadcrumbs = async (
-  document: Document,
-  type: DocumentType
-) => {
-  if (!document?.fullPath) {
-    return []
+export function getFullPathFromQuery(ctx: any): string | null {
+  const { query } = ctx
+  return query?.filters?.fullPath?.$eq || null
+}
+
+export async function generateBreadcrumbs(
+  document: any,
+  contentType: string
+): Promise<Breadcrumb[]> {
+  if (contentType === "api::page.page") {
+    return fetchPageBreadcrumbs(document)
   }
+  return []
+}
 
-  // Get all parents based on the fullPath
-  const allSegments = document.fullPath.split("/").filter(Boolean)
-  // Ensure the first segment is the root page path
-  allSegments.unshift(ROOT_PAGE_PATH)
-  // Remove the last segment to get the parent segments
-  const parents = allSegments.slice(0, -1)
-
-  // Create a populate object based on the number of parents
-  interface Populate {
-    parent?: { populate: Populate } | true
-  }
-
-  const populate: Populate = {}
-  let currentPopulate: Populate = populate
-
-  parents.forEach((_, index) => {
-    if (index === parents.length - 1) {
-      // If it's the last parent, assign `true` to indicate the deepest level
-      currentPopulate.parent = true
-    } else {
-      // Otherwise, keep nesting
-      currentPopulate.parent = { populate: {} }
-      // Move deeper into the next level
-      currentPopulate = currentPopulate.parent.populate
-    }
-  })
-
-  // Create Breadcrumbs data based on parents
+export async function fetchPageBreadcrumbs(
+  document: Data.ContentType<"api::page.page">,
+  locale?: string
+): Promise<Breadcrumb[]> {
   const breadcrumbs: Breadcrumb[] = [
     {
-      title: document.breadcrumbTitle ?? document.title,
-      fullPath: document.fullPath,
+      title: document.breadcrumbTitle ?? document.title ?? "",
+      path: document.fullPath ?? "",
     },
   ]
 
-  let hierarchy = await strapi.documents(type).findOne({
+  let hierarchy = await strapi.documents("api::page.page").findOne({
     documentId: document.documentId,
-    populate,
-    fields: ["breadcrumbTitle", "title", "fullPath"],
-    locale: document.locale,
+    populate: "parent",
+    locale: locale ?? document.locale ?? undefined,
   })
 
-  while (true) {
-    // Pages have a `parent` field that points to the parent
-    const parent = hierarchy?.parent ?? null
+  const parent = (hierarchy as any)?.parent ?? null
+  let currentParent = parent
 
-    if (!parent) {
-      break
-    }
-
+  while (currentParent) {
     breadcrumbs.unshift({
-      title: parent.breadcrumbTitle ?? parent.title,
-      fullPath: parent.fullPath,
+      title: currentParent.breadcrumbTitle ?? currentParent.title ?? "",
+      path: currentParent.fullPath ?? "",
     })
 
-    hierarchy = parent
+    const parentPage = await strapi.documents("api::page.page").findOne({
+      documentId: currentParent.documentId,
+      populate: "parent",
+      locale,
+    })
+
+    currentParent = (parentPage as any)?.parent ?? null
   }
 
   return breadcrumbs
-}
-
-export const getFullPathFromQuery = (ctx: any) => {
-  const query: Record<string, any> = ctx.request.query
-  const fullPathFilter = query?.filters?.fullPath
-  const fullPath = fullPathFilter ? fullPathFilter["$eq"] : null
-  return fullPath
 }

@@ -1,326 +1,168 @@
-import { Event } from "@strapi/database/dist/lifecycles"
-import { Core } from "@strapi/strapi"
-import { errors } from "@strapi/utils"
+import { Data } from "@strapi/strapi"
 
-/**
- * Template Access Log Lifecycle Hook
- * Enforces append-only behavior for template access logs as audit records.
- * Template access logs cannot be deleted and have restricted update capabilities.
- */
-export const registerTemplateAccessLogSubscriber = async ({
-  strapi,
-}: {
-  strapi: Core.Strapi
-}) => {
-  strapi.db.lifecycles.subscribe({
-    models: ["api::template-access-log.template-access-log"],
+const MUTABLE_FIELDS = [
+  "status",
+  "remixUrl",
+  "processingState",
+  "errorMessage",
+  "metadata",
+  "retryCount",
+  "processingCompletedAt",
+] as const
 
-    /**
-     * Enrich template access log creation with required metadata and defaults.
-     */
-    async beforeCreate(event: Event) {
-      const { data } = event.params
+type MutableField = (typeof MUTABLE_FIELDS)[number]
 
-      // Set default values for required fields
-      data.initiatedAt = data.initiatedAt || new Date()
-      data.status = data.status || "pending"
+async function validateLifecycleEvent(event: any, action: "create" | "update") {
+  const data = event.params?.data
 
-      // Generate unique accessId if not provided
-      if (!data.accessId) {
-        const timestamp = Date.now()
-        const random = Math.random().toString(36).substring(7)
-        data.accessId = `rmx_${timestamp}_${random}` // rmx = remix
-      }
+  if (!data) {
+    throw new Error(`No data provided for ${action} operation`)
+  }
 
-      // Set issuedAt if not provided
-      if (!data.issuedAt) {
-        data.issuedAt = new Date()
-      }
+  if (action === "create") {
+    // Validate required fields
+    const requiredFields = ["projectId", "userId"]
+    const missingFields = requiredFields.filter((field) => !data[field])
 
-      // Set expiration time (default to 15 minutes from now per spec)
-      if (!data.expiresAt) {
-        const expirationTime = new Date()
-        expirationTime.setMinutes(expirationTime.getMinutes() + 15)
-        data.expiresAt = expirationTime
-      }
+    if (missingFields.length > 0) {
+      throw new Error(
+        `Missing required fields for template access log: ${missingFields.join(
+          ", "
+        )}`
+      )
+    }
 
-      // Initialize metadata with creation info
-      data.metadata = {
-        ...data.metadata,
-        createdAt: new Date().toISOString(),
-        createdBy: "system",
-        environment: process.env.NODE_ENV || "development",
-        strapiVersion: strapi.config.get("info.strapi", "5.x"),
-        apiVersion: strapi.config.get("info.version", "1.0.0"),
-        updateHistory: [],
-        // Additional tracking metadata
-        serverHost: process.env.HOSTNAME || require("os").hostname(),
-        region: process.env.REGION || process.env.CF_REGION || "unknown",
-      }
+    // Set default values
+    data.status = data.status || "pending"
+    data.processingState = data.processingState || "initialized"
+    data.retryCount = data.retryCount || 0
+    data.ipAddress = data.ipAddress || null
+    data.userAgent = data.userAgent || null
+  }
 
-      // Set attempt number based on retryOf relationship
-      if (data.retryOf) {
-        try {
-          // Find the original template access and count retry attempts
-          const originalLog = await strapi.entityService.findOne(
-            "api::template-access-log.template-access-log",
-            data.retryOf,
-            { fields: ["attemptNumber"] }
-          )
+  if (action === "update") {
+    const documentId = event.params?.where?.documentId
 
-          if (originalLog) {
-            data.attemptNumber = (originalLog.attemptNumber || 1) + 1
+    if (!documentId) {
+      throw new Error("No documentId provided for update operation")
+    }
 
-            // Enforce maximum retry limit
-            if (data.attemptNumber > 3) {
-              throw new errors.ForbiddenError(
-                "Maximum retry attempts (3) exceeded for this template access"
-              )
-            }
+    // Fetch existing record
+    const existingLog = await strapi
+      .documents("api::template-access-log.template-access-log")
+      .findOne({ documentId })
+
+    if (!existingLog) {
+      throw new Error(`Template access log not found: ${documentId}`)
+    }
+
+    // Prevent modifying immutable fields
+    const immutableFields = Object.keys(data).filter(
+      (field) => !MUTABLE_FIELDS.includes(field as MutableField)
+    )
+
+    if (immutableFields.length > 0) {
+      // Check if any immutable field is actually being changed
+      const changedImmutableFields = immutableFields.filter((field) => {
+        if (data[field] !== undefined && (existingLog as any)[field] !== null) {
+          // Field is being set and exists in the record
+          if ((existingLog as any)[field] !== data[field]) {
+            return true
           }
-        } catch (error) {
-          if (error instanceof errors.ForbiddenError) {
-            throw error
-          }
-          // If we can't find the original, default to attempt 1
-          data.attemptNumber = 1
-          strapi.log.warn(
-            "Could not find original template access log for retry:",
-            error
-          )
         }
+        return false
+      })
+
+      if (changedImmutableFields.length > 0) {
+        throw new Error(
+          `Cannot modify immutable fields: ${changedImmutableFields.join(", ")}`
+        )
+      }
+    }
+
+    // Validate status transitions
+    if (data.status && existingLog.status !== data.status) {
+      const validTransitions: Record<string, string[]> = {
+        pending: ["processing", "failed"],
+        processing: ["completed", "failed"],
+        failed: ["processing"], // Allow retry
+        completed: [], // No transitions from completed
+      }
+
+      const currentStatus = existingLog.status || "pending"
+      const allowedTransitions = validTransitions[currentStatus] || []
+
+      if (!allowedTransitions.includes(data.status)) {
+        throw new Error(
+          `Invalid status transition from ${currentStatus} to ${data.status}`
+        )
+      }
+    }
+
+    // Auto-set processing completed timestamp
+    if (data.status === "completed" && !data.processingCompletedAt) {
+      data.processingCompletedAt = new Date()
+    }
+
+    // Increment retry count if transitioning from failed to processing
+    if (existingLog.status === "failed" && data.status === "processing") {
+      data.retryCount = ((existingLog as any).retryCount || 0) + 1
+    }
+  }
+
+  // Validate metadata if provided
+  if (data.metadata) {
+    try {
+      if (typeof data.metadata === "string") {
+        JSON.parse(data.metadata)
       } else {
-        data.attemptNumber = 1
+        data.metadata = JSON.stringify(data.metadata)
       }
-    },
+    } catch (error) {
+      throw new Error("Invalid metadata format. Must be valid JSON.")
+    }
+  }
 
-    /**
-     * Enforce append-only behavior with limited updates for status transitions.
-     * Critical fields remain immutable once set.
-     */
-    async beforeUpdate(event: Event) {
-      const { data, where } = event.params
+  // Set expiration date (30 days from creation)
+  if (action === "create" && !data.expiresAt) {
+    const expirationDate = new Date()
+    expirationDate.setDate(expirationDate.getDate() + 30)
+    data.expiresAt = expirationDate
+  }
+}
 
-      // Get the existing template access log
-      const existingLog = await strapi.entityService.findOne(
-        "api::template-access-log.template-access-log",
-        where.id,
-        {
-          populate: ["user", "project"],
-        }
-      )
+export default {
+  async beforeCreate(event: any) {
+    await validateLifecycleEvent(event, "create")
+  },
 
-      if (!existingLog) {
-        throw new errors.NotFoundError("Template access log not found")
-      }
+  async beforeUpdate(event: any) {
+    await validateLifecycleEvent(event, "update")
+  },
 
-      // Define immutable fields that cannot be changed once set
-      const immutableFields = [
-        "accessId",
-        "user",
-        "project",
-        "initiatedAt",
-        "ipAddress",
-        "userAgent",
-        "sourceIp",
-        "retryOf",
-        "quotaCharged",
-        "issuedAt",
-      ]
+  async afterCreate(event: any) {
+    const { result, params } = event
 
-      // Check for attempts to modify immutable fields
-      for (const field of immutableFields) {
-        if (data[field] !== undefined && existingLog[field] !== null) {
-          // Allow setting null fields for the first time, but not modifying existing values
-          if (existingLog[field] !== data[field]) {
-            throw new errors.ForbiddenError(
-              `Field '${field}' is immutable and cannot be modified once set. Template access logs are append-only audit records.`
-            )
-          }
-        }
-      }
+    // Log the template access event
+    strapi.log.info(
+      `Template access log created: ${result.documentId} for project ${params.data.projectId} by user ${params.data.userId}`
+    )
 
-      // Only allow specific status transitions
-      if (data.status && data.status !== existingLog.status) {
-        const allowedTransitions: Record<string, string[]> = {
-          pending: ["success", "failed", "expired"],
-          success: [], // Terminal state - no changes allowed
-          failed: ["success"], // Allow retry to succeed
-          expired: [], // Terminal state - no changes allowed
-        }
+    // You could emit an event here for analytics
+    // strapi.eventHub.emit('template.accessed', { ...result })
+  },
 
-        const currentStatus = existingLog.status || "pending"
-        const allowedNextStatuses = allowedTransitions[currentStatus] || []
+  async afterUpdate(event: any) {
+    const { result } = event
 
-        if (!allowedNextStatuses.includes(data.status)) {
-          throw new errors.ForbiddenError(
-            `Invalid status transition from '${currentStatus}' to '${data.status}'. Template access logs enforce append-only audit trail.`
-          )
-        }
-
-        // Set completedAt timestamp when transitioning to terminal states
-        if (
-          ["success", "failed", "expired"].includes(data.status) &&
-          !existingLog.completedAt
-        ) {
-          data.completedAt = data.completedAt || new Date()
-
-          // Calculate access duration if not already set
-          if (!data.accessDuration && existingLog.initiatedAt) {
-            const duration =
-              new Date().getTime() - new Date(existingLog.initiatedAt).getTime()
-            data.accessDuration = Math.floor(duration / 1000) // Convert to seconds
-          }
-        }
-      }
-
-      // Record update metadata for audit trail
-      if (!data.metadata) {
-        data.metadata = existingLog.metadata || {}
-      }
-
-      // Add audit trail to metadata
-      const updateMetadata = {
-        ...data.metadata,
-        lastUpdated: new Date().toISOString(),
-        updateReason: data.metadata?.updateReason || "Status change",
-        updateUser: "system",
-        updateHistory: [
-          ...((existingLog.metadata as any)?.updateHistory || []),
-          {
-            timestamp: new Date().toISOString(),
-            previousStatus: existingLog.status,
-            newStatus: data.status || existingLog.status,
-            user: "system",
-            reason: data.metadata?.updateReason || "Status change",
-          },
-        ],
-      }
-
-      data.metadata = updateMetadata
-    },
-
-    /**
-     * Completely prevent deletion of template access logs - they are permanent audit records.
-     */
-    async beforeDelete(event: Event) {
-      throw new errors.ForbiddenError(
-        "Template access logs cannot be deleted. They are append-only audit records required for compliance and tracking."
-      )
-    },
-
-    /**
-     * Prevent bulk deletion of template access logs.
-     */
-    async beforeDeleteMany(event: Event) {
-      throw new errors.ForbiddenError(
-        "Template access logs cannot be deleted. They are append-only audit records required for compliance and tracking."
-      )
-    },
-
-    /**
-     * Post-creation actions including logging and scheduled expiration.
-     */
-    async afterCreate(event: Event) {
-      const { result } = event
-
-      // Log creation for audit purposes
+    if (result.status === "completed") {
       strapi.log.info(
-        `Template access log created: ${result.accessId} for user ${result.user?.id || "anonymous"} - Project: ${result.project?.id || "unknown"}`
+        `Template access completed: ${result.documentId} for project ${result.projectId}`
       )
-
-      // Schedule automatic expiration check
-      if (result.expiresAt && result.status === "pending") {
-        const expirationTime = new Date(result.expiresAt).getTime()
-        const now = Date.now()
-        const delay = Math.max(0, expirationTime - now)
-
-        // Only schedule if expiration is in the future and within 24 hours
-        if (delay > 0 && delay < 24 * 60 * 60 * 1000) {
-          setTimeout(async () => {
-            try {
-              const currentLog = await strapi.entityService.findOne(
-                "api::template-access-log.template-access-log",
-                result.id,
-                { fields: ["status"] }
-              )
-
-              // Only mark as expired if still pending
-              if (currentLog && currentLog.status === "pending") {
-                await strapi.entityService.update(
-                  "api::template-access-log.template-access-log",
-                  result.id,
-                  {
-                    data: {
-                      status: "expired",
-                      completedAt: new Date(),
-                      metadata: {
-                        ...((currentLog.metadata as any) || {}),
-                        updateReason: "Automatic expiration after timeout",
-                        expiredAt: new Date().toISOString(),
-                      },
-                    },
-                  }
-                )
-
-                strapi.log.info(
-                  `Template access log ${result.accessId} automatically expired`
-                )
-              }
-            } catch (error) {
-              strapi.log.error(
-                `Failed to expire template access log ${result.accessId}:`,
-                error
-              )
-            }
-          }, delay)
-        }
-      }
-    },
-
-    /**
-     * Log significant status changes for monitoring and analytics.
-     */
-    async afterUpdate(event: Event) {
-      const { result } = event
-
-      // Log significant status changes
-      if (result.status === "success") {
-        strapi.log.info(
-          `Template access completed: ${result.accessId} for user ${result.user?.id || "anonymous"} - Duration: ${result.accessDuration}s`
-        )
-
-        // Send analytics event if enabled
-        if (process.env.ENABLE_ANALYTICS === "true") {
-          strapi.log.debug("Analytics event: template_access_completed", {
-            accessId: result.accessId,
-            projectId: result.project?.id,
-            userId: result.user?.id,
-            duration: result.accessDuration,
-            templateSize: result.templateSize,
-          })
-        }
-      } else if (result.status === "failed") {
-        strapi.log.warn(`Template access failed: ${result.accessId}`, {
-          errorReason: result.errorReason,
-          errorCode: result.errorCode,
-          userId: result.user?.id || "anonymous",
-        })
-
-        // Track failure metrics
-        if (process.env.ENABLE_ANALYTICS === "true") {
-          strapi.log.debug("Analytics event: template_access_failed", {
-            accessId: result.accessId,
-            errorCode: result.errorCode,
-            projectId: result.project?.id,
-            userId: result.user?.id,
-          })
-        }
-      } else if (result.status === "expired") {
-        strapi.log.info(
-          `Template access expired: ${result.accessId} for user ${result.user?.id || "anonymous"}`
-        )
-      }
-    },
-  })
+    } else if (result.status === "failed") {
+      strapi.log.error(
+        `Template access failed: ${result.documentId} for project ${result.projectId}. Error: ${result.errorMessage}`
+      )
+    }
+  },
 }

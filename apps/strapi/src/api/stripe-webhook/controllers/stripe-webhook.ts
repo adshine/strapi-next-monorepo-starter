@@ -163,6 +163,10 @@ async function handleCheckoutSessionCompleted(
   }
 
   // Get subscription details from Stripe
+  if (!stripe) {
+    console.error("Stripe is not configured")
+    return
+  }
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
   // Get plan details based on price ID
@@ -293,7 +297,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   }
 
   // Reset monthly quota if this is a renewal payment
-  if (subscriptionId) {
+  if (subscriptionId && stripe) {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
     await strapi.db.query("api::user-profile.user-profile").update({
