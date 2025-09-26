@@ -6,7 +6,11 @@ import { setRequestLocale } from "next-intl/server"
 
 import { LayoutProps } from "@/types/next"
 
-import { fontRoboto } from "@/lib/fonts"
+import {
+  fontInstrumentSans,
+  fontInstrumentSerif,
+  fontRoboto,
+} from "@/lib/fonts"
 import { routing } from "@/lib/navigation"
 import { cn } from "@/lib/styles"
 import { ErrorBoundary } from "@/components/elementary/ErrorBoundary"
@@ -47,7 +51,9 @@ export default async function RootLayout({ children, params }: LayoutProps) {
       <body
         className={cn(
           "min-h-screen bg-gray-100 font-sans antialiased",
-          fontRoboto.variable
+          fontRoboto.variable,
+          fontInstrumentSans.variable,
+          fontInstrumentSerif.variable
         )}
       >
         <StrapiPreviewListener />
@@ -59,9 +65,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
                 <StrapiNavbar locale={locale} />
               </ErrorBoundary>
 
-              <div className="flex-1">
-                <div>{children}</div>
-              </div>
+              <div className="flex-1">{children}</div>
 
               <TailwindIndicator />
 

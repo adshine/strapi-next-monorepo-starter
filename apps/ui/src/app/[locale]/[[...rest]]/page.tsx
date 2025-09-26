@@ -76,26 +76,27 @@ export default async function StrapiPage(props: Props) {
 
   const fullPath = ROOT_PAGE_PATH + restSegments.join("/")
 
+  if (isRootRequest) {
+    return <MarketingLandingPage />
+  }
+
   let response: Awaited<ReturnType<typeof fetchPage>> | null = null
 
   try {
     response = await fetchPage(fullPath, params.locale)
   } catch (error) {
-    console.warn("fetchPage failed, falling back to marketing page", {
+    console.warn("fetchPage failed", {
       error,
       fullPath,
       locale: params.locale,
     })
+    notFound()
   }
 
   const data = response?.data
   const content = data?.content?.filter((comp) => comp != null) ?? []
 
   if (content.length === 0) {
-    if (isRootRequest) {
-      return <MarketingLandingPage />
-    }
-
     notFound()
   }
 
