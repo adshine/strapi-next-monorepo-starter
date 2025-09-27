@@ -110,17 +110,12 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
             ) : (
               <>
                 <AppLink href="/auth/signin">
-                  <div className="relative shrink-0 rounded-[24px] bg-white">
-                    <div className="box-border flex items-center justify-center gap-[8px] px-[20px] py-[8px]">
+                  <div className="shrink-0 rounded-[24px] border border-gray-200 bg-white">
+                    <div className="flex items-center justify-center gap-[8px] px-[20px] py-[8px]">
                       <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
                         Login
                       </span>
                     </div>
-                    <div className="pointer-events-none absolute inset-0 shadow-[0px_0px_12px_-8px_inset_rgba(0,0,0,0.25),0px_-4px_4px_0px_inset_rgba(0,0,0,0.04)]" />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-[-0.5px] rounded-[24.5px] border-[0.5px] border-[rgba(0,0,0,0.12)]"
-                    />
                   </div>
                 </AppLink>
                 <AppLink href="/auth/register">
