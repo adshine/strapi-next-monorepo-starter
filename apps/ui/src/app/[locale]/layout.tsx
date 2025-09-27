@@ -16,7 +16,7 @@ import { cn } from "@/lib/styles"
 import { ErrorBoundary } from "@/components/elementary/ErrorBoundary"
 import StrapiPreviewListener from "@/components/elementary/StrapiPreviewListener"
 import { TailwindIndicator } from "@/components/elementary/TailwindIndicator"
-import StrapiFooter from "@/components/page-builder/single-types/footer/StrapiFooter"
+import { Footer } from "@/components/layout/Footer"
 import StrapiNavbar from "@/components/page-builder/single-types/navbar/StrapiNavbar"
 import { ClientProviders } from "@/components/providers/ClientProviders"
 import { ServerProviders } from "@/components/providers/ServerProviders"
@@ -71,9 +71,7 @@ export default async function RootLayout({ children, params }: LayoutProps) {
 
               <Toaster />
 
-              <ErrorBoundary hideFallback>
-                <StrapiFooter locale={locale} />
-              </ErrorBoundary>
+              <Footer />
             </div>
           </ClientProviders>
         </ServerProviders>

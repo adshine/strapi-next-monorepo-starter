@@ -1,6 +1,153 @@
-2025/09/24-08:03:03.375 18d1ec Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
-2025/09/24-08:03:03.378 18d1ec Recovering log #3
-2025/09/24-08:03:03.379 18d1ec Reusing old log /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/000003.log 
-2025/09/24-16:12:39.218 18d1ec Level-0 table #5: started
-2025/09/24-16:12:39.229 18d1ec Level-0 table #5: 64875 bytes OK
-2025/09/24-16:12:39.235 18d1ec Delete type=0 #3
+2025/09/25-10:51:56.987 18d1ec Reusing MANIFEST /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/MANIFEST-000001
+2025/09/25-10:51:57.003 18d1ec Recovering log #4
+2025/09/25-10:51:57.005 18d1ec Reusing old log /Users/adebimpeomolaso/Projects/strapi-next-monorepo-starter/playwright-profile/Default/Local Storage/leveldb/000004.log 
+2025/09/26-07:14:50.987 18d1ec Level-0 table #8: started
+2025/09/26-07:14:51.002 18d1ec Level-0 table #8: 27879 bytes OK
+2025/09/26-07:14:51.008 18d1ec Delete type=0 #4
+2025/09/26-07:51:51.028 18d1ec Level-0 table #10: started
+2025/09/26-07:51:51.041 18d1ec Level-0 table #10: 17261 bytes OK
+2025/09/26-07:51:51.047 18d1ec Delete type=0 #7
+2025/09/26-08:28:51.073 18d1ec Level-0 table #12: started
+2025/09/26-08:28:51.085 18d1ec Level-0 table #12: 17246 bytes OK
+2025/09/26-08:28:51.092 18d1ec Delete type=0 #9
+2025/09/26-09:00:16.758 18d1f2 Level-0 table #14: started
+2025/09/26-09:00:16.763 18d1f2 Level-0 table #14: 41918 bytes OK
+2025/09/26-09:00:16.785 18d1f2 Delete type=0 #11
+2025/09/26-09:34:51.128 18d1f2 Level-0 table #16: started
+2025/09/26-09:34:51.275 18d1f2 Level-0 table #16: 18116 bytes OK
+2025/09/26-09:34:51.295 18d1f2 Delete type=0 #13
+2025/09/26-09:34:51.344 18d1ec Compacting 4@0 + 1@1 files
+2025/09/26-09:34:51.383 18d1ec Generated table #17@0: 66 keys, 33874 bytes
+2025/09/26-09:34:51.383 18d1ec Compacted 4@0 + 1@1 files => 33874 bytes
+2025/09/26-09:34:51.386 18d1ec compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-09:34:51.386 18d1ec Delete type=2 #14
+2025/09/26-09:34:51.386 18d1ec Delete type=2 #16
+2025/09/26-09:34:51.386 18d1ec Delete type=2 #12
+2025/09/26-09:34:51.386 18d1ec Delete type=2 #10
+2025/09/26-09:34:51.386 18d1ec Delete type=2 #8
+2025/09/26-10:11:50.974 18d1f2 Level-0 table #19: started
+2025/09/26-10:11:51.011 18d1f2 Level-0 table #19: 17227 bytes OK
+2025/09/26-10:11:51.020 18d1f2 Delete type=0 #15
+2025/09/26-10:48:51.058 18d1ec Level-0 table #21: started
+2025/09/26-10:48:51.078 18d1ec Level-0 table #21: 17227 bytes OK
+2025/09/26-10:48:51.083 18d1ec Delete type=0 #18
+2025/09/26-11:25:51.241 18d1f2 Level-0 table #23: started
+2025/09/26-11:25:51.465 18d1f2 Level-0 table #23: 17216 bytes OK
+2025/09/26-11:25:51.493 18d1f2 Delete type=0 #20
+2025/09/26-12:02:51.105 18d1ec Level-0 table #25: started
+2025/09/26-12:02:51.120 18d1ec Level-0 table #25: 17247 bytes OK
+2025/09/26-12:02:51.127 18d1ec Delete type=0 #22
+2025/09/26-12:02:51.132 18d1ec Compacting 4@0 + 1@1 files
+2025/09/26-12:02:51.155 18d1ec Generated table #26@0: 66 keys, 33880 bytes
+2025/09/26-12:02:51.156 18d1ec Compacted 4@0 + 1@1 files => 33880 bytes
+2025/09/26-12:02:51.157 18d1ec compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-12:02:51.158 18d1ec Delete type=2 #17
+2025/09/26-12:02:51.158 18d1ec Delete type=2 #21
+2025/09/26-12:02:51.158 18d1ec Delete type=2 #23
+2025/09/26-12:02:51.158 18d1ec Delete type=2 #25
+2025/09/26-12:02:51.159 18d1ec Delete type=2 #19
+2025/09/26-12:39:51.103 18d1ec Level-0 table #28: started
+2025/09/26-12:39:51.121 18d1ec Level-0 table #28: 17239 bytes OK
+2025/09/26-12:39:51.126 18d1ec Delete type=0 #24
+2025/09/26-13:16:51.071 18d1ec Level-0 table #30: started
+2025/09/26-13:16:51.088 18d1ec Level-0 table #30: 17235 bytes OK
+2025/09/26-13:16:51.093 18d1ec Delete type=0 #27
+2025/09/26-13:53:51.118 18d1ec Level-0 table #32: started
+2025/09/26-13:53:51.136 18d1ec Level-0 table #32: 17233 bytes OK
+2025/09/26-13:53:51.141 18d1ec Delete type=0 #29
+2025/09/26-14:30:51.121 18d1f2 Level-0 table #34: started
+2025/09/26-14:30:51.142 18d1f2 Level-0 table #34: 17303 bytes OK
+2025/09/26-14:30:51.148 18d1f2 Delete type=0 #31
+2025/09/26-14:30:51.151 18d1ec Compacting 4@0 + 1@1 files
+2025/09/26-14:30:51.156 18d1ec Generated table #35@0: 66 keys, 33880 bytes
+2025/09/26-14:30:51.157 18d1ec Compacted 4@0 + 1@1 files => 33880 bytes
+2025/09/26-14:30:51.158 18d1ec compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-14:30:51.159 18d1ec Delete type=2 #28
+2025/09/26-14:30:51.159 18d1ec Delete type=2 #34
+2025/09/26-14:30:51.159 18d1ec Delete type=2 #26
+2025/09/26-14:30:51.159 18d1ec Delete type=2 #32
+2025/09/26-14:30:51.159 18d1ec Delete type=2 #30
+2025/09/26-15:07:51.132 18d1ec Level-0 table #37: started
+2025/09/26-15:07:51.160 18d1ec Level-0 table #37: 17310 bytes OK
+2025/09/26-15:07:51.166 18d1ec Delete type=0 #33
+2025/09/26-15:44:51.094 18d1f2 Level-0 table #39: started
+2025/09/26-15:44:51.109 18d1f2 Level-0 table #39: 17311 bytes OK
+2025/09/26-15:44:51.114 18d1f2 Delete type=0 #36
+2025/09/26-16:21:51.025 18d1ec Level-0 table #41: started
+2025/09/26-16:21:51.044 18d1ec Level-0 table #41: 17286 bytes OK
+2025/09/26-16:21:51.050 18d1ec Delete type=0 #38
+2025/09/26-16:58:51.060 18d1ec Level-0 table #43: started
+2025/09/26-16:58:51.084 18d1ec Level-0 table #43: 17253 bytes OK
+2025/09/26-16:58:51.091 18d1ec Delete type=0 #40
+2025/09/26-16:58:51.094 18d1ec Compacting 4@0 + 1@1 files
+2025/09/26-16:58:51.099 18d1ec Generated table #44@0: 66 keys, 33881 bytes
+2025/09/26-16:58:51.100 18d1ec Compacted 4@0 + 1@1 files => 33881 bytes
+2025/09/26-16:58:51.101 18d1ec compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-16:58:51.101 18d1ec Delete type=2 #39
+2025/09/26-16:58:51.101 18d1ec Delete type=2 #35
+2025/09/26-16:58:51.101 18d1ec Delete type=2 #37
+2025/09/26-16:58:51.102 18d1ec Delete type=2 #43
+2025/09/26-16:58:51.102 18d1ec Delete type=2 #41
+2025/09/26-17:35:51.115 18d1f2 Level-0 table #46: started
+2025/09/26-17:35:51.131 18d1f2 Level-0 table #46: 17233 bytes OK
+2025/09/26-17:35:51.140 18d1f2 Delete type=0 #42
+2025/09/26-18:12:51.185 18d1ec Level-0 table #48: started
+2025/09/26-18:12:51.202 18d1ec Level-0 table #48: 17236 bytes OK
+2025/09/26-18:12:51.209 18d1ec Delete type=0 #45
+2025/09/26-18:49:51.130 18d1ec Level-0 table #50: started
+2025/09/26-18:49:51.151 18d1ec Level-0 table #50: 17230 bytes OK
+2025/09/26-18:49:51.164 18d1ec Delete type=0 #47
+2025/09/26-19:26:51.130 18d1ec Level-0 table #52: started
+2025/09/26-19:26:51.144 18d1ec Level-0 table #52: 17228 bytes OK
+2025/09/26-19:26:51.150 18d1ec Delete type=0 #49
+2025/09/26-19:26:51.154 18d1f2 Compacting 4@0 + 1@1 files
+2025/09/26-19:26:51.160 18d1f2 Generated table #53@0: 66 keys, 33880 bytes
+2025/09/26-19:26:51.160 18d1f2 Compacted 4@0 + 1@1 files => 33880 bytes
+2025/09/26-19:26:51.162 18d1f2 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-19:26:51.163 18d1f2 Delete type=2 #48
+2025/09/26-19:26:51.163 18d1f2 Delete type=2 #50
+2025/09/26-19:26:51.163 18d1f2 Delete type=2 #44
+2025/09/26-19:26:51.163 18d1f2 Delete type=2 #52
+2025/09/26-19:26:51.163 18d1f2 Delete type=2 #46
+2025/09/26-20:03:51.032 18d1ec Level-0 table #55: started
+2025/09/26-20:03:51.044 18d1ec Level-0 table #55: 17224 bytes OK
+2025/09/26-20:03:51.050 18d1ec Delete type=0 #51
+2025/09/26-20:40:51.090 18d1f2 Level-0 table #57: started
+2025/09/26-20:40:51.106 18d1f2 Level-0 table #57: 17246 bytes OK
+2025/09/26-20:40:51.110 18d1f2 Delete type=0 #54
+2025/09/26-21:17:51.121 18d1ec Level-0 table #59: started
+2025/09/26-21:17:51.134 18d1ec Level-0 table #59: 17235 bytes OK
+2025/09/26-21:17:51.140 18d1ec Delete type=0 #56
+2025/09/26-21:54:51.180 18d1f2 Level-0 table #61: started
+2025/09/26-21:54:51.193 18d1f2 Level-0 table #61: 17231 bytes OK
+2025/09/26-21:54:51.197 18d1f2 Delete type=0 #58
+2025/09/26-21:54:51.200 18d1f2 Compacting 4@0 + 1@1 files
+2025/09/26-21:54:51.205 18d1f2 Generated table #62@0: 66 keys, 33881 bytes
+2025/09/26-21:54:51.205 18d1f2 Compacted 4@0 + 1@1 files => 33881 bytes
+2025/09/26-21:54:51.208 18d1f2 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/26-21:54:51.209 18d1f2 Delete type=2 #61
+2025/09/26-21:54:51.209 18d1f2 Delete type=2 #59
+2025/09/26-21:54:51.209 18d1f2 Delete type=2 #57
+2025/09/26-21:54:51.209 18d1f2 Delete type=2 #55
+2025/09/26-21:54:51.209 18d1f2 Delete type=2 #53
+2025/09/26-22:31:51.185 18d1f2 Level-0 table #64: started
+2025/09/26-22:31:51.205 18d1f2 Level-0 table #64: 17249 bytes OK
+2025/09/26-22:31:51.210 18d1f2 Delete type=0 #60
+2025/09/26-23:08:51.175 18d1f2 Level-0 table #66: started
+2025/09/26-23:08:51.192 18d1f2 Level-0 table #66: 17231 bytes OK
+2025/09/26-23:08:51.196 18d1f2 Delete type=0 #63
+2025/09/26-23:45:51.121 18d1f2 Level-0 table #68: started
+2025/09/26-23:45:51.134 18d1f2 Level-0 table #68: 17213 bytes OK
+2025/09/26-23:45:51.139 18d1f2 Delete type=0 #65
+2025/09/27-00:22:51.155 18d1ec Level-0 table #70: started
+2025/09/27-00:22:51.170 18d1ec Level-0 table #70: 17223 bytes OK
+2025/09/27-00:22:51.174 18d1ec Delete type=0 #67
+2025/09/27-00:22:51.178 18d1f2 Compacting 4@0 + 1@1 files
+2025/09/27-00:22:51.182 18d1f2 Generated table #71@0: 66 keys, 33881 bytes
+2025/09/27-00:22:51.183 18d1f2 Compacted 4@0 + 1@1 files => 33881 bytes
+2025/09/27-00:22:51.184 18d1f2 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/09/27-00:22:51.184 18d1f2 Delete type=2 #62
+2025/09/27-00:22:51.184 18d1f2 Delete type=2 #64
+2025/09/27-00:22:51.184 18d1f2 Delete type=2 #70
+2025/09/27-00:22:51.184 18d1f2 Delete type=2 #66
+2025/09/27-00:22:51.184 18d1f2 Delete type=2 #68

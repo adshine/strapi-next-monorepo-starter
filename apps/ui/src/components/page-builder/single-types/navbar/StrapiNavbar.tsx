@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 
 const hardcodedLinks: NonNullable<
   Data.ContentType<"api::navbar.navbar">["links"]
-> = [{ id: "client-page", href: "/client-page", label: "Client Page" }]
+> = []
 
 export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
   const response = await fetchNavbar(locale)
@@ -32,25 +32,26 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
   ]
 
   const links = navbar?.links
-    ? (navbar.links ?? []).filter((link) => link.href).concat(...hardcodedLinks)
+    ? (navbar.links ?? []).filter((link) => link.href)
     : fallbackLinks
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white">
-      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-16">
-        <div className="flex items-center gap-8">
+    <header className="sticky top-0 z-40 w-full bg-white">
+      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-[64px]">
+        {/* Logo Section */}
+        <div className="flex shrink-0 items-center gap-[8px]">
           {navbar?.logoImage ? (
             <StrapiImageWithLink
               component={navbar.logoImage}
-              linkProps={{ className: "flex items-center gap-2" }}
+              linkProps={{ className: "flex items-center gap-[8px]" }}
               imageProps={{
-                forcedSizes: { width: 90, height: 60 },
+                forcedSizes: { width: 22, height: 22 },
                 hideWhenMissing: true,
               }}
             />
           ) : (
-            <AppLink href="/" className="flex items-center gap-2">
-              <div className="flex h-[22px] w-[22px] items-center justify-center">
+            <AppLink href="/" className="flex items-center gap-[8px]">
+              <div className="flex shrink-0 items-center justify-center">
                 <svg
                   width="22"
                   height="22"
@@ -62,53 +63,76 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
                   <rect width="22" height="22" rx="4" fill="#ef1d0c" />
                 </svg>
               </div>
-              <span className="font-instrument-sans text-[12.897px] leading-[9.673px] font-semibold tracking-[-0.5159px] text-black capitalize">
-                Framer Dojo
-              </span>
+              <div className="flex flex-col items-start gap-[5px]">
+                <span className="font-instrument-sans text-[12.897px] leading-[9.673px] font-semibold tracking-[-0.5159px] whitespace-nowrap text-black capitalize">
+                  Framer Dojo
+                </span>
+              </div>
             </AppLink>
           )}
+        </div>
 
-          <nav className="flex items-center gap-8">
-            {session?.user && (
-              <div className="flex items-center gap-3 rounded-[24px] border-[0.5px] border-gray-200 bg-white px-5 py-2 shadow-sm">
-                <span className="font-roboto text-[16px] leading-[1.5] text-black">
+        {/* Right Side: Navigation Links + Auth */}
+        <div className="flex shrink-0 items-center gap-[24px]">
+          {/* Navigation Links with Coin Badge */}
+          <nav className="flex items-center gap-[32px]">
+            {/* Coin Badge - Always visible */}
+            <div className="relative shrink-0 rounded-[24px] bg-white">
+              <div className="box-border flex items-center justify-center gap-[12px] px-[20px] py-[8px]">
+                <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
                   3
                 </span>
-                <Coins className="h-5 w-5 text-black" />
+                <Coins
+                  className="h-5 w-5 shrink-0 text-black"
+                  strokeWidth={1.5}
+                />
               </div>
-            )}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-[-0.5px] rounded-[24.5px] border-[0.5px] border-[rgba(0,0,0,0.12)]"
+              />
+            </div>
 
+            {/* Navigation Links */}
             {links.map((link) => (
               <StrapiLink
                 component={link}
                 key={link.href}
-                className="font-roboto text-[16px] leading-[1.5] text-black transition-colors hover:text-[#ef1d0c]"
+                className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black"
               />
             ))}
           </nav>
-        </div>
 
-        <div className="flex items-center gap-4">
-          {session?.user ? (
-            <LoggedUserMenu user={session.user} />
-          ) : (
-            <>
-              <AppLink href="/auth/signin">
-                <Button
-                  variant="outline"
-                  className="font-roboto rounded-[24px] border-[0.5px] border-gray-200 bg-white px-5 py-2 text-[16px] leading-[1.5] text-black shadow-sm hover:bg-gray-50"
-                >
-                  {t("actions.signIn")}
-                </Button>
-              </AppLink>
-              <AppLink href="/auth/register">
-                <Button className="font-roboto rounded-[24px] bg-black px-5 py-2 text-[16px] leading-[1.5] text-white hover:bg-black/90">
-                  Sign Up
-                </Button>
-              </AppLink>
-            </>
-          )}
-          <LocaleSwitcher locale={locale} />
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-[12px]">
+            {session?.user ? (
+              <LoggedUserMenu user={session.user} />
+            ) : (
+              <>
+                <AppLink href="/auth/signin">
+                  <div className="relative shrink-0 rounded-[24px] bg-white">
+                    <div className="box-border flex items-center justify-center gap-[8px] px-[20px] py-[8px]">
+                      <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
+                        Login
+                      </span>
+                    </div>
+                    <div className="pointer-events-none absolute inset-0 shadow-[0px_0px_12px_-8px_inset_rgba(0,0,0,0.25),0px_-4px_4px_0px_inset_rgba(0,0,0,0.04)]" />
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-[-0.5px] rounded-[24.5px] border-[0.5px] border-[rgba(0,0,0,0.12)]"
+                    />
+                  </div>
+                </AppLink>
+                <AppLink href="/auth/register">
+                  <div className="box-border flex shrink-0 items-center justify-center gap-[8px] rounded-[24px] bg-black px-[20px] py-[8px]">
+                    <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-white">
+                      Sign Up
+                    </span>
+                  </div>
+                </AppLink>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

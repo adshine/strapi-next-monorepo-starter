@@ -18,6 +18,7 @@ import { projectsAPI } from "@/lib/api/projects"
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/styles"
 import { useUserProfile } from "@/hooks/use-user-profile"
+import { Container } from "@/components/elementary/Container"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -290,7 +291,7 @@ export default function TemplatesPage() {
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       {/* Page Header */}
       <div className="border-b border-[var(--border-neutral)] bg-[var(--bg-primary)]/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-8">
+        <Container className="py-8">
           <div className="mb-8 text-center">
             <h1 className="mb-4 text-4xl font-bold text-[var(--text-primary)] md:text-5xl">
               Professional Framer Templates
@@ -409,11 +410,11 @@ export default function TemplatesPage() {
               )}
             </div>
           </div>
-        </div>
+        </Container>
       </div>
 
       {/* Templates Grid */}
-      <div className="container mx-auto px-4 py-8">
+      <Container className="py-8">
         <div className="mb-6 flex items-center justify-between">
           <div className="text-[var(--text-muted)]">
             Showing {filteredTemplates.length} template
@@ -464,7 +465,7 @@ export default function TemplatesPage() {
             </Button>
           </div>
         )}
-      </div>
+      </Container>
 
       {/* Remix Modal */}
       {selectedTemplate && (
