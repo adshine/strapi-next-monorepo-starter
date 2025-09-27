@@ -81,7 +81,7 @@ export function MarketingLandingPage() {
         {loading
           ? Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="flex animate-pulse flex-col gap-[6px]">
-                <div className="aspect-[285/399] w-full rounded-[12px] bg-gray-200" />
+                <div className="aspect-[4/5] w-full rounded-[12px] bg-gray-200" />
                 <div className="flex items-center justify-between">
                   <div className="h-4 w-32 rounded bg-gray-200" />
                   <div className="h-7 w-7 rounded bg-gray-200" />
@@ -94,7 +94,7 @@ export function MarketingLandingPage() {
                 href={`/templates/${template.slug}`}
                 className="group flex flex-col gap-[6px]"
               >
-                <div className="relative aspect-[285/399] w-full overflow-hidden rounded-[12px]">
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[12px]">
                   {template.featuredImage?.url || template.thumbnailUrl ? (
                     <Image
                       src={template.featuredImage?.url || template.thumbnailUrl}

@@ -1,5 +1,6 @@
 import { Data } from "@repo/strapi"
 import { Coins } from "lucide-react"
+import Image from "next/image"
 import { getTranslations } from "next-intl/server"
 
 import { AppLocale } from "@/types/general"
@@ -51,17 +52,14 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
             />
           ) : (
             <AppLink href="/" className="flex items-center gap-[8px]">
-              <div className="flex shrink-0 items-center justify-center">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="scale-y-[-1]"
-                >
-                  <rect width="22" height="22" rx="4" fill="#ef1d0c" />
-                </svg>
+              <div className="flex shrink-0 items-center justify-center scale-y-[-1]">
+                <Image
+                  src="/logo.png"
+                  alt="FramerDojo Logo"
+                  width={22}
+                  height={22}
+                  className="object-cover"
+                />
               </div>
               <div className="flex flex-col items-start gap-[5px]">
                 <span className="font-instrument-sans text-[12.897px] leading-[9.673px] font-semibold tracking-[-0.5159px] whitespace-nowrap text-black capitalize">
@@ -73,9 +71,9 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
         </div>
 
         {/* Right Side: Navigation Links + Auth */}
-        <div className="flex shrink-0 items-center gap-[24px]">
+        <div className="flex shrink-0 items-center gap-[48px]">
           {/* Navigation Links with Coin Badge */}
-          <nav className="flex items-center gap-[32px]">
+          <nav className="flex items-center gap-[24px]">
             {/* Coin Badge - Always visible */}
             <div className="relative shrink-0 rounded-[24px] bg-white">
               <div className="box-border flex items-center justify-center gap-[12px] px-[20px] py-[8px]">
@@ -109,17 +107,15 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
               <LoggedUserMenu user={session.user} />
             ) : (
               <>
-                <AppLink href="/auth/signin">
-                  <div className="shrink-0 rounded-[24px] border border-gray-200 bg-white">
-                    <div className="flex items-center justify-center gap-[8px] px-[20px] py-[8px]">
-                      <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
-                        Login
-                      </span>
-                    </div>
+                <AppLink href="/auth/signin" className="inline-block">
+                  <div className="flex shrink-0 items-center justify-center rounded-[24px] border border-gray-200 bg-white px-[20px] py-[8px]">
+                    <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
+                      Login
+                    </span>
                   </div>
                 </AppLink>
-                <AppLink href="/auth/register">
-                  <div className="box-border flex shrink-0 items-center justify-center gap-[8px] rounded-[24px] bg-black px-[20px] py-[8px]">
+                <AppLink href="/auth/register" className="inline-block">
+                  <div className="flex shrink-0 items-center justify-center rounded-[24px] bg-black px-[20px] py-[8px]">
                     <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-white">
                       Sign Up
                     </span>
