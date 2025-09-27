@@ -2,7 +2,11 @@ import { UID } from "@strapi/strapi"
 
 import { StrapiPreviewConfig } from "../types/internals"
 
-export default ({ env }) => {
+type StrapiEnv = {
+  (key: string, defaultValue?: any): any
+}
+
+export default ({ env }: { env: StrapiEnv }) => {
   const strapiPreviewConfig: StrapiPreviewConfig = {
     enabled: env("STRAPI_PREVIEW_ENABLED") === "true",
     previewSecret: env("STRAPI_PREVIEW_SECRET"),
@@ -27,7 +31,11 @@ export default ({ env }) => {
         allowedOrigins: env("CLIENT_URL"),
         handler: async (
           uid: UID.CollectionType,
-          { documentId, locale, status }
+          {
+            documentId,
+            locale,
+            status,
+          }: { documentId: string; locale?: string; status?: string }
         ) => {
           // Fetch the complete document from Strapi
           if (
@@ -46,13 +54,13 @@ export default ({ env }) => {
             return null // returning null diables the preview button in the UI
           }
           // Use Next.js draft mode passing it a secret key and the content-type status
-          const urlSearchParams = new URLSearchParams({
-            url: pathname,
-            locale,
-            secret: strapiPreviewConfig.previewSecret,
-            status,
-          })
-          return `${strapiPreviewConfig.clientUrl}/api/preview?${urlSearchParams}`
+          const urlSearchParams = new URLSearchParams()
+          urlSearchParams.set("url", pathname)
+          if (locale) urlSearchParams.set("locale", locale)
+          urlSearchParams.set("secret", strapiPreviewConfig.previewSecret)
+          if (status) urlSearchParams.set("status", status)
+
+          return `${strapiPreviewConfig.clientUrl}/api/preview?${urlSearchParams.toString()}`
         },
       },
     },

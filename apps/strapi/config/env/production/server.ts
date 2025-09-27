@@ -1,16 +1,29 @@
 import cronTasks from "../../cron-tasks"
 
-export default ({ env }) => ({
+type StrapiEnv = {
+  (key: string, defaultValue?: any): any
+  array<T = any>(key: string, defaultValue?: T[]): T[]
+}
+
+export default ({ env }: { env: StrapiEnv }) => ({
   proxy: true,
-  url: env("APP_URL"), // Sets the public URL of the application.
+  url: env("APP_URL"),
   app: {
     keys: env.array("APP_KEYS"),
   },
-  webhooks: {
-    populateRelations: env.bool("WEBHOOKS_POPULATE_RELATIONS", false),
+  admin: {
+    forgotPassword: {
+      emailTemplate: {
+        from: env("EMAIL_FROM"),
+        replyTo: env("EMAIL_REPLY_TO"),
+        subject: "Reset your password",
+        text: "Password reset request",
+        html: "Password reset request",
+      },
+    },
   },
   cron: {
-    enabled: env.bool("CRON_ENABLED", false),
+    enabled: true,
     tasks: cronTasks,
   },
 })

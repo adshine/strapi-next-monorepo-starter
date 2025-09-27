@@ -24,7 +24,7 @@ export const hierarchyService = {
     if (newFullPath !== oldFullPath) {
       await strapi.documents(documentType).update({
         documentId,
-        data: { fullPath: newFullPath },
+        data: { fullPath: newFullPath || "" },
         status: "published",
       })
 
@@ -49,7 +49,15 @@ export const hierarchyService = {
     }
   },
 
-  async CREATE_REDIRECT({ oldPath, newPath, documentId }) {
+  async CREATE_REDIRECT({
+    oldPath,
+    newPath,
+    documentId,
+  }: {
+    oldPath: string
+    newPath: string
+    documentId: string
+  }) {
     await strapi.documents("api::redirect.redirect").create({
       data: {
         source: oldPath,
@@ -78,7 +86,7 @@ export const hierarchyService = {
 
 const joinPaths = (...paths: Array<string | undefined | null>) => {
   const joinedPath = paths
-    .flatMap((path) => path.split("/"))
+    .flatMap((path) => path?.split("/") || [])
     .filter(Boolean)
     .join("/")
 

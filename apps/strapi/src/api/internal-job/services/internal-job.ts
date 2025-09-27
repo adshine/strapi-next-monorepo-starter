@@ -21,7 +21,11 @@ export default factories.createCoreService(
       const samePendingJob = await strapi
         .documents("api::internal-job.internal-job")
         .findFirst({
-          filters: { jobType, relatedDocumentId, state: "pending" },
+          filters: {
+            ...(jobType && { jobType }),
+            ...(relatedDocumentId && { relatedDocumentId }),
+            state: "pending",
+          },
         })
 
       if (samePendingJob) {
@@ -30,8 +34,8 @@ export default factories.createCoreService(
 
       return strapi.documents("api::internal-job.internal-job").create({
         data: {
-          jobType,
-          relatedDocumentId,
+          jobType: jobType!,
+          relatedDocumentId: relatedDocumentId || undefined,
           payload: JSON.stringify(payload),
           state: "pending",
         },
@@ -42,7 +46,10 @@ export default factories.createCoreService(
       jobType: Data.ContentType<"api::internal-job.internal-job">["jobType"]
     ) {
       return strapi.documents("api::internal-job.internal-job").findFirst({
-        filters: { jobType, state: "pending" },
+        filters: {
+          ...(jobType && { jobType }),
+          state: "pending",
+        },
         orderBy: { createdAt: "asc" },
       })
     },
@@ -54,7 +61,10 @@ export default factories.createCoreService(
     ) {
       return strapi.documents("api::internal-job.internal-job").update({
         documentId,
-        data: { state, error },
+        data: {
+          ...(state && { state }),
+          ...(error && { error }),
+        },
       })
     },
 
@@ -67,17 +77,30 @@ export default factories.createCoreService(
 
       while (job != null) {
         try {
-          await hierarchyService[jobType](job.payload as any)
+          if (
+            jobType &&
+            hierarchyService[jobType as keyof typeof hierarchyService]
+          ) {
+            await (
+              hierarchyService[jobType as keyof typeof hierarchyService] as any
+            )(job.payload as any)
+          } else {
+            throw new Error(`Unknown job type: ${jobType}`)
+          }
           await this.updateJobStatus(job.documentId, "completed")
           successfulJobs.push(job.documentId)
 
           strapi.log.info(`Job ${jobType} (${job.id}) completed`)
         } catch (error) {
-          await this.updateJobStatus(job.documentId, "failed", error.message)
+          await this.updateJobStatus(
+            job.documentId,
+            "failed",
+            (error as Error).message
+          )
           failedJobs.push(job.documentId)
 
           strapi.log.error(
-            `Job ${jobType} (${job.id}) failed: ${error.message}`
+            `Job ${jobType} (${job.id}) failed: ${(error as Error).message}`
           )
         }
 

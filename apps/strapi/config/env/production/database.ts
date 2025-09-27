@@ -1,20 +1,25 @@
-export default ({ env }) => {
+export default ({ env }: { env: (key: string, defaultValue?: any) => any }) => {
+  const parse = require("pg-connection-string").parse
+  const config = parse(env("DATABASE_URL"))
+
   return {
     connection: {
       client: "postgres",
       connection: {
-        connectionString: env("DATABASE_URL"),
-        host: env("DATABASE_HOST", "localhost"),
-        port: env.int("DATABASE_PORT", 5432),
-        database: env("DATABASE_NAME", "strapi"),
-        user: env("DATABASE_USERNAME", "strapi"),
-        password: env("DATABASE_PASSWORD", "strapi"),
-        ssl: env.bool("DATABASE_SSL", true)
-          ? { rejectUnauthorized: false }
-          : false,
-        schema: env("DATABASE_SCHEMA", "public"),
+        host: config.host,
+        port: config.port,
+        database: config.database,
+        user: config.user,
+        password: config.password,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       },
       debug: false,
+      pool: {
+        min: 2,
+        max: 10,
+      },
     },
   }
 }

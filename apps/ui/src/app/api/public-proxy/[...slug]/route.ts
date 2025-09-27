@@ -63,13 +63,21 @@ async function handler(
     isPrivate: false,
   })
 
-  // Debug logging
-  console.log('[Public Proxy] Request:', {
+  // Debug logging - more detailed
+  console.log("[Public Proxy] Request:", {
     path,
     url,
     isReadOnly,
     authHeaderPresent: !!authHeader.Authorization,
-    authHeaderLength: authHeader.Authorization ? authHeader.Authorization.length : 0
+    authHeaderLength: authHeader.Authorization
+      ? authHeader.Authorization.length
+      : 0,
+    tokenPrefix: authHeader.Authorization
+      ? authHeader.Authorization.substring(0, 20)
+      : "NO TOKEN",
+    envTokenLength: env.STRAPI_REST_READONLY_API_KEY
+      ? env.STRAPI_REST_READONLY_API_KEY.length
+      : 0,
   })
 
   const requestHeaders = {
@@ -79,9 +87,11 @@ async function handler(
     ...authHeader,
   }
 
-  console.log('[Public Proxy] Headers being sent:', {
+  console.log("[Public Proxy] Headers being sent:", {
     hasAuth: !!requestHeaders.Authorization,
-    authLength: requestHeaders.Authorization ? requestHeaders.Authorization.length : 0
+    authLength: requestHeaders.Authorization
+      ? requestHeaders.Authorization.length
+      : 0,
   })
 
   const response = await fetch(url, {

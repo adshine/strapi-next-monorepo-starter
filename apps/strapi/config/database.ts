@@ -1,9 +1,15 @@
 import path from "path"
 
-export default ({ env }) => {
-  const client = env("DATABASE_CLIENT", "postgres")
+type StrapiEnv = {
+  (key: string, defaultValue?: any): any
+  int(key: string, defaultValue?: number): number
+  bool(key: string, defaultValue?: boolean): boolean
+}
 
-  const connections = {
+export default ({ env }: { env: StrapiEnv }) => {
+  const client = env("DATABASE_CLIENT", "sqlite")
+
+  const connections: Record<string, any> = {
     postgres: {
       connection: {
         connectionString: env("DATABASE_URL"),
@@ -35,8 +41,7 @@ export default ({ env }) => {
         filename: path.join(
           __dirname,
           "..",
-          "..",
-          env("DATABASE_FILENAME", ".tmp/data.db")
+          env("DATABASE_FILENAME", "data.db")
         ),
       },
       useNullAsDefault: true,

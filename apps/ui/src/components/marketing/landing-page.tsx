@@ -173,8 +173,8 @@ export function MarketingLandingPage() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-16">
-            <h2 className="font-instrument-sans text-[234.146px] leading-none font-semibold tracking-[-16.3902px] text-black">
+          <div className="flex w-full flex-col items-center gap-16 overflow-hidden">
+            <h2 className="font-instrument-sans w-full text-center text-[clamp(80px,16vw,234.146px)] leading-none font-semibold tracking-[-0.07em] whitespace-nowrap text-black">
               Framer Dojo
             </h2>
           </div>

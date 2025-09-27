@@ -26,7 +26,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
   const { user, showAuthModal } = useAuth()
   const [template, setTemplate] = useState<any>(null)
   const [requiredPlan, setRequiredPlan] = useState<any>(null)
-  const [loading, setLoading] = useState(true) // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [loading, setLoading] = useState(true)
   const [showRemixModal, setShowRemixModal] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [relatedTemplates, setRelatedTemplates] = useState<any[]>([])
@@ -96,10 +96,10 @@ export default function TemplatePage({ params }: TemplatePageProps) {
 
   const galleryImages = useMemo(() => {
     if (!template) return []
-    if (template.previewImages && template.previewImages.length > 0) {
+    if (template?.previewImages && template.previewImages.length > 0) {
       return template.previewImages
     }
-    return [template.thumbnailUrl]
+    return template?.thumbnailUrl ? [template.thumbnailUrl] : []
   }, [template])
 
   const shouldAutoShowRecommendations = galleryImages.length <= 1
@@ -181,6 +181,27 @@ export default function TemplatePage({ params }: TemplatePageProps) {
     setIsFavorited((prev) => !prev)
   }
 
+  if (loading || !template) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+        <div className="container mx-auto max-w-7xl px-6 py-20 md:px-8">
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-pulse">
+                <div className="mx-auto mb-4 h-8 w-64 rounded bg-gray-200"></div>
+                <div className="mx-auto mb-2 h-4 w-48 rounded bg-gray-200"></div>
+                <div className="mx-auto h-4 w-32 rounded bg-gray-200"></div>
+              </div>
+              <p className="mt-8 text-[var(--text-muted)]">
+                Loading template...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="container mx-auto max-w-7xl px-6 md:px-8">
@@ -194,25 +215,25 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                 Templates
               </Link>
               <span>→</span>
-              {template.category && (
+              {template?.category && (
                 <>
                   <Link
                     href={`/templates?category=${encodeURIComponent(
-                      typeof template.category === "string"
+                      typeof template?.category === "string"
                         ? template.category.toLowerCase()
-                        : template.category.slug || "general"
+                        : template?.category?.slug || "general"
                     )}`}
                     className="hover:text-[var(--text-primary)]"
                   >
-                    {typeof template.category === "string"
+                    {typeof template?.category === "string"
                       ? template.category
-                      : template.category?.name || "General"}
+                      : template?.category?.name || "General"}
                   </Link>
                   <span>→</span>
                 </>
               )}
               <span className="text-[var(--text-primary)]">
-                {template.title}
+                {template?.title || "Untitled Template"}
               </span>
             </nav>
 
@@ -226,7 +247,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                       : undefined
                   }
                   src={src}
-                  alt={`${template.title} preview ${index + 1}`}
+                  alt={`${template?.title || "Template"} preview ${index + 1}`}
                   width={800}
                   height={600}
                   className="w-full rounded-2xl border border-[var(--border-neutral)] object-cover"
@@ -238,44 +259,46 @@ export default function TemplatePage({ params }: TemplatePageProps) {
           <div className="lg:col-span-5">
             <div className="sticky top-8 space-y-6 py-8">
               <div className="space-y-4">
-                {(template.creator || template.category) && (
+                {(template?.creator || template?.category) && (
                   <p className="text-sm text-[var(--text-muted)]">
-                    {template.creator && (
+                    {template?.creator && (
                       <>
                         by{" "}
                         <span className="font-semibold text-[var(--text-primary)]">
-                          {template.creator}
+                          {template?.creator}
                         </span>
                       </>
                     )}
-                    {template.creator && template.category && " "}
-                    {template.category && (
+                    {template?.creator && template?.category && " "}
+                    {template?.category && (
                       <>
                         in{" "}
                         <span className="font-semibold text-[var(--text-primary)]">
-                          {typeof template.category === "string"
+                          {typeof template?.category === "string"
                             ? template.category
-                            : template.category?.name || "General"}
+                            : template?.category?.name || "General"}
                         </span>
                       </>
                     )}
                   </p>
                 )}
                 <h1 className="text-4xl leading-tight font-bold md:text-5xl">
-                  {template.title}
+                  {template?.title || "Untitled Template"}
                 </h1>
                 <p className="text-[var(--text-muted)]">
-                  {template.description}
+                  {template?.description || "No description available"}
                 </p>
 
                 <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
                   <div className="flex items-center gap-2">
                     <Star className="h-4 w-4 fill-[var(--accent-warning)] text-[var(--accent-warning)]" />
-                    <span>{template.rating} / 5.0</span>
+                    <span>{template?.rating || 0} / 5.0</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
-                    <span>{template.remixCount.toLocaleString()} remixes</span>
+                    <span>
+                      {(template?.remixCount || 0).toLocaleString()} remixes
+                    </span>
                   </div>
                 </div>
               </div>
@@ -349,22 +372,22 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                 </div>
               </div>
 
-              {template.longDescription && (
+              {template?.longDescription && (
                 <div className="space-y-3 text-sm leading-relaxed text-[var(--text-muted)]">
                   <h2 className="text-xs font-semibold tracking-[0.2em] text-[var(--text-muted)] uppercase">
                     Overview
                   </h2>
-                  <p>{template.longDescription}</p>
+                  <p>{template?.longDescription}</p>
                 </div>
               )}
 
-              {(template.compatibility ?? []).length > 0 && (
+              {(template?.compatibility ?? []).length > 0 && (
                 <div>
                   <h3 className="text-xs font-semibold tracking-[0.2em] text-[var(--text-muted)] uppercase">
                     Compatible with
                   </h3>
                   <div className="mt-3 flex items-center gap-3">
-                    {(template.compatibility ?? ["Framer"]).map((tool) => (
+                    {(template?.compatibility ?? ["Framer"]).map((tool) => (
                       <div
                         key={tool}
                         className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border-neutral)] text-base font-semibold"
@@ -377,7 +400,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
               )}
 
               <div className="flex flex-wrap gap-2 pt-2">
-                {template.tags.map((tag) => (
+                {(template?.tags || []).map((tag) => (
                   <Badge
                     key={tag}
                     variant="secondary"
@@ -399,7 +422,7 @@ export default function TemplatePage({ params }: TemplatePageProps) {
                   className="gap-2 text-[var(--accent-primary)] hover:text-[var(--accent-primary)]"
                 >
                   <a
-                    href={template.thumbnailUrl}
+                    href={template?.thumbnailUrl || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -426,7 +449,8 @@ export default function TemplatePage({ params }: TemplatePageProps) {
               You may also like
             </h2>
             <p className="mt-2 text-center text-[var(--text-muted)]">
-              Hand-picked templates similar to {template.title}
+              Hand-picked templates similar to{" "}
+              {template?.title || "this template"}
             </p>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {relatedTemplates.map((item) => (

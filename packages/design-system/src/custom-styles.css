@@ -40,7 +40,7 @@
 
 .ck-editor__main h1,
 .typo-h1 {
-  @apply text-10xl mb-2;
+  @apply text-9xl mb-2;
 }
 
 .ck-editor__main h2,
@@ -71,4 +71,153 @@
 .ck-editor__main p,
 .typo-p {
   @apply text-2xl mb-0.5;
+}
+
+/* Tweaken-inspired card and component styles */
+.card {
+  @apply bg-card rounded-lg border border-border;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-border;
+}
+
+.card-content {
+  @apply px-6 py-4;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-border bg-muted/30;
+}
+
+/* Clean button styles */
+.btn-clean {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+  @apply border border-border bg-background hover:bg-muted;
+}
+
+.btn-primary-clean {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+  @apply bg-primary text-primary-foreground hover:opacity-90;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.btn-secondary-clean {
+  @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+}
+
+/* Form input styles */
+.input-clean {
+  @apply w-full px-3 py-2 rounded-md border border-input bg-background;
+  @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  @apply placeholder:text-muted-foreground;
+  transition: border-color 0.2s ease;
+}
+
+.input-clean:hover:not(:focus) {
+  @apply border-muted-foreground/50;
+}
+
+/* Sidebar styles */
+.sidebar-clean {
+  @apply bg-card border-r border-border;
+  box-shadow: 1px 0 2px 0 rgb(0 0 0 / 0.02);
+}
+
+.sidebar-item {
+  @apply px-4 py-2 rounded-md transition-all duration-200;
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+.sidebar-item-active {
+  @apply bg-accent text-accent-foreground font-medium;
+}
+
+/* Navigation styles */
+.nav-clean {
+  @apply bg-card border-b border-border;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.02);
+}
+
+.nav-link {
+  @apply px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+/* Table styles */
+.table-clean {
+  @apply w-full border-collapse;
+}
+
+.table-clean thead {
+  @apply bg-muted/30 border-b border-border;
+}
+
+.table-clean th {
+  @apply px-4 py-3 text-left text-sm font-medium text-muted-foreground;
+}
+
+.table-clean td {
+  @apply px-4 py-3 text-sm border-b border-border;
+}
+
+.table-clean tbody tr:hover {
+  @apply bg-muted/20;
+}
+
+/* Badge styles */
+.badge-clean {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-error {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Modal overlay styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/20 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply bg-card rounded-lg border border-border;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+/* Dropdown styles */
+.dropdown-clean {
+  @apply bg-card border border-border rounded-md;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+}
+
+.dropdown-item {
+  @apply px-4 py-2 text-sm transition-colors duration-200;
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+/* Clean divider */
+.divider {
+  @apply border-t border-border;
+}
+
+/* Toast notification styles */
+.toast-clean {
+  @apply bg-card border border-border rounded-lg p-4;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
 }
