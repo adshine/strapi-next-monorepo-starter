@@ -15,7 +15,7 @@ export const Container = ({
     <div
       className={cn(
         "mx-auto w-full",
-        hideDefaultPadding ? "max-w-screen-default" : "max-w-[1296px] px-6",
+        hideDefaultPadding ? "max-w-[1440px]" : "max-w-[1440px] px-[64px]",
         className
       )}
     >

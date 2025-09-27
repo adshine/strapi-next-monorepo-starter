@@ -9,7 +9,15 @@ export function Footer() {
       <Container className="py-8">
         <div className="mb-12 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded bg-red-600" />
+            <div className="relative h-[22px] w-[22px] scale-y-[-1]">
+              <Image
+                src="/logo.png"
+                alt="FramerDojo Logo"
+                width={22}
+                height={22}
+                className="object-cover"
+              />
+            </div>
             <span className="text-xl font-bold">FramerDojo</span>
           </Link>
 

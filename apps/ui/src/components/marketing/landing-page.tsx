@@ -32,17 +32,14 @@ export function MarketingLandingPage() {
     <div className="flex min-h-screen flex-col gap-[100px] bg-white">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[80px] px-4 py-16">
         <div className="flex w-full max-w-[768px] flex-col items-center gap-8 text-center">
-          <div className="flex h-[22px] w-[22px] items-center justify-center">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 22 22"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="scale-y-[-1]"
-            >
-              <rect width="22" height="22" rx="4" fill="#ef1d0c" />
-            </svg>
+          <div className="flex h-[22px] w-[22px] items-center justify-center scale-y-[-1]">
+            <Image
+              src="/logo.png"
+              alt="FramerDojo Logo"
+              width={22}
+              height={22}
+              className="object-cover"
+            />
           </div>
 
           <div className="flex flex-col gap-6">
@@ -77,7 +74,8 @@ export function MarketingLandingPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 px-[120px] md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto w-full max-w-[1440px] px-[64px]">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {loading
           ? Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="flex animate-pulse flex-col gap-[6px]">
@@ -134,6 +132,7 @@ export function MarketingLandingPage() {
                 </div>
               </Link>
             ))}
+        </div>
       </div>
     </div>
   )

@@ -9,11 +9,11 @@ import { getAuth } from "@/lib/auth"
 import { fetchNavbar } from "@/lib/strapi-api/content/server"
 import { cn } from "@/lib/styles"
 import AppLink from "@/components/elementary/AppLink"
-import LocaleSwitcher from "@/components/elementary/LocaleSwitcher"
+// import LocaleSwitcher from "@/components/elementary/LocaleSwitcher"
 import StrapiImageWithLink from "@/components/page-builder/components/utilities/StrapiImageWithLink"
 import StrapiLink from "@/components/page-builder/components/utilities/StrapiLink"
 import { LoggedUserMenu } from "@/components/page-builder/single-types/navbar/LoggedUserMenu"
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 
 const hardcodedLinks: NonNullable<
   Data.ContentType<"api::navbar.navbar">["links"]
@@ -71,7 +71,7 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
         </div>
 
         {/* Right Side: Navigation Links + Auth */}
-        <div className="flex shrink-0 items-center gap-[48px]">
+        <div className="flex shrink-0 items-center gap-[12px]">
           {/* Navigation Links with Coin Badge */}
           <nav className="flex items-center gap-[24px]">
             {/* Coin Badge - Always visible */}
@@ -102,19 +102,19 @@ export async function StrapiNavbar({ locale }: { readonly locale: AppLocale }) {
           </nav>
 
           {/* Auth Buttons */}
-          <div className="flex items-center gap-[12px]">
+          <div className="flex items-center gap-[8px]">
             {session?.user ? (
               <LoggedUserMenu user={session.user} />
             ) : (
               <>
-                <AppLink href="/auth/signin" className="inline-block">
-                  <div className="flex shrink-0 items-center justify-center rounded-[24px] border border-gray-200 bg-white px-[20px] py-[8px]">
+                <AppLink href="/auth/signin" className="p-0">
+                  <div className="rounded-[24px] border border-gray-200 bg-white px-[20px] py-[8px]">
                     <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-black">
                       Login
                     </span>
                   </div>
                 </AppLink>
-                <AppLink href="/auth/register" className="inline-block">
+                <AppLink href="/auth/register" className="p-0">
                   <div className="flex shrink-0 items-center justify-center rounded-[24px] bg-black px-[20px] py-[8px]">
                     <span className="font-roboto text-[16px] leading-[1.5] font-normal whitespace-nowrap text-white">
                       Sign Up
